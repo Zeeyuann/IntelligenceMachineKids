@@ -1,7 +1,15 @@
 import cac from 'cac';
 import { blue, lightGreen } from 'kolorist';
 import { version } from '../package.json';
-import { cleanup, genChangelog, generateRoute, gitCommit, gitCommitVerify, release, updatePkg } from './commands';
+import {
+  cleanup,
+  genChangelog,
+  generateRoute,
+  //  gitCommit,
+  //  gitCommitVerify,
+  release,
+  updatePkg
+} from './commands';
 import { loadCliOptions } from './config';
 import type { Lang } from './locales';
 
@@ -69,14 +77,14 @@ export async function setupCli() {
     },
     'git-commit': {
       desc: 'git commit, generate commit message which match Conventional Commits standard',
-      action: async args => {
-        await gitCommit(args?.lang);
+      action: () => {
+        // await gitCommit(args?.lang);
       }
     },
     'git-commit-verify': {
       desc: 'verify git commit message, make sure it match Conventional Commits standard',
-      action: async args => {
-        await gitCommitVerify(args?.lang, cliOptions.gitCommitVerifyIgnores);
+      action: () => {
+        // await gitCommitVerify(args?.lang, cliOptions.gitCommitVerifyIgnores);
       }
     },
     changelog: {
