@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { VNode } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouterPush } from '@/hooks/common/router';
 import { useSvgIcon } from '@/hooks/common/icon';
 import { $t } from '@/locales';
+import { useLoginTypeStore } from '@/store/modules/login';
+import Login from './login/index.vue';
 
 defineOptions({
   name: 'UserAvatar'
 });
+const { type, showModal } = storeToRefs(useLoginTypeStore());
 
 const authStore = useAuthStore();
 const { routerPushByKey, toLogin } = useRouterPush();
@@ -16,6 +20,7 @@ const { SvgIconVNode } = useSvgIcon();
 
 function loginOrRegister() {
   toLogin();
+  useLoginTypeStore().show();
 }
 
 type DropdownKey = 'logout';
@@ -77,6 +82,9 @@ function handleDropdown(key: DropdownKey) {
       </ButtonIcon>
     </div>
   </NDropdown>
+  <NModal v-model:show="showModal">
+    <Login :module="type" />
+  </NModal>
 </template>
 
 <style scoped></style>

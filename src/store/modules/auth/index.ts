@@ -7,10 +7,11 @@ import { useRouterPush } from '@/hooks/common/router';
 import { fetchGetUserInfo, fetchLogin } from '@/service/api';
 import { localStg } from '@/utils/storage';
 import { $t } from '@/locales';
+import { useLoginTypeStoreWithOut } from '@/store/modules/login';
 import { useRouteStore } from '../route';
 import { useTabStore } from '../tab';
 import { clearAuthStorage, getToken } from './shared';
-
+const LoginTypeStoreWithOut = useLoginTypeStoreWithOut();
 export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   const route = useRoute();
   const routeStore = useRouteStore();
@@ -79,6 +80,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
             content: $t('page.login.common.welcomeBack', { userName: userInfo.userName }),
             duration: 4500
           });
+          LoginTypeStoreWithOut.close();
         }
       }
     } else {
