@@ -19,7 +19,13 @@ export default defineConfig(
         }
       ],
       'unocss/order-attributify': 'off',
-      'no-console': 'off'
+      'no-console': 'off',
+      'vue/no-static-inline-styles': [
+        'error',
+        {
+          allowBinding: true
+        }
+      ]
     }
   }
 );
