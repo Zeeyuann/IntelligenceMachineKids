@@ -1,0 +1,30 @@
+@font-face {
+  font-family: 'Alph';
+  font-style: normal;
+  src:
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-55-Regular.woff2') format('woff2'),
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-115-Black.woff2') format('woff2'),
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-35-Thin.woff2') format('woff2'),
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-45-Light.woff2') format('woff2'),
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-55-RegularL3.woff2') format('woff2'),
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-65-Medium.woff2') format('woff2'),
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-75-SemiBold.woff2') format('woff2'),
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-85-Bold.woff2') format('woff2'),
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-95-ExtraBold.woff2') format('woff2'),
+    url('../../assets/fonts/AlibabaPuHuiTi-3-55-Regular/AlibabaPuHuiTi-3-105-Heavy.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Almm';
+  font-style: normal;
+  src: url('../../assets/fonts/AlimamaShuHeiTi-bold/AlimamaShuHeiTi-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Ddjb';
+  font-style: normal;
+  src: url('../../assets/fonts/DingTalk/DingTalkJinBuTi.ttf') format('woff2');
+}
+@font-face {
+  font-family: 'Mi';
+  font-style: normal;
+  src: url('../../assets/fonts/MiSans/MiSans-Normal.woff2') format('woff2');
+}

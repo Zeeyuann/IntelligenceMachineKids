@@ -1,13 +1,38 @@
 @import './reset.css';
 @import './nprogress.css';
 @import './transition.css';
+@import './font.css';
 
 html,
 body,
 #app {
   height: 100%;
+  font-family: Alph;
 }
 
 html {
   overflow-x: hidden;
+}
+.alph {
+  font-family: Alph;
+}
+.almm {
+  font-family: Almm;
+}
+.ddjb {
+  font-family: Ddjb;
+}
+.mi {
+  font-family: Mi;
+}
+.global-btn {
+  border-radius: 14px;
+  background: linear-gradient(180deg, #2b2d24 0%, #0b0c09 100%);
+  box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 22px;
 }
