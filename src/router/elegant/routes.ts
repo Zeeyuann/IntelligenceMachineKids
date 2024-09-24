@@ -77,19 +77,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
-    name: 'login',
-    path: '/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?',
-    component: 'layout.blank$view.login',
-    redirect: '/',
-    props: true,
-    meta: {
-      title: 'login',
-      i18nKey: 'route.login',
-      constant: true,
-      hideInMenu: true
-    }
-  },
-  {
     name: 'paint',
     path: '/paint',
     component: 'layout.base$view.paint',

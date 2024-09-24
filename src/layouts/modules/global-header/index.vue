@@ -34,7 +34,7 @@ const themeStore = useThemeStore();
     <GlobalLogo v-if="showLogo" class="h-full" :style="{ width: themeStore.sider.width + 'px' }" />
     <MenuToggler v-if="showMenuToggler" :collapsed="appStore.siderCollapse" @click="appStore.toggleSiderCollapse" />
     <div v-if="showMenu" :id="GLOBAL_HEADER_MENU_ID" class="h-full flex-y-center flex-1-hidden"></div>
-    <div v-else class="h-full flex-y-center flex-1-hidden">
+    <div v-else class="bg h-full flex-y-center flex-1-hidden">
       <GlobalBreadcrumb v-if="!appStore.isMobile" class="ml-12px" />
     </div>
     <div class="h-full flex-y-center justify-end">
@@ -54,4 +54,8 @@ const themeStore = useThemeStore();
   </DarkModeContainer>
 </template>
 
-<style scoped></style>
+<style scoped>
+.bg {
+  background: radial-gradient(48% 48% at 56% 37%, rgba(208, 254, 24, 0.26) 0%, #d0fe18 100%);
+}
+</style>

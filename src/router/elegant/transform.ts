@@ -169,7 +169,6 @@ const routeMap: RouteMap = {
   "classroom": "/classroom",
   "home": "/home",
   "iframe-page": "/iframe-page/:url",
-  "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?",
   "paint": "/paint",
   "write": "/write"
 };

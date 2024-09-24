@@ -15,11 +15,10 @@ defineOptions({
 const { type, showModal } = storeToRefs(useLoginTypeStore());
 
 const authStore = useAuthStore();
-const { routerPushByKey, toLogin } = useRouterPush();
+const { routerPushByKey } = useRouterPush();
 const { SvgIconVNode } = useSvgIcon();
 
 function loginOrRegister() {
-  toLogin();
   useLoginTypeStore().show();
 }
 
