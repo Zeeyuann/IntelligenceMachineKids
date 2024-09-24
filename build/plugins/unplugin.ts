@@ -7,6 +7,7 @@ import Components from 'unplugin-vue-components/vite';
 import { AntDesignVueResolver, NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
+import AutoImport from 'unplugin-auto-import/vite';
 
 export function setupUnplugin(viteEnv: Env.ImportMeta) {
   const { VITE_ICON_PREFIX, VITE_ICON_LOCAL_PREFIX } = viteEnv;
@@ -17,6 +18,12 @@ export function setupUnplugin(viteEnv: Env.ImportMeta) {
   const collectionName = VITE_ICON_LOCAL_PREFIX.replace(`${VITE_ICON_PREFIX}-`, '');
 
   const plugins: PluginOption[] = [
+    AutoImport({
+      include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /\.md$/],
+      imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
+      // 注意这个配置和src同级
+      dts: './auto-imports.d.ts'
+    }),
     Icons({
       compiler: 'vue3',
       customCollections: {
