@@ -154,7 +154,10 @@ const local: App.I18n.Schema = {
     404: 'Page Not Found',
     500: 'Server Error',
     'iframe-page': 'Iframe',
-    home: 'Home'
+    home: 'Home',
+    classroom: 'classroom',
+    write: '文本创作',
+    paint: '智能绘图'
   },
   page: {
     login: {

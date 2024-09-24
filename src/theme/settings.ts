@@ -22,7 +22,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
     animateMode: 'fade-slide'
   },
   header: {
-    height: 56,
+    height: 105,
     breadcrumb: {
       visible: true,
       showIcon: true

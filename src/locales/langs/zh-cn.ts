@@ -154,7 +154,10 @@ const local: App.I18n.Schema = {
     404: '页面不存在',
     500: '服务器错误',
     'iframe-page': '外链页面',
-    home: '首页'
+    home: '系统首页',
+    classroom: '智慧课堂',
+    write: '文本创作',
+    paint: '智能绘图'
   },
   page: {
     login: {

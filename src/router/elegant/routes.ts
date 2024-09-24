@@ -40,6 +40,18 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'classroom',
+    path: '/classroom',
+    component: 'layout.base$view.classroom',
+    meta: {
+      title: 'classroom',
+      i18nKey: 'route.classroom',
+      constant: true,
+      icon: '',
+      order: 1
+    }
+  },
+  {
     name: 'home',
     path: '/home',
     component: 'layout.base$view.home',
@@ -47,8 +59,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'home',
       constant: true,
       i18nKey: 'route.home',
-      icon: 'mdi:monitor-dashboard',
-      order: 1
+      icon: '',
+      order: 0
     }
   },
   {
@@ -75,6 +87,30 @@ export const generatedRoutes: GeneratedRoute[] = [
       i18nKey: 'route.login',
       constant: true,
       hideInMenu: true
+    }
+  },
+  {
+    name: 'paint',
+    path: '/paint',
+    component: 'layout.base$view.paint',
+    meta: {
+      title: '智能绘图',
+      constant: true,
+      icon: '',
+      order: 3,
+      i18nKey: 'route.paint'
+    }
+  },
+  {
+    name: 'write',
+    path: '/write',
+    component: 'layout.base$view.write',
+    meta: {
+      title: '文本创作',
+      constant: true,
+      icon: '',
+      order: 2,
+      i18nKey: 'route.write'
     }
   }
 ];
