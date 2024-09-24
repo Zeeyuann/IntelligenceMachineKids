@@ -17,6 +17,8 @@ async function setupApp() {
 
   const app = createApp(App);
 
+  app.config.warnHandler = () => null;
+
   setupStore(app);
 
   await setupRouter(app);

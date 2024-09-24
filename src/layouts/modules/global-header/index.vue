@@ -9,6 +9,16 @@ import GlobalBreadcrumb from '../global-breadcrumb/index.vue';
 // import ThemeButton from './components/theme-button.vue';
 import UserAvatar from './components/user-avatar.vue';
 
+const route = useRoute();
+const routeName = ref(route.name);
+watch(
+  route,
+  val => {
+    routeName.value = val.name;
+  },
+  { immediate: true }
+);
+
 defineOptions({
   name: 'GlobalHeader'
 });
@@ -30,7 +40,10 @@ const themeStore = useThemeStore();
 </script>
 
 <template>
-  <DarkModeContainer class="bg h-full flex-y-center px-230px shadow-header">
+  <DarkModeContainer
+    :class="`${routeName === 'paint' ? 'paintbg' : 'bg'}`"
+    class="h-full flex-y-center px-230px shadow-header"
+  >
     <GlobalLogo v-if="showLogo" class="h-full" :style="{ width: themeStore.sider.width + 'px' }" />
     <MenuToggler v-if="showMenuToggler" :collapsed="appStore.siderCollapse" @click="appStore.toggleSiderCollapse" />
     <div v-if="showMenu" :id="GLOBAL_HEADER_MENU_ID" class="h-full flex-y-center flex-1-hidden"></div>
