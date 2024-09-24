@@ -2,7 +2,7 @@
 
 <template>
   <DarkModeContainer class="flex-center flex-col p-unset">
-    <header class="bg flex flex-col justify-center pl-234px">
+    <header class="bg box-border flex flex-col justify-center pl-234px">
       <div class="text-60px text-#0B0B0B font-400">智童AI系统</div>
       <div class="almm title text-65px font-700">青少年AI学习室</div>
       <div class="text-34px text-#000000 font-400">Superx自研大模型，智能高效全能问答</div>
