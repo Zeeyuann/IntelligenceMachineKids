@@ -14,7 +14,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
   isInfoFollowPrimary: true,
   layout: {
     mode: 'horizontal',
-    scrollMode: 'content',
+    scrollMode: 'wrapper',
     reverseHorizontalMix: false
   },
   page: {
@@ -29,7 +29,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
     }
   },
   tab: {
-    visible: true,
+    visible: false,
     cache: true,
     height: 44,
     mode: 'chrome'

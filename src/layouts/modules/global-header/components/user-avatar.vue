@@ -70,8 +70,16 @@ function handleDropdown(key: DropdownKey) {
 </script>
 
 <template>
-  <NButton v-if="!authStore.isLogin" quaternary @click="loginOrRegister">
-    {{ $t('page.login.common.loginOrRegister') }}
+  <NButton
+    v-if="!authStore.isLogin"
+    class="global-btn h-50px w-153px text-22px"
+    type="primary"
+    size="large"
+    round
+    block
+    @click="loginOrRegister"
+  >
+    立即登录
   </NButton>
   <NDropdown v-else placement="bottom" trigger="click" :options="options" @select="handleDropdown">
     <div>

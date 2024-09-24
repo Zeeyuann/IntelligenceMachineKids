@@ -30,7 +30,7 @@ const themeStore = useThemeStore();
 </script>
 
 <template>
-  <DarkModeContainer class="h-full flex-y-center px-12px shadow-header">
+  <DarkModeContainer class="bg h-full flex-y-center px-230px shadow-header">
     <GlobalLogo v-if="showLogo" class="h-full" :style="{ width: themeStore.sider.width + 'px' }" />
     <MenuToggler v-if="showMenuToggler" :collapsed="appStore.siderCollapse" @click="appStore.toggleSiderCollapse" />
     <div v-if="showMenu" :id="GLOBAL_HEADER_MENU_ID" class="h-full flex-y-center flex-1-hidden"></div>
@@ -57,5 +57,19 @@ const themeStore = useThemeStore();
 <style scoped>
 .bg {
   background: radial-gradient(48% 48% at 56% 37%, rgba(208, 254, 24, 0.26) 0%, #d0fe18 100%);
+}
+:deep(.n-menu) {
+  justify-content: center !important;
+}
+:deep(.v-overflow) {
+  background-color: #fff;
+  width: fit-content !important;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  border-radius: 23px;
+}
+:deep(.n-menu-item-content--selected) {
+  font-weight: 700 !important;
 }
 </style>

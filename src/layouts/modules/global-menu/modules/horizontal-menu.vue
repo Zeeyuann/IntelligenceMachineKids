@@ -1,9 +1,18 @@
 <script setup lang="ts">
+import type { MenuProps } from 'naive-ui';
+import { NMenu } from 'naive-ui';
 import { GLOBAL_HEADER_MENU_ID } from '@/constants/app';
 import { useRouteStore } from '@/store/modules/route';
 import { useRouterPush } from '@/hooks/common/router';
 import { useMenu } from '../../../context';
-
+type MenuThemeOverrides = NonNullable<MenuProps['themeOverrides']>;
+const menuThemeOverrides: MenuThemeOverrides = {
+  itemTextColor: '#6F6F6F',
+  itemTextColorHoverHorizontal: '#181818',
+  itemTextColorActiveHorizontal: '#0B0B0B',
+  itemTextColorActiveHoverHorizontal: '#000000',
+  fontSize: '14px'
+};
 defineOptions({
   name: 'HorizontalMenu'
 });
@@ -21,6 +30,7 @@ const { selectedKey } = useMenu();
       :options="routeStore.menus"
       :indent="18"
       responsive
+      :theme-overrides="menuThemeOverrides"
       @update:value="routerPushByKeyWithMetaQuery"
     />
   </Teleport>
