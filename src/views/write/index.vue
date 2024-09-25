@@ -5,6 +5,9 @@ const { routerPushByPath } = useRouterPush();
 const goWriteChat = () => {
   routerPushByPath('/write-chat-home');
 };
+const goWriteComposition = () => {
+  routerPushByPath('/write-composition');
+};
 
 console.log('🚀 ~ allRoutes:', useRouter().getRoutes());
 </script>
@@ -24,7 +27,13 @@ console.log('🚀 ~ allRoutes:', useRouter().getRoutes());
         >
           知识问答
         </NButton>
-        <NButton type="primary" class="global-btn my-48px ml-48px h-80px !w-197px !text-22px !font-600" round block>
+        <NButton
+          type="primary"
+          class="global-btn my-48px ml-48px h-80px !w-197px !text-22px !font-600"
+          round
+          block
+          @click="goWriteComposition"
+        >
           文章写作
         </NButton>
       </div>

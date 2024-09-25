@@ -101,6 +101,9 @@ async function handleSubmit() {
 }
 
 // 图片加载
+
+// animate__animated animate__fadeInRight
+// animate__animated animate__fadeInLeft
 </script>
 
 <template>
@@ -306,7 +309,7 @@ async function handleSubmit() {
           </NButton>
           <NButton
             type="primary"
-            class="global-btn btn h-50px !w-223px !text-16px !font-600"
+            class="btn global-btn h-50px !w-223px !text-16px !font-600"
             round
             block
             @click="handleSubmit"

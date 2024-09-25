@@ -23,15 +23,19 @@ const handleGoBack = () => {
 <template>
   <div class="box-border size-full flex justify-center bg-#F5F7FA pt-220px">
     <div class="box-border w-768px flex flex-col items-center">
-      <div class="logo flex cursor-pointer" @click="handleGoBack">
+      <div class="animate__animated animate__fadeInLeft logo flex cursor-pointer" @click="handleGoBack">
         <SystemLogo class="text-32px text-primary" />
         <h2 class="ddjb pl-8px text-22px text-#0B0B0B font-bold transition duration-300 ease-in-out">
           {{ $t('system.title') }}
         </h2>
       </div>
-      <div class="my-36px text-18px text-#3d3d3d">有问题，为什么不问问神奇海螺呢？</div>
+      <div class="animate__animated animate__fadeInRight my-36px text-18px text-#3d3d3d">
+        有问题，为什么不问问神奇海螺呢？
+      </div>
       <!-- 输入框 -->
-      <div class="box-border w-768px flex flex-col items-center rd-14px bg-white p-25px">
+      <div
+        class="animate__animated animate__fadeInLeft box-border w-768px flex flex-col items-center rd-14px bg-white p-25px"
+      >
         <NInput
           v-model:value="prompt"
           placeholder="输入你的需求，按[Enter]发送"
@@ -67,7 +71,7 @@ const handleGoBack = () => {
         </div>
       </div>
       <!-- 功能 -->
-      <div class="mt-34px w-full">
+      <div class="animate__animated animate__fadeInRight mt-34px w-full">
         <div class="mb-16px text-15px text-#7A808D">快来探索这些功能</div>
         <div class="flex items-center">
           <NButton
