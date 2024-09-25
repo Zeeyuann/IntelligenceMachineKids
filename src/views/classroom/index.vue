@@ -144,7 +144,7 @@ async function handleSubmit() {
   <DarkModeContainer class="flex-center flex-col p-unset">
     <header class="bg box-border flex flex-col justify-center pl-234px">
       <div class="text-60px text-#0B0B0B font-400">王队长成长营</div>
-      <div class="almm title text-65px font-700">孩子的第一堂AI课</div>
+      <div class="title almm text-65px font-700">孩子的第一堂AI课</div>
       <div class="text-34px text-#000000 font-400">Superx自研大模型，智能高效全能问答</div>
       <NButton type="primary" class="global-btn my-48px h-68px !w-233px !text-22px !font-600" round block>
         开始写作
@@ -176,7 +176,7 @@ async function handleSubmit() {
 <style scoped>
 .bg {
   width: 100%;
-  height: 1080px;
+  height: 860px;
   background: url('https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/webbg2.png') no-repeat;
   background-size: cover;
 }

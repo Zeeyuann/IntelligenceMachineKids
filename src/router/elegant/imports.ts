@@ -19,9 +19,11 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   404: () => import("@/views/_builtin/404/index.vue"),
   500: () => import("@/views/_builtin/500/index.vue"),
   "iframe-page": () => import("@/views/_builtin/iframe-page/[url].vue"),
+  "write-chat-home": () => import("@/views/_write-relation/write-chat-home/index.vue"),
+  "write-chat": () => import("@/views/_write-relation/write-chat/index.vue"),
+  "write-composition": () => import("@/views/_write-relation/write-composition/index.vue"),
   classroom: () => import("@/views/classroom/index.vue"),
   home: () => import("@/views/home/index.vue"),
   paint: () => import("@/views/paint/index.vue"),
-  write_home: () => import("@/views/write/home/index.vue"),
-  "write_write-chat": () => import("@/views/write/write-chat/index.vue"),
+  write: () => import("@/views/write/index.vue"),
 };

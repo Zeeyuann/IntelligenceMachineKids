@@ -41,7 +41,12 @@ const themeStore = useThemeStore();
 
 <template>
   <DarkModeContainer
-    :class="`${routeName === 'paint' ? 'paintbg' : 'bg'}`"
+    :class="{
+      bg: routeName === 'home',
+      paintbg: routeName === 'paint',
+      classbg: routeName === 'classroom',
+      writebg: routeName === 'write'
+    }"
     class="h-full flex-y-center px-230px shadow-header"
   >
     <GlobalLogo v-if="showLogo" class="h-full" :style="{ width: themeStore.sider.width + 'px' }" />
@@ -69,7 +74,16 @@ const themeStore = useThemeStore();
 
 <style scoped>
 .bg {
-  background: radial-gradient(48% 48% at 56% 37%, rgba(208, 254, 24, 0.26) 0%, #d0fe18 100%);
+  background: radial-gradient(48% 48% at 56% 37%, #d0fe18 0%, #d0fe18 100%);
+}
+.paintbg {
+  background: linear-gradient(180deg, #42c700 18%, #42c700 100%);
+}
+.classbg {
+  background: linear-gradient(180deg, #2cb6ff 10%, #2cb6ff 100%);
+}
+.writebg {
+  background: linear-gradient(180deg, #fd7925 0%, #fd7925 100%), #fd7925;
 }
 :deep(.n-menu) {
   justify-content: center !important;

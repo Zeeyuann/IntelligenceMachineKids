@@ -11,13 +11,28 @@ import GlobalContent from '../modules/global-content/index.vue';
 import GlobalFooter from '../modules/global-footer/index.vue';
 import ThemeDrawer from '../modules/theme-drawer/index.vue';
 import { setupMixMenuContext } from '../context';
-
+const route = useRoute();
 defineOptions({
   name: 'BaseLayout'
 });
 
 const appStore = useAppStore();
 const themeStore = useThemeStore();
+
+watch(
+  route,
+  routeInfo => {
+    if (routeInfo.meta.isBlank) {
+      themeStore.setFooterVisible(!routeInfo.meta.isBlank);
+      themeStore.setLayoutScroll('content');
+    } else {
+      themeStore.setFooterVisible(true);
+      themeStore.setLayoutScroll('wrapper');
+    }
+  },
+  { immediate: true }
+);
+
 const { childLevelMenus, isActiveFirstLevelMenuHasChildren } = setupMixMenuContext();
 
 const GlobalMenu = defineAsyncComponent(() => import('../modules/global-menu/index.vue'));

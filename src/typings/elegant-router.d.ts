@@ -25,8 +25,9 @@ declare module "@elegant-router/types" {
     "iframe-page": "/iframe-page/:url";
     "paint": "/paint";
     "write": "/write";
-    "write_home": "/write/home";
-    "write_write-chat": "/write/write-chat";
+    "write-chat": "/write-chat";
+    "write-chat-home": "/write-chat-home";
+    "write-composition": "/write-composition";
   };
 
   /**
@@ -66,6 +67,9 @@ declare module "@elegant-router/types" {
     | "iframe-page"
     | "paint"
     | "write"
+    | "write-chat"
+    | "write-chat-home"
+    | "write-composition"
   >;
 
   /**
@@ -86,11 +90,13 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "iframe-page"
+    | "write-chat-home"
+    | "write-chat"
+    | "write-composition"
     | "classroom"
     | "home"
     | "paint"
-    | "write_home"
-    | "write_write-chat"
+    | "write"
   >;
 
   /**

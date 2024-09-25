@@ -83,6 +83,23 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
   }
 
   /**
+   * setFooterVisible
+   *
+   * @param visible
+   */
+  function setFooterVisible(visible: boolean) {
+    settings.value.footer.visible = visible;
+  }
+  /**
+   * setLayoutScroll
+   *
+   * @param visible
+   */
+  function setLayoutScroll(ThemeScrollMode: UnionKey.ThemeScrollMode) {
+    settings.value.layout.scrollMode = ThemeScrollMode;
+  }
+
+  /**
    * Set colourWeakness value
    *
    * @param isColourWeakness
@@ -208,6 +225,8 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     themeColors,
     naiveTheme,
     settingsJson,
+    setFooterVisible,
+    setLayoutScroll,
     setGrayscale,
     setColourWeakness,
     resetStore,

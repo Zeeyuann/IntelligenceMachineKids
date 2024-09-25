@@ -7,7 +7,10 @@ import { useRouterPush } from '@/hooks/common/router';
 import { useSvgIcon } from '@/hooks/common/icon';
 import { $t } from '@/locales';
 import { useLoginTypeStore } from '@/store/modules/login';
+import { useLoginClassStore } from '@/store/modules/login-class';
 import Login from './login/index.vue';
+
+const loginClassStore = useLoginClassStore();
 
 defineOptions({
   name: 'UserAvatar'
@@ -72,6 +75,7 @@ function handleDropdown(key: DropdownKey) {
 <template>
   <NButton
     v-if="!authStore.isLogin"
+    :class="{ 'animate-shake': loginClassStore.flag }"
     class="global-btn h-50px w-153px text-22px"
     type="primary"
     size="large"

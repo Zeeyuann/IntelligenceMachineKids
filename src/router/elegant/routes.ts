@@ -91,35 +91,43 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'write',
     path: '/write',
-    component: 'layout.base',
+    component: 'layout.base$view.write',
     meta: {
       title: '文本创作',
       constant: true,
       icon: '',
       order: 2,
       i18nKey: 'route.write'
-    },
-    children: [
-      {
-        name: 'write_home',
-        path: '/write/home',
-        component: 'view.write_home',
-        meta: {
-          title: 'write_home',
-          i18nKey: 'route.write_home',
-          hideInMenu: true
-        }
-      },
-      {
-        name: 'write_write-chat',
-        path: '/write/write-chat',
-        component: 'view.write_write-chat',
-        meta: {
-          title: '文本创作',
-          i18nKey: 'route.write_write-chat',
-          hideInMenu: true
-        }
-      }
-    ]
+    }
+  },
+  {
+    name: 'write-chat',
+    path: '/write-chat',
+    component: 'layout.blank$view.write-chat',
+    meta: {
+      title: 'write-chat',
+      i18nKey: 'route.write-chat',
+      hideInMenu: true
+    }
+  },
+  {
+    name: 'write-chat-home',
+    path: '/write-chat-home',
+    component: 'layout.base$view.write-chat-home',
+    meta: {
+      title: 'write-chat-home',
+      i18nKey: 'route.write-chat-home',
+      hideInMenu: true
+    }
+  },
+  {
+    name: 'write-composition',
+    path: '/write-composition',
+    component: 'layout.base$view.write-composition',
+    meta: {
+      title: 'write-composition',
+      i18nKey: 'route.write-composition',
+      hideInMenu: true
+    }
   }
 ];

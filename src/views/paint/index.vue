@@ -94,8 +94,8 @@
 <style scoped>
 .bg {
   width: 100%;
-  height: 1080px;
-  background: url('https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/webbg2.png') no-repeat;
+  height: 860px;
+  background: url('https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/webpaintbg.png') no-repeat;
   background-size: cover;
 }
 .title {

@@ -10,7 +10,9 @@ import type { RouteKey, RoutePath } from '@elegant-router/types';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouteStore } from '@/store/modules/route';
 import { localStg } from '@/utils/storage';
+import { useLoginClassStoreWithOut } from '@/store/modules/login-class';
 
+const loginClassStoreWithOut = useLoginClassStoreWithOut();
 /**
  * create route guard
  *
@@ -54,12 +56,15 @@ export function createRouteGuard(router: Router) {
         }
       },
       // if the route need login but the user is not logged in, then switch to the login page
-      // {
-      //   condition: !isLogin && needLogin,
-      //   callback: () => {
-      //     next({ name: loginRoute, query: { redirect: to.fullPath } });
-      //   }
-      // },
+      {
+        condition: !isLogin && needLogin,
+        callback: () => {
+          loginClassStoreWithOut.setFlag(true);
+          setTimeout(() => {
+            loginClassStoreWithOut.setFlag(false);
+          }, 1000);
+        }
+      },
       // if the user is logged in and has authorization, then it is allowed to access
       {
         condition: isLogin && needLogin && hasAuth,
