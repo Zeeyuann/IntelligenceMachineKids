@@ -156,7 +156,9 @@ const local: App.I18n.Schema = {
     home: '系统首页',
     classroom: '智慧课堂',
     write: '文本创作',
-    paint: '智能绘图'
+    paint: '智能绘图',
+    write_home: '文本创作',
+    'write_write-chat': '文本创作'
   },
   page: {
     login: {
