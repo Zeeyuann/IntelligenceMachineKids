@@ -75,7 +75,7 @@ function handleDropdown(key: DropdownKey) {
 <template>
   <NButton
     v-if="!authStore.isLogin"
-    :class="{ 'animate-shake': loginClassStore.flag }"
+    :class="{ 'animate__headShake animate__animated': loginClassStore.flag }"
     class="global-btn h-50px w-153px text-22px"
     type="primary"
     size="large"
