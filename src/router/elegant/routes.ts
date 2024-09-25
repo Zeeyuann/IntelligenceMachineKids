@@ -52,6 +52,16 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'generate-pic',
+    path: '/generate-pic',
+    component: 'layout.blank$view.generate-pic',
+    meta: {
+      title: 'generate-pic',
+      i18nKey: 'route.generate-pic',
+      hideInMenu: true
+    }
+  },
+  {
     name: 'home',
     path: '/home',
     component: 'layout.base$view.home',
@@ -113,7 +123,7 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'write-chat-home',
     path: '/write-chat-home',
-    component: 'layout.base$view.write-chat-home',
+    component: 'layout.blank$view.write-chat-home',
     meta: {
       title: 'write-chat-home',
       i18nKey: 'route.write-chat-home',
@@ -123,7 +133,7 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'write-composition',
     path: '/write-composition',
-    component: 'layout.base$view.write-composition',
+    component: 'layout.blank$view.write-composition',
     meta: {
       title: 'write-composition',
       i18nKey: 'route.write-composition',

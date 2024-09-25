@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useRouterPush } from '@/hooks/common/router';
+const { routerPushByPath } = useRouterPush();
+
+const goGeneratePic = () => {
+  routerPushByPath('/generate-pic');
+};
+</script>
 
 <template>
   <DarkModeContainer class="flex-center flex-col p-unset">
@@ -6,10 +13,22 @@
       <div class="title text-80px text-#0B0B0B font-700">轻松创作 极速出图</div>
       <div class="text-30px font-400">基于最新AI技术，可快速生成各种风格的高质量图片</div>
       <div class="flex items-center">
-        <NButton type="primary" class="global-btn my-48px h-80px !w-197px !text-22px !font-600" round block>
+        <NButton
+          type="primary"
+          class="global-btn my-48px h-80px !w-197px !text-22px !font-600"
+          round
+          block
+          @click="goGeneratePic"
+        >
           文生图
         </NButton>
-        <NButton type="primary" class="global-btn my-48px ml-48px h-80px !w-197px !text-22px !font-600" round block>
+        <NButton
+          type="primary"
+          class="global-btn my-48px ml-48px h-80px !w-197px !text-22px !font-600"
+          round
+          block
+          @click="goGeneratePic"
+        >
           图生图
         </NButton>
       </div>

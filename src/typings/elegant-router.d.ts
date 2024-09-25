@@ -21,6 +21,7 @@ declare module "@elegant-router/types" {
     "404": "/404";
     "500": "/500";
     "classroom": "/classroom";
+    "generate-pic": "/generate-pic";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
     "paint": "/paint";
@@ -63,6 +64,7 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "classroom"
+    | "generate-pic"
     | "home"
     | "iframe-page"
     | "paint"
@@ -90,6 +92,7 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "iframe-page"
+    | "generate-pic"
     | "write-chat-home"
     | "write-chat"
     | "write-composition"

@@ -1,6 +1,6 @@
 import { useRouter } from 'vue-router';
 import type { RouteLocationRaw } from 'vue-router';
-import type { RouteKey } from '@elegant-router/types';
+import type { RouteKey, RouteMap } from '@elegant-router/types';
 import { router as globalRouter } from '@/router';
 
 /**
@@ -36,6 +36,20 @@ export function useRouterPush(inSetup = true) {
 
     if (Object.keys(params || {}).length) {
       routeLocation.params = params;
+    }
+
+    return routerPush(routeLocation);
+  }
+
+  async function routerPushByPath(path: RouteMap[RouteKey], options?: RouterPushOptions) {
+    const { query } = options || {};
+
+    const routeLocation: RouteLocationRaw = {
+      path
+    };
+
+    if (Object.keys(query || {}).length) {
+      routeLocation.query = query;
     }
 
     return routerPush(routeLocation);
@@ -78,6 +92,7 @@ export function useRouterPush(inSetup = true) {
     routerBack,
     routerPushByKey,
     routerPushByKeyWithMetaQuery,
+    routerPushByPath,
     redirectFromLogin
   };
 }

@@ -60,6 +60,8 @@ export function createRouteGuard(router: Router) {
         condition: !isLogin && needLogin,
         callback: () => {
           loginClassStoreWithOut.setFlag(true);
+          window?.$message?.info('请先登录哦');
+          next();
           setTimeout(() => {
             loginClassStoreWithOut.setFlag(false);
           }, 1000);

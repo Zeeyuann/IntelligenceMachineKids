@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useRouterPush } from '@/hooks/common/router';
-const { routerPushByKey } = useRouterPush();
+const { routerPushByPath } = useRouterPush();
+
 const goWriteChat = () => {
-  routerPushByKey('write-chat-home');
+  routerPushByPath('/write-chat-home');
 };
 
-const allRoutes = useRouter().getRoutes();
-console.log('🚀 ~ allRoutes:', allRoutes);
+console.log('🚀 ~ allRoutes:', useRouter().getRoutes());
 </script>
 
 <template>

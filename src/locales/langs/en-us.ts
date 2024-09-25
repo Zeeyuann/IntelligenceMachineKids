@@ -159,7 +159,8 @@ const local: App.I18n.Schema = {
     paint: '智能绘图',
     'write-chat': '文本创作',
     'write-chat-home': '文本创作',
-    'write-composition': '文本创作'
+    'write-composition': '文本创作',
+    'generate-pic': '图片创作'
   },
   page: {
     login: {

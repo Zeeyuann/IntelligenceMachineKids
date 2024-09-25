@@ -19,6 +19,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   404: () => import("@/views/_builtin/404/index.vue"),
   500: () => import("@/views/_builtin/500/index.vue"),
   "iframe-page": () => import("@/views/_builtin/iframe-page/[url].vue"),
+  "generate-pic": () => import("@/views/_parint-relation/generate-pic/index.vue"),
   "write-chat-home": () => import("@/views/_write-relation/write-chat-home/index.vue"),
   "write-chat": () => import("@/views/_write-relation/write-chat/index.vue"),
   "write-composition": () => import("@/views/_write-relation/write-composition/index.vue"),

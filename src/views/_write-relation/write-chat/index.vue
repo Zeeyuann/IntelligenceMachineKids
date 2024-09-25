@@ -55,7 +55,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col of-hidden">
+  <div class="box-border size-full flex flex-col of-hidden pb-40px pt-30px">
     <!-- title -->
     <div class="mb-20px box-border flex flex-col items-center pl-560px pr-214px">
       <div class="w-full flex items-center justify-between overflow-visible">

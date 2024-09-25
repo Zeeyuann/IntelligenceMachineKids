@@ -14,12 +14,16 @@ const hanldInput = () => {
   }
   routerPushByKey('write-chat', { query: { prompt: prompt.value } });
 };
+
+const handleGoBack = () => {
+  routerPushByKey('write');
+};
 </script>
 
 <template>
-  <div class="size-full flex items-center justify-center bg-#F5F7FA">
-    <div class="w-768px flex flex-col items-center justify-center">
-      <div class="logo flex">
+  <div class="box-border size-full flex justify-center bg-#F5F7FA pt-220px">
+    <div class="box-border w-768px flex flex-col items-center">
+      <div class="logo flex cursor-pointer" @click="handleGoBack">
         <SystemLogo class="text-32px text-primary" />
         <h2 class="ddjb pl-8px text-22px text-#0B0B0B font-bold transition duration-300 ease-in-out">
           {{ $t('system.title') }}
