@@ -62,6 +62,7 @@
     "nprogress": "0.2.0",
     "pinia": "2.2.2",
     "tailwind-merge": "2.5.2",
+    "typeit": "^8.8.5",
     "vue": "3.5.3",
     "vue-draggable-plus": "0.5.3",
     "vue-i18n": "9.14.0",

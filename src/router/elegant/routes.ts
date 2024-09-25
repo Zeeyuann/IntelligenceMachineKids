@@ -91,13 +91,35 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'write',
     path: '/write',
-    component: 'layout.base$view.write',
+    component: 'layout.base',
     meta: {
       title: '文本创作',
       constant: true,
       icon: '',
       order: 2,
       i18nKey: 'route.write'
-    }
+    },
+    children: [
+      {
+        name: 'write_home',
+        path: '/write/home',
+        component: 'view.write_home',
+        meta: {
+          title: 'write_home',
+          i18nKey: 'route.write_home',
+          hideInMenu: true
+        }
+      },
+      {
+        name: 'write_write-chat',
+        path: '/write/write-chat',
+        component: 'view.write_write-chat',
+        meta: {
+          title: '文本创作',
+          i18nKey: 'route.write_write-chat',
+          hideInMenu: true
+        }
+      }
+    ]
   }
 ];

@@ -25,6 +25,8 @@ declare module "@elegant-router/types" {
     "iframe-page": "/iframe-page/:url";
     "paint": "/paint";
     "write": "/write";
+    "write_home": "/write/home";
+    "write_write-chat": "/write/write-chat";
   };
 
   /**
@@ -87,7 +89,8 @@ declare module "@elegant-router/types" {
     | "classroom"
     | "home"
     | "paint"
-    | "write"
+    | "write_home"
+    | "write_write-chat"
   >;
 
   /**

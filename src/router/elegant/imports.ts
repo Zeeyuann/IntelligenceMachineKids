@@ -22,5 +22,6 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   classroom: () => import("@/views/classroom/index.vue"),
   home: () => import("@/views/home/index.vue"),
   paint: () => import("@/views/paint/index.vue"),
-  write: () => import("@/views/write/index.vue"),
+  write_home: () => import("@/views/write/home/index.vue"),
+  "write_write-chat": () => import("@/views/write/write-chat/index.vue"),
 };
