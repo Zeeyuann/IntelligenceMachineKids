@@ -78,7 +78,7 @@ async function handleSubmit() {
       </NButton>
     </div>
     <div
-      :class="addAnimateClass ? 'animate-shake' : ''"
+      :class="addAnimateClass ? 'animate__headShake animate__animated' : ''"
       class="w-full flex items-center justify-center text-14px text-#ABABAB font-600"
     >
       <NCheckbox v-model:checked="checkBox" />

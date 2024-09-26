@@ -1,34 +1,58 @@
 <script setup lang="ts">
+import { useLoading } from '@sa/hooks';
+import type { UploadInst } from 'naive-ui';
 import { useNaiveForm } from '@/hooks/common/form';
+import { useAuthStore } from '@/store/modules/auth';
+import { drawConfig, drawTaskSearch, fetchDrawInfo, startDraw } from '@/service/api';
+import { useUpload } from '@/hooks/common/upload';
 
-const addClassFlag = ref(true);
-setTimeout(() => {
-  addClassFlag.value = false;
-}, 1000);
+const { loading, startLoading, endLoading } = useLoading();
+
+const { list, customUpload, handleRemove } = useUpload();
+
+const authStore = useAuthStore();
+
+const rules = {
+  prompt: { required: true, message: '请输入正向描述词', trigger: 'blur' }
+};
+
+const { formRef, validate } = useNaiveForm();
+const model: any = reactive({
+  prompt: undefined,
+  style: undefined,
+  negative_prompt: undefined,
+  ref_img: list.value,
+  size: undefined
+});
+
+// Lora
+const loraList = reactive<any>([]);
 
 const selectedLora = ref(0);
-const hanldeSelectLora = (val: any) => {
+const hanldeSelectLora = (val: any, name: any) => {
+  model.style = name;
   selectedLora.value = val;
 };
 
-// 图片上传
-
 // 图片比例
-const SIZE_LIST = [
+const SIZE_LIST_MODEL = [
   {
     label: '1:1',
     width: 40,
-    height: 40
+    height: 40,
+    size: '1024*1024'
   },
   {
     label: '16:9',
     width: 40,
-    height: 24
+    height: 24,
+    size: '1280*720'
   },
   {
     label: '9:16',
     width: 24,
-    height: 34
+    height: 34,
+    size: '720*1280'
   },
   {
     label: '3:2',
@@ -47,9 +71,12 @@ const SIZE_LIST = [
   }
 ];
 
+const SIZE_LIST = reactive<any>([]);
+
 const sizeIndex = ref(0);
 
-const handleSizeChange = (index: any) => {
+const handleSizeChange = (index: any, size: any) => {
+  model.size = size;
   sizeIndex.value = index;
 };
 
@@ -73,37 +100,94 @@ const MODEL_LIST = reactive([
   }
 ]);
 
-const rules = {
-  prompt: { required: true, message: '请输入正向描述词' },
-  value1: { required: true, message: '请选择班级' },
-  value2: { required: true, message: '请选科目' },
-  value3: { required: true, message: '请选择版本' },
-  value4: { required: true, message: '请选择难度' }
+// 获取配置
+
+(async () => {
+  const { data, error } = await drawConfig();
+  if (!error) {
+    Object.assign(loraList, data.styles);
+    data.sizes.forEach((item: any) => {
+      SIZE_LIST_MODEL.forEach(ele => {
+        if (item.size === ele.size) {
+          Object.assign(item, ele);
+        }
+      });
+    });
+    Object.assign(SIZE_LIST, data.sizes);
+  }
+})();
+
+const drawHistory = reactive<any[]>([
+  {
+    id: 17,
+    task_id: '89fa885c-91b6-41a7-98aa-faa78e672374',
+    user_id: 2,
+    offspring_id: 3,
+    prompt:
+      '一个女孩，紫色蝴蝶拟人，solo，闪闪发光的画面，闪亮的黑色长发，五官高光，化妆，红唇，像银河般亮晶晶的眼睛，蝴蝶散发着蓝色的荧光，少女就像蝴蝶仙子一般，紫色打光，最高画质，最佳杰作，最高画质，高分辨率\n',
+    negative_prompt:
+      '低分辨率、错误、最差质量、低质量、jpeg 伪影、丑陋、重复、病态、残缺、超出框架、多余的手指、变异的手、画得不好的手、画得不好的脸、突变、变形、模糊、脱水、不良的解剖结构、 比例不良、多余肢体、克隆脸、毁容、总体比例、畸形肢体、缺臂、缺腿、多余手臂、多余腿、融合手指、手指过多、长脖子、用户名、水印、签名',
+    ref_img: '',
+    parameters: { style: '\\u003Cauto\\u003E', size: '1024*1024', n: 1, seed: 3821411579 },
+    content: [
+      {
+        url: 'https:\\/\\/dashscope-result-hz.oss-cn-hangzhou.aliyuncs.com\\/1d\\/4e\\/20240926\\/522176a8\\/e6f00a8a-96ec-4750-b0bd-5be37e1a6d25-1.png?Expires=1727434671&OSSAccessKeyId=LTAI5tQZd8AEcZX6KZV4G8qL&Signature=DfJUTuOenso8Y0ibnZiADc%2FjVDE%3D'
+      }
+    ],
+    model_name: 'wanx-v1',
+    coin: 0,
+    status: 'SUCCEEDED',
+    create_time: null,
+    delete_time: null
+  }
+]);
+
+const uploadRef = ref<UploadInst | null>(null);
+const handleRest = () => {
+  model.prompt = '';
+  model.style = '';
+  selectedLora.value = 0;
+  model.negative_prompt = '';
+  model.ref_img = [];
+  uploadRef.value?.clear();
+  sizeIndex.value = 0;
+  model.size = '';
 };
 
-const { formRef, validate } = useNaiveForm();
-const model: any = reactive({
-  prompt: undefined,
-  value1: undefined,
-  value2: undefined,
-  value3: undefined,
-  value4: undefined,
-  pic_list: []
-});
-
 async function handleSubmit() {
-  console.log(await validate());
-
   await validate();
 
-  // request
-  window.$message?.success('1');
+  startLoading();
+
+  const uploadModel = { ...model, ref_img: model?.ref_img[0] ?? '' };
+  const { data, error } = await startDraw(uploadModel);
+  if (!error) {
+    const { start, stop } = useTimeoutFn(async () => {
+      const { data: taskSearch, error: err } = await drawTaskSearch(data.task_id);
+      console.log('🚀 ~ const{start,stop}=useTimeoutFn ~ err:', err);
+      console.log('🚀 ~ const{start,stop}=useTimeoutFn ~ taskSearch:', taskSearch);
+      start();
+      if (!err) {
+        if (taskSearch === 'SUCCEEDED') {
+          stop();
+          endLoading();
+          const { data: taskInfo, error: infoErr } = await fetchDrawInfo(data.task_id);
+          if (!infoErr) {
+            console.log(taskInfo);
+            drawHistory.unshift(taskInfo);
+          }
+        }
+        if (taskSearch === null) {
+          stop();
+          endLoading();
+        }
+      } else {
+        stop();
+        endLoading();
+      }
+    }, 1000);
+  }
 }
-
-// 图片加载
-
-// animate__animated animate__fadeInRight
-// animate__animated animate__fadeInLeft
 </script>
 
 <template>
@@ -126,11 +210,13 @@ async function handleSubmit() {
               功能介绍：基于 StableDiffusion 2.0模型进行绘画创作能根据文本描述生成逼真图像
             </div>
             <!-- 快速提示词 -->
-            <div class="grid grid-cols-6 gap-10px">
+            <!--
+ <div class="grid grid-cols-6 gap-10px">
               <NButton v-for="item in 12" :key="item">人物</NButton>
             </div>
+-->
             <!-- 提示词 -->
-            <NFormItem class="my16px" path="prompt">
+            <NFormItem class="mt16px" path="prompt">
               <NInput
                 v-model:value="model.prompt"
                 type="textarea"
@@ -152,22 +238,24 @@ async function handleSubmit() {
               <icon-local-tooltip />
             </div>
             <!-- 风格 -->
-            <NFormItem class="mt16px" path="value1">
+            <NFormItem class="mt16px" path="style">
               <div class="grid grid-cols-5 w-full gap-12px">
                 <div
-                  v-for="(item, index) in 10"
+                  v-for="(item, index) in loraList"
                   :key="item"
                   class="lora-item relative z-10 box-border h-72px w-72px cursor-pointer border-2 border-[transparent] rd-14px border-solid bg-transparent"
                   :class="`${index === selectedLora ? 'active-lora' : ''}`"
-                  @click="hanldeSelectLora(index)"
+                  @click="hanldeSelectLora(index, item.name)"
                 >
                   <img
                     class="absolute left-0 top-0 z--1 h-[100%] w-[100%] rounded-14px"
                     mode="aspectFill"
-                    src="https://img2.baidu.com/it/u=1544882228,2394903552&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"
+                    :src="item.cover"
                   />
-                  <div class="absolute bottom-8px left-[50%] z100 translate-x-[-50%] text-12px text-[#ffffff] font-600">
-                    厚涂
+                  <div
+                    class="absolute bottom-0px left-[50%] z100 w-full flex translate-x-[-50%] items-center justify-center text-12px text-[#ffffff] font-600"
+                  >
+                    {{ item.desc }}
                   </div>
                   <div
                     :class="`${index === selectedLora ? 'active-lora-bg' : ''}`"
@@ -186,9 +274,9 @@ async function handleSubmit() {
               <icon-local-tooltip />
             </div>
             <!-- 提示词 -->
-            <NFormItem class="mt16px" path="prompt">
+            <NFormItem class="mt16px" path="negative_prompt">
               <NInput
-                v-model:value="model.prompt"
+                v-model:value="model.negative_prompt"
                 type="textarea"
                 class="w-full bg-#F7F7F7"
                 :autosize="{
@@ -208,12 +296,15 @@ async function handleSubmit() {
               <icon-local-tooltip />
             </div>
             <!-- 参考图片 -->
-            <NFormItem class="mt16px" path="prompt">
+            <NFormItem class="mt16px" path="ref_img">
               <NUpload
-                action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-                :default-file-list="model.pic_list"
+                ref="uploadRef"
+                action="/superx/openness/upimgs"
+                :default-file-list="model.ref_img"
                 list-type="image-card"
                 :max="1"
+                :on-remove="handleRemove"
+                :custom-request="customUpload"
               />
             </NFormItem>
           </div>
@@ -226,13 +317,13 @@ async function handleSubmit() {
               <icon-local-tooltip />
             </div>
             <!-- 图片尺寸 -->
-            <NFormItem class="mt16px" path="prompt">
+            <NFormItem class="mt16px" path="size">
               <div class="grid grid-cols-6 gap-x-15px">
                 <div
                   v-for="(item, index) in SIZE_LIST"
                   :key="item.label"
                   class="box-border h80px w63px flex flex-col cursor-pointer items-center justify-between border border-[#BDEE7E] rd-8px bg-#ffffff p-10px"
-                  @click="handleSizeChange(index)"
+                  @click="handleSizeChange(index, item.size)"
                 >
                   <div
                     :style="{
@@ -248,7 +339,7 @@ async function handleSubmit() {
             </NFormItem>
           </div>
           <!-- 模型选择 -->
-          <div class="mt-16px w-full border-b border-b-[#F4F4F4]">
+          <div v-if="false" class="mt-16px w-full border-b border-b-[#F4F4F4]">
             <!-- title   -->
             <div class="flex items-center">
               <icon-local-require />
@@ -265,7 +356,7 @@ async function handleSubmit() {
             </NFormItem>
           </div>
           <!-- 设置提示词相关性 -->
-          <div class="mt-16px w-full border-b border-b-[#F4F4F4]">
+          <div v-if="false" class="mt-16px w-full border-b border-b-[#F4F4F4]">
             <!-- title   -->
             <div class="flex items-center">
               <icon-local-require />
@@ -281,7 +372,7 @@ async function handleSubmit() {
             </NFormItem>
           </div>
           <!-- 图片质量 --q -->
-          <div class="mt-16px w-full border-b border-b-[#F4F4F4]">
+          <div v-if="false" class="mt-16px w-full border-b border-b-[#F4F4F4]">
             <!-- title   -->
             <div class="flex items-center">
               <icon-local-require />
@@ -304,10 +395,14 @@ async function handleSubmit() {
           <span class="ml3px text-16px font-500">890点</span>
         </div>
         <div class="flex items-center">
-          <NButton class="btn btn1 mr-16px h-50px rd-8px bg-#F7F7F7 text-#181818 !w-106px !text-16px !font-600">
+          <NButton
+            class="btn btn1 mr-16px h-50px rd-8px bg-#F7F7F7 text-#181818 !w-106px !text-16px !font-600"
+            @click="handleRest"
+          >
             重置参数
           </NButton>
           <NButton
+            :loading="loading"
             type="primary"
             class="btn global-btn h-50px !w-223px !text-16px !font-600"
             round
@@ -315,39 +410,40 @@ async function handleSubmit() {
             @click="handleSubmit"
           >
             <div class="text-#E5FF7D">
-              立即生成
+              {{ loading ? '生成中' : '立即生成' }}
               <span class="text-12px text-#E5FF7D">（消耗3个点）</span>
             </div>
           </NButton>
         </div>
       </div>
     </div>
-    <NScrollbar v-if="true" class="animate__animated animate__fadeInRight box-border flex-1 pr-20px">
+    <NScrollbar v-if="true" class="box-border flex-1 pr-20px">
       <div
-        class="item mb-16px box-border h-584px w-full flex flex-col rd-14px bg-#ffffff px-16px py-20px"
-        :class="addClassFlag ? 'animate__animated animate__fadeInRight' : ''"
+        v-for="item in drawHistory"
+        :key="item.id"
+        class="animate__animated animate__fadeInRight item mb-16px box-border h-584px w-full flex flex-col rd-14px bg-#ffffff px-16px py-20px"
       >
         <!-- 头像 -->
         <div class="flex items-center">
-          <img src="" class="h-24px w-24px rd-50% bg-red" alt="" />
-          <span class="mi ml-8px text-14px text-#7A808D">语文老师</span>
+          <img :src="authStore.userInfo.avatar" class="h-24px w-24px rd-50% bg-red" alt="" />
+          <span class="mi ml-8px text-14px text-#7A808D">{{ authStore.userInfo.name }}</span>
         </div>
         <!-- 提示词 -->
         <div class="mi my16px text-14px text-[#3D3D3D] font-500 line-height-24px">
-          一个女孩，紫色蝴蝶拟人，solo，闪闪发光的画面，闪亮的黑色长发，五官高光，化妆，红唇，像银河般亮晶晶的眼睛，蝴蝶散发着蓝色的荧光，少女就像蝴蝶仙子一般，紫色打光，最高画质，最佳杰作，最高画质，高分辨率
+          {{ item.prompt }}
         </div>
         <!-- 图片 -->
         <div class="h-340px w-340px">
-          <NSpin class="size-full">
+          <NSpin v-for="pic in item.content" :key="pic.url" :show="!pic.url" class="size-full">
             <NImage
-              src="https://inews.gtimg.com/om_bt/OE8piEBa-tbqn-wNvWZl8coi4AlzoUD43upEkoAnIkYL8AA/641"
+              :src="pic.url"
               lazy
               show-toolbar-tooltip
               object-fit="cover"
-              class="h-full w-full rd-4px bg-red !h-full"
+              class="h-full w-full rd-4px !h-full"
               alt=""
             />
-            <template #description>图片生成中</template>
+            <!-- <template #description>图片生成中</template> -->
           </NSpin>
         </div>
         <!-- 拓展 -->
@@ -427,7 +523,7 @@ async function handleSubmit() {
   border-color: #cdfd49;
 }
 .lora-bg {
-  background-image: linear-gradient(178deg, rgba(0, 0, 0, 0) 80%, #beeb08 98%);
+  background-image: linear-gradient(177deg, rgba(0, 0, 0, 0) 55%, #beeb08 97%);
   opacity: 0;
   transition: opacity 0.3s ease-in;
 }

@@ -6,7 +6,7 @@ import { sendMsg } from '@/service/api/login';
 
 export function useCaptcha() {
   const { loading, startLoading, endLoading } = useLoading();
-  const { count, start, stop, isCounting } = useCountDown(10);
+  const { count, start, stop, isCounting } = useCountDown(60);
 
   const label = computed(() => {
     let text = $t('page.login.codeLogin.getCode');

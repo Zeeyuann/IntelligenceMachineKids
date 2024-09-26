@@ -97,7 +97,6 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   async function getUserInfo(chooseIndex: number) {
     const osid = kidList[chooseIndex].id;
     const { data: info, error } = await fetchUserInfo(osid);
-    console.log('🚀 ~ getUserInfo ~ info:', info);
 
     if (!error) {
       localStg.set('Offspriingid', String(kidList[chooseIndex].id));
@@ -122,8 +121,6 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
         }
       }, 500);
     }
-    console.log('🚀 ~ getUserInfo ~ info:', info);
-
     return false;
   }
 
