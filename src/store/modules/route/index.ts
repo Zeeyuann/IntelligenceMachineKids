@@ -13,7 +13,7 @@ import { useAppStore } from '../app';
 import { useAuthStore } from '../auth';
 import { useTabStore } from '../tab';
 import {
-  filterAuthRoutesByRoles,
+  // filterAuthRoutesByRoles,
   getBreadcrumbsByRoute,
   getCacheRouteNames,
   getGlobalMenusByAuthRoutes,
@@ -231,14 +231,14 @@ export const useRouteStore = defineStore(SetupStoreId.Route, () => {
   function initStaticAuthRoute() {
     const { authRoutes: staticAuthRoutes } = createStaticRoutes();
 
-    if (authStore.isStaticSuper) {
-      addAuthRoutes(staticAuthRoutes);
-    } else {
-      const filteredAuthRoutes = filterAuthRoutesByRoles(staticAuthRoutes, authStore.userInfo.roles);
+    // if (authStore.isStaticSuper) {
+    //   addAuthRoutes(staticAuthRoutes);
+    // } else {
+    //   const filteredAuthRoutes = filterAuthRoutesByRoles(staticAuthRoutes, authStore.userInfo.roles);
 
-      addAuthRoutes(filteredAuthRoutes);
-    }
-
+    //   addAuthRoutes(filteredAuthRoutes);
+    // }
+    addAuthRoutes(staticAuthRoutes);
     handleConstantAndAuthRoutes();
 
     setIsInitAuthRoute(true);

@@ -18,6 +18,9 @@ defineOptions({
 const { showModal } = storeToRefs(useLoginTypeStore());
 
 const authStore = useAuthStore();
+const isLogin = computed(() => {
+  return authStore.token && authStore.offSpriingId;
+});
 const { routerPushByKey } = useRouterPush();
 const { SvgIconVNode } = useSvgIcon();
 
@@ -73,8 +76,17 @@ function handleDropdown(key: DropdownKey) {
 </script>
 
 <template>
+  <NDropdown v-if="isLogin" placement="bottom" trigger="click" :options="options" @select="handleDropdown">
+    <div>
+      <ButtonIcon>
+        <img v-if="authStore.userInfo.avatar" :src="authStore.userInfo.avatar" class="h-30px w-30px rd-50%" alt="" />
+        <SvgIcon v-else icon="ph:user-circle" class="text-icon-large" />
+        <span class="text-16px font-medium">{{ authStore.userInfo.name }}</span>
+      </ButtonIcon>
+    </div>
+  </NDropdown>
   <NButton
-    v-if="!authStore.isLogin"
+    v-else
     :class="{ 'animate__headShake animate__animated': loginClassStore.flag }"
     class="global-btn h-50px w-153px text-22px"
     type="primary"
@@ -85,14 +97,6 @@ function handleDropdown(key: DropdownKey) {
   >
     立即登录
   </NButton>
-  <NDropdown v-else placement="bottom" trigger="click" :options="options" @select="handleDropdown">
-    <div>
-      <ButtonIcon>
-        <SvgIcon icon="ph:user-circle" class="text-icon-large" />
-        <span class="text-16px font-medium">{{ authStore.userInfo.userName }}</span>
-      </ButtonIcon>
-    </div>
-  </NDropdown>
 
   <NModal v-model:show="showModal" role="dialog" size="huge" title="模态框">
     <Login @close="showModal = false" />

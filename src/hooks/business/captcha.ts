@@ -2,6 +2,7 @@ import { computed } from 'vue';
 import { useCountDown, useLoading } from '@sa/hooks';
 import { $t } from '@/locales';
 import { REG_PHONE } from '@/constants/reg';
+import { sendMsg } from '@/service/api/login';
 
 export function useCaptcha() {
   const { loading, startLoading, endLoading } = useLoading();
@@ -49,9 +50,10 @@ export function useCaptcha() {
     startLoading();
 
     // request
-    await new Promise(resolve => {
-      setTimeout(resolve, 500);
-    });
+    const { data, error: err } = await sendMsg(phone);
+    if (!err) {
+      console.log(data);
+    }
 
     window.$message?.success?.($t('page.login.codeLogin.sendCodeSuccess'));
 

@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/store/modules/auth';
 import CodeLogin from './modules/code-login.vue';
 import BindWechat from './modules/bind-wechat.vue';
 
-const loginFlag = ref(true);
+const authStore = useAuthStore();
 
-const kidList = reactive([1, 2, 3]);
+const currentKidIndex = ref<number | null>(null);
 
-const currentKidIndex = ref(0);
-
-const handleChooseKid = (index: number) => {
+const handleChooseKid = async (index: number) => {
   currentKidIndex.value = index;
+  await authStore.getUserInfo(index);
 };
 
 const emit = defineEmits<{
@@ -25,7 +25,7 @@ const handleClose = () => {
     <!-- <WaveBg :theme-color="bgThemeColor" /> -->
     <NCard title=" " :bordered="false" class="relative z-4 h-420px w-800px rd-12px">
       <Transition name="fade" mode="out-in">
-        <div v-if="loginFlag" class="size-full flex-center">
+        <div v-if="!authStore.token" class="size-full flex-center">
           <div class="br h-full flex flex-col flex-1 items-center lt-sm:w-300px">
             <div class="flex flex-col items-center pt-24px">
               <h3 class="text-28px text-#000000 font-600">立即登录</h3>
@@ -49,16 +49,16 @@ const handleClose = () => {
 
             <div class="mt-60px box-border w-full flex items-center justify-between px-226px">
               <div
-                v-for="(item, index) in kidList"
-                :key="item"
+                v-for="(item, index) in authStore.kidList"
+                :key="item.id"
                 class="relative flex flex-col flex-1 cursor-pointer items-center"
                 @click="handleChooseKid(index)"
               >
                 <div class="relative h-56px w-56px rd-50%">
                   <img
-                    src=""
+                    :src="item.avatar"
                     :class="{ '!border-[#000000]': index === currentKidIndex }"
-                    class="h-56px w-56px border-2 border-transparent rd-50% bg-red"
+                    class="h-56px w-56px border-2 border-transparent rd-50%"
                     alt=""
                   />
                   <icon-local-choose-kid
@@ -66,8 +66,8 @@ const handleClose = () => {
                     class="absolute bottom-0 right-0 z-10 h-16px w-16px opacity-0 transition-all transition-duration-300 ease-in-out"
                   />
                 </div>
-                <div class="mb-3px mt-15px text-18px font-600">大胖</div>
-                <div class="mi text-14px text-#7A808D">一年级</div>
+                <div class="mb-3px mt-15px text-18px font-600">{{ item.name }}</div>
+                <div class="mi text-14px text-#7A808D">{{ item.description }}</div>
               </div>
             </div>
           </div>

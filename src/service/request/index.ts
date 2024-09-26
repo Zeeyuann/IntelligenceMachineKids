@@ -4,7 +4,7 @@ import { useAuthStore } from '@/store/modules/auth';
 import { $t } from '@/locales';
 import { localStg } from '@/utils/storage';
 import { getServiceBaseURL } from '@/utils/service';
-import { getAuthorization, handleExpiredRequest, showErrorMsg } from './shared';
+import { getAuthorization, getOffSpriingId, handleExpiredRequest, showErrorMsg } from './shared';
 import type { RequestInstanceState } from './type';
 
 const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y';
@@ -13,15 +13,17 @@ const { baseURL, otherBaseURL } = getServiceBaseURL(import.meta.env, isHttpProxy
 export const request = createFlatRequest<App.Service.Response, RequestInstanceState>(
   {
     baseURL,
-    headers: {
-      apifoxToken: 'XL299LiMEDZ0H5h3A29PxwQXdMJqWyY2'
-    }
+    headers: {}
   },
   {
     async onRequest(config) {
       const Authorization = getAuthorization();
-      Object.assign(config.headers, { Authorization });
-
+      const Offspriingid = getOffSpriingId();
+      if (config.url === 'aiweb/center/detail') {
+        Object.assign(config.headers, { Authorization });
+        return config;
+      }
+      Object.assign(config.headers, { Authorization, Offspriingid });
       return config;
     },
     isBackendSuccess(response) {

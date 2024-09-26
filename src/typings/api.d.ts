@@ -54,6 +54,22 @@ declare namespace Api {
    * backend api module: "auth"
    */
   namespace Auth {
+    type token = string;
+
+    interface offSpriingId {
+      avatar: string;
+      birthday: number | null;
+      create_time: number | null;
+      delete_time: number | null;
+      update_time: number | null;
+      description: string;
+      id: number;
+      name: string;
+      sex: number;
+      status: number;
+      user_id: number;
+    }
+
     interface LoginToken {
       token: string;
       refreshToken: string;

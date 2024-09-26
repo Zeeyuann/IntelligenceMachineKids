@@ -3,6 +3,9 @@ import { computed, reactive, ref } from 'vue';
 import { $t } from '@/locales';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { useCaptcha } from '@/hooks/business/captcha';
+import { useAuthStore } from '@/store/modules/auth';
+
+const authStore = useAuthStore();
 
 defineOptions({
   name: 'CodeLogin'
@@ -45,7 +48,7 @@ async function handleSubmit() {
     return;
   }
   // request
-  window.$message?.success($t('page.login.common.validateSuccess'));
+  await authStore.login(model.phone, model.code);
 }
 </script>
 
