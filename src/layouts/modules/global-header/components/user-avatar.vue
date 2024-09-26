@@ -15,7 +15,7 @@ const loginClassStore = useLoginClassStore();
 defineOptions({
   name: 'UserAvatar'
 });
-const { type, showModal } = storeToRefs(useLoginTypeStore());
+const { showModal } = storeToRefs(useLoginTypeStore());
 
 const authStore = useAuthStore();
 const { routerPushByKey } = useRouterPush();
@@ -93,8 +93,9 @@ function handleDropdown(key: DropdownKey) {
       </ButtonIcon>
     </div>
   </NDropdown>
-  <NModal v-model:show="showModal">
-    <Login :module="type" />
+
+  <NModal v-model:show="showModal" role="dialog" size="huge" title="模态框">
+    <Login @close="showModal = false" />
   </NModal>
 </template>
 

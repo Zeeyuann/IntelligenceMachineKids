@@ -8,8 +8,6 @@ const goWriteChat = () => {
 const goWriteComposition = () => {
   routerPushByPath('/write-composition');
 };
-
-console.log('🚀 ~ allRoutes:', useRouter().getRoutes());
 </script>
 
 <template>
