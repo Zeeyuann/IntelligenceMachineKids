@@ -61,6 +61,8 @@ function logout() {
     negativeText: $t('common.cancel'),
     onPositiveClick: () => {
       authStore.resetStore();
+      authStore.token = '';
+      authStore.offSpriingId = '';
     }
   });
 }

@@ -25,6 +25,7 @@ declare module 'vue' {
     IconIcRoundRefresh: typeof import('~icons/ic/round-refresh')['default']
     IconIcRoundRemove: typeof import('~icons/ic/round-remove')['default']
     IconIcRoundSearch: typeof import('~icons/ic/round-search')['default']
+    'IconLetsIcons:sadLight': typeof import('~icons/lets-icons/sad-light')['default']
     IconLocalAdjust: typeof import('~icons/local/adjust')['default']
     IconLocalBanner: typeof import('~icons/local/banner')['default']
     IconLocalChooseKid: typeof import('~icons/local/choose-kid')['default']

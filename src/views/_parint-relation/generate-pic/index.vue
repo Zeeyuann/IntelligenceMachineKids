@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useLoading } from '@sa/hooks';
 import type { UploadInst } from 'naive-ui';
+import InfiniteLoading from 'v3-infinite-loading';
+import 'v3-infinite-loading/lib/style.css';
 import { useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
-import { drawConfig, drawTaskSearch, fetchDrawInfo, startDraw } from '@/service/api';
+import { deleteDrawItem, drawConfig, drawTaskSearch, fetchDrawInfo, fetchDrawList, startDraw } from '@/service/api';
 import { useUpload } from '@/hooks/common/upload';
 
 const { loading, startLoading, endLoading } = useLoading();
@@ -117,30 +119,37 @@ const MODEL_LIST = reactive([
   }
 })();
 
-const drawHistory = reactive<any[]>([
-  {
-    id: 17,
-    task_id: '89fa885c-91b6-41a7-98aa-faa78e672374',
-    user_id: 2,
-    offspring_id: 3,
-    prompt:
-      '一个女孩，紫色蝴蝶拟人，solo，闪闪发光的画面，闪亮的黑色长发，五官高光，化妆，红唇，像银河般亮晶晶的眼睛，蝴蝶散发着蓝色的荧光，少女就像蝴蝶仙子一般，紫色打光，最高画质，最佳杰作，最高画质，高分辨率\n',
-    negative_prompt:
-      '低分辨率、错误、最差质量、低质量、jpeg 伪影、丑陋、重复、病态、残缺、超出框架、多余的手指、变异的手、画得不好的手、画得不好的脸、突变、变形、模糊、脱水、不良的解剖结构、 比例不良、多余肢体、克隆脸、毁容、总体比例、畸形肢体、缺臂、缺腿、多余手臂、多余腿、融合手指、手指过多、长脖子、用户名、水印、签名',
-    ref_img: '',
-    parameters: { style: '\\u003Cauto\\u003E', size: '1024*1024', n: 1, seed: 3821411579 },
-    content: [
-      {
-        url: 'https:\\/\\/dashscope-result-hz.oss-cn-hangzhou.aliyuncs.com\\/1d\\/4e\\/20240926\\/522176a8\\/e6f00a8a-96ec-4750-b0bd-5be37e1a6d25-1.png?Expires=1727434671&OSSAccessKeyId=LTAI5tQZd8AEcZX6KZV4G8qL&Signature=DfJUTuOenso8Y0ibnZiADc%2FjVDE%3D'
-      }
-    ],
-    model_name: 'wanx-v1',
-    coin: 0,
-    status: 'SUCCEEDED',
-    create_time: null,
-    delete_time: null
+const drawHistory = reactive<any[]>([]);
+
+const query = reactive({
+  page: 1,
+  pageSize: 10
+});
+// 绘图列表
+
+const hanldeLoad = async (state: any) => {
+  const { data, error } = await fetchDrawList(query);
+  if (!error) {
+    drawHistory.push(...data.data);
+    if (data.data.length < query.pageSize) state.complete();
+    else {
+      state.loaded();
+    }
+    query.page += 1;
+  } else {
+    state.error();
   }
-]);
+};
+const handlePositiveClick = async (record_id: number) => {
+  const { error } = await deleteDrawItem({ record_id });
+  if (!error) {
+    window?.$message?.success('删除成功');
+    const index = drawHistory.findIndex(item => item.id === record_id);
+    if (index !== -1) {
+      drawHistory.splice(index, 1);
+    }
+  }
+};
 
 const uploadRef = ref<UploadInst | null>(null);
 const handleRest = () => {
@@ -164,8 +173,6 @@ async function handleSubmit() {
   if (!error) {
     const { start, stop } = useTimeoutFn(async () => {
       const { data: taskSearch, error: err } = await drawTaskSearch(data.task_id);
-      console.log('🚀 ~ const{start,stop}=useTimeoutFn ~ err:', err);
-      console.log('🚀 ~ const{start,stop}=useTimeoutFn ~ taskSearch:', taskSearch);
       start();
       if (!err) {
         if (taskSearch === 'SUCCEEDED') {
@@ -175,6 +182,7 @@ async function handleSubmit() {
           if (!infoErr) {
             console.log(taskInfo);
             drawHistory.unshift(taskInfo);
+            window?.$message?.success('生成成功!');
           }
         }
         if (taskSearch === null) {
@@ -196,199 +204,207 @@ async function handleSubmit() {
       class="left animate__animated animate__fadeInLeft mr-16px box-border h-full w-522px flex flex-col rd-14px bg-#ffffff px-24px pb-20px pt-28px"
     >
       <NScrollbar class="box-border w-full flex-1 pr-15px">
-        <NForm ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
-          <!-- 提示词 -->
-          <div class="w-full">
-            <!-- title   -->
-            <div class="flex items-center">
-              <icon-local-require />
-              <span class="mx-5px text-14px">正向画面描述</span>
-              <icon-local-tooltip />
-            </div>
-            <!-- 介绍 -->
-            <div class="my12px text-12px text-#9E9E9E">
-              功能介绍：基于 StableDiffusion 2.0模型进行绘画创作能根据文本描述生成逼真图像
-            </div>
-            <!-- 快速提示词 -->
-            <!--
+        <NSpin :show="loading" class="box-border w-full flex-1">
+          <NForm ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
+            <!-- 提示词 -->
+            <div class="w-full">
+              <!-- title   -->
+              <div class="flex items-center">
+                <icon-local-require />
+                <span class="mx-5px text-14px">正向画面描述</span>
+                <icon-local-tooltip />
+              </div>
+              <!-- 介绍 -->
+              <div class="my12px text-12px text-#9E9E9E">
+                功能介绍：基于 StableDiffusion 2.0模型进行绘画创作能根据文本描述生成逼真图像
+              </div>
+              <!-- 快速提示词 -->
+              <!--
  <div class="grid grid-cols-6 gap-10px">
               <NButton v-for="item in 12" :key="item">人物</NButton>
             </div>
 -->
-            <!-- 提示词 -->
-            <NFormItem class="mt16px" path="prompt">
-              <NInput
-                v-model:value="model.prompt"
-                type="textarea"
-                class="w-full bg-#F7F7F7"
-                :autosize="{
-                  minRows: 2,
-                  maxRows: 2
-                }"
-                placeholder="请输入正向描述词"
-              />
-            </NFormItem>
-          </div>
-          <!-- Lora -->
-          <div class="w-full border-b border-b-[#F4F4F4]">
-            <!-- title   -->
-            <div class="flex items-center">
-              <icon-local-require />
-              <span class="mx-5px text-14px">LORA风格选择</span>
-              <icon-local-tooltip />
+              <!-- 提示词 -->
+              <NFormItem class="mt16px" path="prompt">
+                <NInput
+                  v-model:value="model.prompt"
+                  type="textarea"
+                  class="w-full bg-#F7F7F7"
+                  :autosize="{
+                    minRows: 2,
+                    maxRows: 2
+                  }"
+                  placeholder="请输入正向描述词"
+                />
+              </NFormItem>
             </div>
-            <!-- 风格 -->
-            <NFormItem class="mt16px" path="style">
-              <div class="grid grid-cols-5 w-full gap-12px">
-                <div
-                  v-for="(item, index) in loraList"
-                  :key="item"
-                  class="lora-item relative z-10 box-border h-72px w-72px cursor-pointer border-2 border-[transparent] rd-14px border-solid bg-transparent"
-                  :class="`${index === selectedLora ? 'active-lora' : ''}`"
-                  @click="hanldeSelectLora(index, item.name)"
-                >
-                  <img
-                    class="absolute left-0 top-0 z--1 h-[100%] w-[100%] rounded-14px"
-                    mode="aspectFill"
-                    :src="item.cover"
-                  />
-                  <div
-                    class="absolute bottom-0px left-[50%] z100 w-full flex translate-x-[-50%] items-center justify-center text-12px text-[#ffffff] font-600"
-                  >
-                    {{ item.desc }}
-                  </div>
-                  <div
-                    :class="`${index === selectedLora ? 'active-lora-bg' : ''}`"
-                    class="lora-bg absolute left-0 top-0 size-full rounded-[14px]"
-                  ></div>
-                </div>
+            <!-- Lora -->
+            <div class="w-full border-b border-b-[#F4F4F4]">
+              <!-- title   -->
+              <div class="flex items-center">
+                <icon-local-require />
+                <span class="mx-5px text-14px">LORA风格选择</span>
+                <icon-local-tooltip />
               </div>
-            </NFormItem>
-          </div>
-          <!-- 负向提示词 -->
-          <div class="mt-16px w-full border-b border-b-[#F4F4F4]">
-            <!-- title   -->
-            <div class="flex items-center">
-              <icon-local-require />
-              <span class="mx-5px text-14px">负向画面描述</span>
-              <icon-local-tooltip />
+              <!-- 风格 -->
+              <NFormItem class="mt16px" path="style">
+                <div class="grid grid-cols-5 w-full gap-12px">
+                  <div
+                    v-for="(item, index) in loraList"
+                    :key="item"
+                    class="lora-item relative z-10 box-border h-72px w-72px cursor-pointer border-2 border-[transparent] rd-14px border-solid bg-transparent"
+                    :class="`${index === selectedLora ? 'active-lora' : ''}`"
+                    @click="hanldeSelectLora(index, item.name)"
+                  >
+                    <img
+                      class="absolute left-0 top-0 z--1 h-[100%] w-[100%] rounded-14px"
+                      mode="aspectFill"
+                      :src="item.cover"
+                    />
+                    <div
+                      class="absolute bottom-0px left-[50%] z100 w-full flex translate-x-[-50%] items-center justify-center text-12px text-[#ffffff] font-600"
+                    >
+                      {{ item.desc }}
+                    </div>
+                    <div
+                      :class="`${index === selectedLora ? 'active-lora-bg' : ''}`"
+                      class="lora-bg absolute left-0 top-0 size-full rounded-[14px]"
+                    ></div>
+                  </div>
+                </div>
+              </NFormItem>
             </div>
-            <!-- 提示词 -->
-            <NFormItem class="mt16px" path="negative_prompt">
-              <NInput
-                v-model:value="model.negative_prompt"
-                type="textarea"
-                class="w-full bg-#F7F7F7"
-                :autosize="{
-                  minRows: 1,
-                  maxRows: 1
-                }"
-                placeholder="请输入负向描述词"
-              />
-            </NFormItem>
-          </div>
-          <!-- 参考图片 -->
-          <div class="mt-16px w-full border-b border-b-[#F4F4F4]">
-            <!-- title   -->
-            <div class="flex items-center">
-              <icon-local-require />
-              <span class="mx-5px text-14px">参考图片</span>
-              <icon-local-tooltip />
+            <!-- 负向提示词 -->
+            <div class="mt-16px w-full border-b border-b-[#F4F4F4]">
+              <!-- title   -->
+              <div class="flex items-center">
+                <icon-local-require />
+                <span class="mx-5px text-14px">负向画面描述</span>
+                <icon-local-tooltip />
+              </div>
+              <!-- 提示词 -->
+              <NFormItem class="mt16px" path="negative_prompt">
+                <NInput
+                  v-model:value="model.negative_prompt"
+                  type="textarea"
+                  class="w-full bg-#F7F7F7"
+                  :autosize="{
+                    minRows: 1,
+                    maxRows: 1
+                  }"
+                  placeholder="请输入负向描述词"
+                />
+              </NFormItem>
             </div>
             <!-- 参考图片 -->
-            <NFormItem class="mt16px" path="ref_img">
-              <NUpload
-                ref="uploadRef"
-                action="/superx/openness/upimgs"
-                :default-file-list="model.ref_img"
-                list-type="image-card"
-                :max="1"
-                :on-remove="handleRemove"
-                :custom-request="customUpload"
-              />
-            </NFormItem>
-          </div>
-          <!-- 尺寸 -->
-          <div class="mt-16px w-full border-b border-b-[#F4F4F4]">
-            <!-- title   -->
-            <div class="flex items-center">
-              <icon-local-require />
-              <span class="mx-5px text-14px">请选择图片尺寸</span>
-              <icon-local-tooltip />
-            </div>
-            <!-- 图片尺寸 -->
-            <NFormItem class="mt16px" path="size">
-              <div class="grid grid-cols-6 gap-x-15px">
-                <div
-                  v-for="(item, index) in SIZE_LIST"
-                  :key="item.label"
-                  class="box-border h80px w63px flex flex-col cursor-pointer items-center justify-between border border-[#BDEE7E] rd-8px bg-#ffffff p-10px"
-                  @click="handleSizeChange(index, item.size)"
-                >
-                  <div
-                    :style="{
-                      width: item.width + 'px',
-                      height: item.height + 'px',
-                      backgroundColor: sizeIndex === index ? '#C3F302' : ''
-                    }"
-                    class="rd-6px bg-#DDDDDD transition-all transition-duration-300 ease-in"
-                  ></div>
-                  <div>{{ item.label }}</div>
-                </div>
+            <div class="mt-16px w-full border-b border-b-[#F4F4F4]">
+              <!-- title   -->
+              <div class="flex items-center">
+                <icon-local-require />
+                <span class="mx-5px text-14px">参考图片</span>
+                <icon-local-tooltip />
               </div>
-            </NFormItem>
-          </div>
-          <!-- 模型选择 -->
-          <div v-if="false" class="mt-16px w-full border-b border-b-[#F4F4F4]">
-            <!-- title   -->
-            <div class="flex items-center">
-              <icon-local-require />
-              <span class="mx-5px text-14px">模型选择</span>
-              <icon-local-tooltip />
+              <!-- 参考图片 -->
+              <NFormItem class="mt16px" path="ref_img">
+                <NUpload
+                  ref="uploadRef"
+                  action="/superx/openness/upimgs"
+                  :default-file-list="model.ref_img"
+                  list-type="image-card"
+                  :max="1"
+                  :on-remove="handleRemove"
+                  :custom-request="customUpload"
+                />
+              </NFormItem>
+            </div>
+            <!-- 尺寸 -->
+            <div class="mt-16px w-full border-b border-b-[#F4F4F4]">
+              <!-- title   -->
+              <div class="flex items-center">
+                <icon-local-require />
+                <span class="mx-5px text-14px">请选择图片尺寸</span>
+                <icon-local-tooltip />
+              </div>
+              <!-- 图片尺寸 -->
+              <NFormItem class="mt16px" path="size">
+                <div class="grid grid-cols-6 gap-x-15px">
+                  <div
+                    v-for="(item, index) in SIZE_LIST"
+                    :key="item.label"
+                    class="box-border h80px w63px flex flex-col cursor-pointer items-center justify-between border border-[#BDEE7E] rd-8px bg-#ffffff p-10px"
+                    @click="handleSizeChange(index, item.size)"
+                  >
+                    <div
+                      :style="{
+                        width: item.width + 'px',
+                        height: item.height + 'px',
+                        backgroundColor: sizeIndex === index ? '#C3F302' : ''
+                      }"
+                      class="rd-6px bg-#DDDDDD transition-all transition-duration-300 ease-in"
+                    ></div>
+                    <div>{{ item.label }}</div>
+                  </div>
+                </div>
+              </NFormItem>
             </div>
             <!-- 模型选择 -->
-            <NFormItem class="mt16px" path="prompt">
-              <div class="w-full">
-                <NRadioGroup v-model:value="model.value2" name="radiobuttongroup1">
-                  <NRadioButton v-for="song in MODEL_LIST" :key="song.value" :value="song.value" :label="song.label" />
-                </NRadioGroup>
+            <div v-if="false" class="mt-16px w-full border-b border-b-[#F4F4F4]">
+              <!-- title   -->
+              <div class="flex items-center">
+                <icon-local-require />
+                <span class="mx-5px text-14px">模型选择</span>
+                <icon-local-tooltip />
               </div>
-            </NFormItem>
-          </div>
-          <!-- 设置提示词相关性 -->
-          <div v-if="false" class="mt-16px w-full border-b border-b-[#F4F4F4]">
-            <!-- title   -->
-            <div class="flex items-center">
-              <icon-local-require />
-              <span class="mx-5px text-14px">请设置提示词相关性</span>
-              <icon-local-tooltip />
+              <!-- 模型选择 -->
+              <NFormItem class="mt16px" path="prompt">
+                <div class="w-full">
+                  <NRadioGroup v-model:value="model.value2" name="radiobuttongroup1">
+                    <NRadioButton
+                      v-for="song in MODEL_LIST"
+                      :key="song.value"
+                      :value="song.value"
+                      :label="song.label"
+                    />
+                  </NRadioGroup>
+                </div>
+              </NFormItem>
             </div>
-            <!-- 提示词相关性 -->
-            <NFormItem class="mt16px" path="prompt">
-              <div class="w-full">
-                <NSlider v-model:value="model.value2" :step="10" />
-                <span class="mi text-12px text-#7A808D">默认值100</span>
+            <!-- 设置提示词相关性 -->
+            <div v-if="false" class="mt-16px w-full border-b border-b-[#F4F4F4]">
+              <!-- title   -->
+              <div class="flex items-center">
+                <icon-local-require />
+                <span class="mx-5px text-14px">请设置提示词相关性</span>
+                <icon-local-tooltip />
               </div>
-            </NFormItem>
-          </div>
-          <!-- 图片质量 --q -->
-          <div v-if="false" class="mt-16px w-full border-b border-b-[#F4F4F4]">
-            <!-- title   -->
-            <div class="flex items-center">
-              <icon-local-require />
-              <span class="mx-5px text-14px">图片质量 --q</span>
-              <icon-local-tooltip />
+              <!-- 提示词相关性 -->
+              <NFormItem class="mt16px" path="prompt">
+                <div class="w-full">
+                  <NSlider v-model:value="model.value2" :step="10" />
+                  <span class="mi text-12px text-#7A808D">默认值100</span>
+                </div>
+              </NFormItem>
             </div>
-            <!-- 提示词相关性 -->
-            <NFormItem class="mt16px" path="prompt">
-              <div class="w-full">
-                <NSlider v-model:value="model.value2" :step="10" />
-                <span class="mi text-12px text-#7A808D">默认值100</span>
+            <!-- 图片质量 --q -->
+            <div v-if="false" class="mt-16px w-full border-b border-b-[#F4F4F4]">
+              <!-- title   -->
+              <div class="flex items-center">
+                <icon-local-require />
+                <span class="mx-5px text-14px">图片质量 --q</span>
+                <icon-local-tooltip />
               </div>
-            </NFormItem>
-          </div>
-        </NForm>
+              <!-- 提示词相关性 -->
+              <NFormItem class="mt16px" path="prompt">
+                <div class="w-full">
+                  <NSlider v-model:value="model.value2" :step="10" />
+                  <span class="mi text-12px text-#7A808D">默认值100</span>
+                </div>
+              </NFormItem>
+            </div>
+          </NForm>
+        </NSpin>
       </NScrollbar>
+
       <div class="mt-20px flex items-center justify-between">
         <div class="flex items-center">
           <icon-local-point />
@@ -417,16 +433,24 @@ async function handleSubmit() {
         </div>
       </div>
     </div>
-    <NScrollbar v-if="true" class="box-border flex-1 pr-20px">
+    <NScrollbar :class="`${drawHistory.length === 0 ? 'noContent' : ''}`" class="box-border flex flex-1 pr-20px">
       <div
         v-for="item in drawHistory"
         :key="item.id"
-        class="animate__animated animate__fadeInRight item mb-16px box-border h-584px w-full flex flex-col rd-14px bg-#ffffff px-16px py-20px"
+        class="animate__animated animate__fadeInRight item mb-16px box-border w-full flex flex-col rd-14px bg-#ffffff px-16px py-20px"
       >
         <!-- 头像 -->
-        <div class="flex items-center">
-          <img :src="authStore.userInfo.avatar" class="h-24px w-24px rd-50% bg-red" alt="" />
-          <span class="mi ml-8px text-14px text-#7A808D">{{ authStore.userInfo.name }}</span>
+        <div class="w-full flex items-start justify-between">
+          <div class="flex items-center">
+            <img :src="authStore.userInfo.avatar" class="h-24px w-24px rd-50% bg-red" alt="" />
+            <span class="mi ml-8px text-14px text-#7A808D">{{ authStore.userInfo.name }}</span>
+          </div>
+          <NPopconfirm @positive-click="handlePositiveClick(item.id)">
+            <template #trigger>
+              <icon-local-close class="cursor-pointer" />
+            </template>
+            确定要删除吗?
+          </NPopconfirm>
         </div>
         <!-- 提示词 -->
         <div class="mi my16px text-14px text-[#3D3D3D] font-500 line-height-24px">
@@ -434,20 +458,27 @@ async function handleSubmit() {
         </div>
         <!-- 图片 -->
         <div class="h-340px w-340px">
-          <NSpin v-for="pic in item.content" :key="pic.url" :show="!pic.url" class="size-full">
-            <NImage
-              :src="pic.url"
-              lazy
-              show-toolbar-tooltip
-              object-fit="cover"
-              class="h-full w-full rd-4px !h-full"
-              alt=""
-            />
-            <!-- <template #description>图片生成中</template> -->
-          </NSpin>
+          <div
+            v-if="item.content.length === 0"
+            class="size-full flex flex-col items-center justify-center rd-6px bg-#F7F7F7"
+          >
+            <icon-lets-icons:sad-light class="h-100px w-100px" />
+            <span>图片生成失败</span>
+          </div>
+          <template v-else>
+            <NSpin v-for="pic in item.content" :key="pic.url" :show="!pic.url" class="size-full">
+              <NImage
+                :src="pic.url"
+                lazy
+                show-toolbar-tooltip
+                object-fit="cover"
+                class="h-full w-full rd-4px !h-full"
+              />
+            </NSpin>
+          </template>
         </div>
         <!-- 拓展 -->
-        <div class="mt-16px w-full">
+        <div v-if="item.content.length > 0" class="mt-16px w-full">
           <div class="mb-8px w-full flex items-center">
             <div class="text-14px">调整:</div>
             <icon-local-tooltip class="mx-10px" />
@@ -498,13 +529,23 @@ async function handleSubmit() {
           </div>
         </div>
       </div>
+      <InfiniteLoading
+        class="mi animate__animated animate__fadeInRight flex items-center justify-center text-#181818"
+        @infinite="hanldeLoad"
+      >
+        <template #complete>
+          <span class="text-16px text-#9E9E9E font-500">
+            {{ drawHistory.length === 0 ? '您还没有作品，快去创作吧' : '没有更多啦!' }}
+          </span>
+        </template>
+        <template #error="{ retry }">
+          <div class="flex flex-col items-center">
+            <span class="mb-5px text-16px text-#9E9E9E font-500">啊哦,加载绘图记录出了点问题~</span>
+            <NButton @click="retry">重试</NButton>
+          </div>
+        </template>
+      </InfiniteLoading>
     </NScrollbar>
-    <div
-      v-else
-      class="mi animate__animated animate__fadeInRight flex flex-1 items-center justify-center text-16px text-#9E9E9E font-500"
-    >
-      您还没有作品，快去创作吧
-    </div>
   </div>
 </template>
 
@@ -555,5 +596,14 @@ async function handleSubmit() {
 :deep(.n-spin-content) {
   width: 100%;
   height: 100%;
+}
+
+:deep(.noContent .n-scrollbar-content) {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 </style>

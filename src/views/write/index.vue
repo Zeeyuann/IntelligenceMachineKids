@@ -43,7 +43,7 @@ const goWriteComposition = () => {
         <div
           v-for="item in 30"
           :key="item"
-          class="boxitem box-border h-70px w-339px flex cursor-pointer items-center border border-[#DADADA] rd-14px border-solid bg-white p-12px transition-all transition-duration-300 ease hover:border-[#BAFD00]"
+          class="boxitem box-border h-70px flex cursor-pointer items-center border border-[#DADADA] rd-14px border-solid bg-white p-12px transition-all transition-duration-300 ease hover:border-[#BAFD00]"
         >
           <img src="" class="mr-10px h-46px w-46px rd-50% bg-red" alt="" />
           <div>
