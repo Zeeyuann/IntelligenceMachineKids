@@ -126,8 +126,9 @@ const query = reactive({
   pageSize: 10
 });
 // 绘图列表
-
+const stateInstance = ref<any>(null);
 const hanldeLoad = async (state: any) => {
+  stateInstance.value = state;
   const { data, error } = await fetchDrawList(query);
   if (!error) {
     drawHistory.push(...data.data);
@@ -139,6 +140,11 @@ const hanldeLoad = async (state: any) => {
   } else {
     state.error();
   }
+};
+const handleRestList = () => {
+  query.page = 1;
+  drawHistory.length = 0;
+  hanldeLoad(stateInstance.value);
 };
 const handlePositiveClick = async (record_id: number) => {
   const { error } = await deleteDrawItem({ record_id });
@@ -186,10 +192,12 @@ async function handleSubmit() {
           }
         }
         if (taskSearch === null) {
+          handleRestList();
           stop();
           endLoading();
         }
       } else {
+        handleRestList();
         stop();
         endLoading();
       }
