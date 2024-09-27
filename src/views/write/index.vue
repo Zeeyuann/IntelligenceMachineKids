@@ -12,13 +12,13 @@ const goWriteComposition = () => {
 
 <template>
   <DarkModeContainer class="flex-center flex-col p-unset">
-    <header class="bg flex flex-col items-center justify-center">
+    <header class="bg box-border flex flex-col items-center justify-center">
       <div class="title text-80px text-#0B0B0B font-700">孩子的AI写作神器</div>
-      <div class="text-30px font-400">开启无限想象：让孩子的写作之旅更加丰富多彩</div>
+      <div class="text-26px font-400">开启无限想象：让孩子的写作之旅更加丰富多彩</div>
       <div class="flex items-center">
         <NButton
           type="primary"
-          class="global-btn my-48px h-80px !w-197px !text-22px !font-600"
+          class="global-btn my-88px h-80px !w-197px !text-22px !font-600"
           round
           block
           @click="goWriteChat"
@@ -27,7 +27,7 @@ const goWriteComposition = () => {
         </NButton>
         <NButton
           type="primary"
-          class="global-btn my-48px ml-48px h-80px !w-197px !text-22px !font-600"
+          class="global-btn my-88px ml-48px h-80px !w-197px !text-22px !font-600"
           round
           block
           @click="goWriteComposition"
@@ -36,12 +36,12 @@ const goWriteComposition = () => {
         </NButton>
       </div>
     </header>
-    <main class="contentbg box-border flex flex-col items-center pt-161px">
+    <main class="contentbg box-border flex flex-col flex-1 items-center pt-161px">
       <div class="text-65px text-#2a2a2a font-700">学科智能体</div>
       <div class="mb-70px mt-16px text-24px text-#3d3d3d font-400">塑造未来教育：智能体在学科教学中的创新应用</div>
       <div class="grid grid-cols-4 box-border w-full flex-1 gap-16px px-257px">
         <div
-          v-for="item in 30"
+          v-for="item in 50"
           :key="item"
           class="boxitem box-border h-70px flex cursor-pointer items-center border border-[#DADADA] rd-14px border-solid bg-white p-12px transition-all transition-duration-300 ease hover:border-[#BAFD00]"
         >

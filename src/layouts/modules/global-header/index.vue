@@ -90,13 +90,34 @@ const themeStore = useThemeStore();
 }
 :deep(.v-overflow) {
   background-color: #fff;
-  width: fit-content !important;
+  width: 454px !important;
   height: 46px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   border-radius: 23px;
 }
 :deep(.n-menu-item-content--selected) {
   font-weight: 700 !important;
+}
+:deep(.n-menu-item-content) {
+  position: relative;
+}
+:deep(.n-menu-item-content::after) {
+  content: '';
+  width: 18px;
+  display: inline-flex;
+  height: 5px;
+  border-radius: 8px;
+  opacity: 0;
+  background: #000;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 4px;
+  transition: all 0.2s ease-in-out;
+}
+:deep(.n-menu-item-content--selected::after) {
+  opacity: 1;
 }
 </style>
