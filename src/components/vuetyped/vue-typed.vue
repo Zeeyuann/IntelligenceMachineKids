@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, shallowRef, watch } from 'vue';
+import { onMounted, shallowRef, watch } from 'vue';
 import TypeIt from 'typeit';
 import type { Options } from 'typeit';
 import type { El } from 'typeit/dist/types';
@@ -40,12 +40,6 @@ watch(
     init(); // 重新初始化
   }
 );
-
-onUnmounted(() => {
-  if (typeItInstance) {
-    typeItInstance.destroy(); // 确保清理
-  }
-});
 </script>
 
 <template>

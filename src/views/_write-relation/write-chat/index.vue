@@ -61,7 +61,6 @@ const scrollBar = ref<any>(null);
 const isComplete = ref(false);
 
 function handleScroll() {
-  console.log('🚀 ~ handleScroll ~ isComplete:', isComplete);
   const { start, stop } = useTimeoutFn(handleScroll, 1000);
   start();
   if (isComplete.value) {
@@ -69,7 +68,6 @@ function handleScroll() {
   }
   nextTick(() => {
     const content: any = document.querySelector('.n-scrollbar-container');
-    console.log('🚀 ~ nextTick ~ content:', content, content?.scrollHeight, content?.clientHeight);
     if (content?.scrollHeight > content?.clientHeight) {
       scrollBar.value.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
     }
