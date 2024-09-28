@@ -1,18 +1,37 @@
 <script setup lang="ts">
-import type { UploadFileInfo } from 'naive-ui';
 import { useRouterPush } from '@/hooks/common/router';
+import { useUpload } from '@/hooks/common/upload';
 const { routerPushByKey } = useRouterPush();
+const { list, fileName, customUploadFile, handleRemove } = useUpload();
+
+const route = useRoute();
+
+const hasQuery = computed(() => Object.keys(route.query).length > 0);
+
+const itemInfo = shallowRef<any>();
+if (hasQuery) {
+  itemInfo.value = route.query;
+}
 
 const prompt = ref('');
 
-const fileList = ref<UploadFileInfo[]>([]);
+const fileList = ref<any>(list.value);
 
 const hanldInput = () => {
   if (!prompt.value.trim()) {
     window?.$message?.info('请输入内容');
     return;
   }
-  routerPushByKey('write-chat', { query: { prompt: prompt.value } });
+
+  routerPushByKey('write-chat', {
+    query: {
+      query: prompt.value,
+      file: fileList.value[0],
+      app_id: hasQuery ? itemInfo.value.app_id : '',
+      conversation_id: '',
+      fileName: fileName.value ? fileName.value : ''
+    }
+  });
 };
 
 const handleGoBack = () => {
@@ -23,14 +42,24 @@ const handleGoBack = () => {
 <template>
   <div class="box-border size-full flex justify-center bg-#F5F7FA pt-220px">
     <div class="box-border w-768px flex flex-col items-center">
-      <div class="animate__animated animate__fadeInLeft logo flex cursor-pointer" @click="handleGoBack">
+      <div
+        v-if="!hasQuery"
+        class="animate__animated animate__fadeInLeft logo flex cursor-pointer"
+        @click="handleGoBack"
+      >
         <SystemLogo class="text-32px text-primary" />
         <h2 class="ddjb pl-8px text-22px text-#0B0B0B font-bold transition duration-300 ease-in-out">
           {{ $t('system.title') }}
         </h2>
       </div>
+      <div v-else class="animate__animated animate__fadeInLeft logo flex cursor-pointer items-center">
+        <img :src="itemInfo.icon" class="mr-10px h-46px w-46px rd-50%" alt="" />
+        <h2 class="ddjb pl-8px text-22px text-#0B0B0B font-bold transition duration-300 ease-in-out">
+          {{ itemInfo.title }}
+        </h2>
+      </div>
       <div class="animate__animated animate__fadeInRight my-36px text-18px text-#3d3d3d">
-        有问题，为什么不问问神奇海螺呢？
+        {{ itemInfo.description || '有问题，为什么不问问神奇海螺呢？' }}
       </div>
       <!-- 输入框 -->
       <div
@@ -49,10 +78,12 @@ const handleGoBack = () => {
         />
         <div class="mt-10px w-full flex items-center justify-between">
           <NUpload
-            action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
+            action="#"
             :default-file-list="fileList"
-            accept=".txt,.doc.pdf"
+            accept=".txt,.doc.pdf,.jpg,.png,.xls,.xlsx"
             :max="1"
+            :custom-request="customUploadFile"
+            :on-remove="handleRemove"
             list-type="image"
           >
             <NButton quaternary class="!text-#4D4D4D">

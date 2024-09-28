@@ -20,6 +20,7 @@ export default defineConfig(
       ],
       'unocss/order-attributify': 'off',
       'no-console': 'off',
+      'vue/no-v-html': 'off',
       'vue/no-static-inline-styles': [
         'error',
         {

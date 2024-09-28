@@ -47,9 +47,45 @@ export function deleteDrawItem(data: any) {
   });
 }
 
+export function getAgentLists(data: any = {}) {
+  return request<any>({
+    url: 'openness/getagentlists',
+    method: 'post',
+    data
+  });
+}
+export function fetchAgentSysuser(data: any = {}) {
+  return request<any>({
+    url: 'aiweb/airecord/getsysuser',
+    method: 'post',
+    data
+  });
+}
+
 export function upLoadFile(data: any) {
   return request<any>({
     url: 'openness/upimgs',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data,
+    method: 'post'
+  });
+}
+export function upLoadFiles(data: any) {
+  return request<any>({
+    url: 'openness/upfiles',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data,
+    method: 'post'
+  });
+}
+
+export function fetchArticle(data: any) {
+  return request<any>({
+    url: 'aiweb/chatai/article',
     headers: {
       'Content-Type': 'multipart/form-data'
     },

@@ -186,7 +186,6 @@ async function handleSubmit() {
           endLoading();
           const { data: taskInfo, error: infoErr } = await fetchDrawInfo(data.task_id);
           if (!infoErr) {
-            console.log(taskInfo);
             drawHistory.unshift(taskInfo);
             window?.$message?.success('生成成功!');
           }
@@ -316,7 +315,7 @@ async function handleSubmit() {
               <NFormItem class="mt16px" path="ref_img">
                 <NUpload
                   ref="uploadRef"
-                  action="/superx/openness/upimgs"
+                  action="#"
                   :default-file-list="model.ref_img"
                   list-type="image-card"
                   :max="1"

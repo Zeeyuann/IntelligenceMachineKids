@@ -1,6 +1,33 @@
 <script setup lang="ts">
 import { useRouterPush } from '@/hooks/common/router';
-const { routerPushByPath } = useRouterPush();
+import { fetchAgentSysuser, getAgentLists } from '@/service/api/index';
+import { useAuthStore } from '@/store/modules/auth';
+const authStore = useAuthStore();
+const { routerPushByPath, routerPushByKey } = useRouterPush();
+
+const config: any = reactive({
+  agents: [{}]
+});
+(async () => {
+  if (authStore.isLogin) {
+    const { data, error } = await fetchAgentSysuser();
+    console.log('🚀 ~ data:', data);
+    if (!error) {
+      Object.assign(config, data);
+    }
+  }
+  const { data, error } = await getAgentLists();
+  if (!error) {
+    Object.assign(config.agents, [...data]);
+    console.log('🚀 ~ config:', config);
+  }
+})();
+
+const goWriteChatByitem = (item?: any) => {
+  if (item) {
+    routerPushByKey('write-chat-home', { query: item });
+  }
+};
 
 const goWriteChat = () => {
   routerPushByPath('/write-chat-home');
@@ -36,19 +63,20 @@ const goWriteComposition = () => {
         </NButton>
       </div>
     </header>
-    <main class="contentbg box-border flex flex-col flex-1 items-center pt-161px">
+    <main class="contentbg box-border flex flex-col flex-1 items-center pb-50px pt-161px">
       <div class="text-65px text-#2a2a2a font-700">学科智能体</div>
       <div class="mb-70px mt-16px text-24px text-#3d3d3d font-400">塑造未来教育：智能体在学科教学中的创新应用</div>
       <div class="grid grid-cols-4 box-border w-full flex-1 gap-16px px-257px">
         <div
-          v-for="item in 50"
+          v-for="item in config.agents"
           :key="item"
           class="boxitem box-border h-70px flex cursor-pointer items-center border border-[#DADADA] rd-14px border-solid bg-white p-12px transition-all transition-duration-300 ease hover:border-[#BAFD00]"
+          @click="goWriteChatByitem(item)"
         >
-          <img src="" class="mr-10px h-46px w-46px rd-50% bg-red" alt="" />
+          <img :src="item.icon" class="mr-10px h-46px w-46px rd-50%" alt="" />
           <div>
-            <div class="text-16px font-600">Ai写景色</div>
-            <div class="text-14px text-#9E9E9E">一键生成主题相关的写作文章</div>
+            <div class="text-16px font-600">{{ item.title }}</div>
+            <div class="text-14px text-#9E9E9E">{{ item.description }}</div>
           </div>
         </div>
       </div>

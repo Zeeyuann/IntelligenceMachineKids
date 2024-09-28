@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import './plugins/assets';
+import 'highlight.js/styles/atom-one-dark.css';
 import { setupAppVersionNotification, setupDayjs, setupIconifyOffline, setupLoading, setupNProgress } from './plugins';
 import { setupStore } from './store';
 import { setupRouter } from './router';

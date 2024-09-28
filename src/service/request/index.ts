@@ -36,6 +36,8 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
       const responseCode = String(response.data.code);
 
       function handleLogout() {
+        authStore.token = '';
+        authStore.offSpriingId = '';
         authStore.resetStore();
       }
 
