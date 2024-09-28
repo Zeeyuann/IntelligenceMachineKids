@@ -258,7 +258,7 @@ onMounted(() => {});
             class="box-border w-full flex flex-col rd-bl-12px rd-br-12px rd-lt-2px rd-rt-12px bg-white p-16px text-14px font-500"
           >
             <template v-if="item.isSending">
-              <Vuetyped
+              <VueTyped
                 v-if="item.content"
                 :strings="[markedRender(item.content)]"
                 @complete="isComplete = true"
