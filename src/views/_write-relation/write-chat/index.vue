@@ -75,6 +75,7 @@ function handleScroll() {
   });
 }
 
+const cid = ref<string>('');
 // 文本生成
 const handleGenerate = async (data: any, forShow: any) => {
   const formData = new FormData();
@@ -84,6 +85,7 @@ const handleGenerate = async (data: any, forShow: any) => {
   const { data: textData, error } = await fetchArticle(formData);
   if (!error) {
     await nextTick();
+    cid.value = textData.conversation_id;
     const index = chatList.length - 1;
     chatList[index] = { ...forShow, ...textData };
     handleScroll();
@@ -91,13 +93,14 @@ const handleGenerate = async (data: any, forShow: any) => {
   endLoading();
   handleRestForm();
 };
+// 从文本首页生成
 const handleGenerateFromHome = async (temp: any) => {
   isComplete.value = false;
   startLoading();
   const forShow = {
     coin: undefined,
     isSending: true,
-    conversation_id: undefined,
+    conversation_id: cid.value || '',
     query: route.query.query,
     content: ` `,
     create_time: undefined,
@@ -108,10 +111,10 @@ const handleGenerateFromHome = async (temp: any) => {
   chatList.push(forShow);
   handleScroll();
 
-  const { app_id, conversation_id, query } = temp;
+  const { app_id, query } = temp;
   const data: Data = {
     app_id,
-    conversation_id,
+    conversation_id: cid.value || '',
     file: fileStore.uploadedFile as File,
     query
   };
@@ -149,7 +152,7 @@ const handleGenerateFromBtn = async () => {
 
   const data: Data = {
     app_id: route.query.app_id as string,
-    conversation_id: route.query.conversation_id as string,
+    conversation_id: cid.value || '',
     file: fileStore.uploadedFile as File,
     query: prompt.value
   };
