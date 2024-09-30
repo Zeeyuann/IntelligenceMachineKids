@@ -18,9 +18,16 @@ defineOptions({
 const { showModal } = storeToRefs(useLoginTypeStore());
 
 const authStore = useAuthStore();
-const isLogin = computed(() => {
-  return authStore.token && authStore.offSpriingId;
-});
+
+const isLogin = ref();
+watch(
+  [() => authStore.token, () => authStore.offSpriingId],
+  ([token, offid]) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    token && offid ? (isLogin.value = true) : (isLogin.value = false);
+  },
+  { immediate: true }
+);
 const { routerPushByKey } = useRouterPush();
 const { SvgIconVNode } = useSvgIcon();
 
