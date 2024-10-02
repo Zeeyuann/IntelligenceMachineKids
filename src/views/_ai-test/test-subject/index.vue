@@ -22,7 +22,7 @@ const percentage = computed(() => Math.floor(((subNo.value + 1) / quetionList.va
 
 const selectValue = computed({
   get() {
-    return subjectStore.answerList[subNo.value] || '';
+    return subjectStore.answerList[subNo.value]?.userAnswer || '';
   },
   set() {}
 });
@@ -172,7 +172,7 @@ onMounted(() => {
                 <NRadioGroup
                   v-model:value="selectValue"
                   class="titlegroup w-full flex flex-col items-center !h-42px"
-                  @update:value="val => subjectStore.handleAddAnswer(val, index)"
+                  @update:value="val => subjectStore.handleAddAnswer(val, index, question)"
                 >
                   <NRadioButton
                     v-for="(item, anindex) in question.questionOptions"

@@ -2,9 +2,11 @@
 import { computed } from 'vue';
 import { NConfigProvider, darkTheme } from 'naive-ui';
 import type { WatermarkProps } from 'naive-ui';
+import katex from 'katex';
 import { useAppStore } from './store/modules/app';
 import { useThemeStore } from './store/modules/theme';
 import { naiveDateLocales, naiveLocales } from './locales/naive';
+import 'katex/dist/katex.css';
 
 defineOptions({
   name: 'App'
@@ -45,6 +47,7 @@ const watermarkProps = computed<WatermarkProps>(() => {
     :theme="naiveDarkTheme"
     :theme-overrides="themeStore.naiveTheme"
     :locale="naiveLocale"
+    :katex="katex"
     :date-locale="naiveDateLocale"
     class="h-full"
   >
