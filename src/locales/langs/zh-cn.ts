@@ -162,7 +162,8 @@ const local: App.I18n.Schema = {
     'write-composition': '文本创作',
     'generate-pic': '图片创作',
     'test-home': 'AI精准测',
-    'test-subject': 'AI精准测'
+    'test-subject': '测试答题',
+    'test-report': '测试报告'
   },
   page: {
     login: {

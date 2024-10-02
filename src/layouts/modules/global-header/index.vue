@@ -44,7 +44,11 @@ const themeStore = useThemeStore();
     :class="{
       bg: routeName === 'home',
       paintbg: routeName === 'paint',
-      classbg: routeName === 'classroom' || routeName === 'test-home' || routeName === 'test-subject',
+      classbg:
+        routeName === 'classroom' ||
+        routeName === 'test-home' ||
+        routeName === 'test-subject' ||
+        routeName === 'test-report',
       writebg: routeName === 'write'
     }"
     class="h-full flex-y-center px-230px shadow-header"

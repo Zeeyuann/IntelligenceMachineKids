@@ -26,6 +26,7 @@ declare module "@elegant-router/types" {
     "iframe-page": "/iframe-page/:url";
     "paint": "/paint";
     "test-home": "/test-home";
+    "test-report": "/test-report";
     "test-subject": "/test-subject";
     "write": "/write";
     "write-chat": "/write-chat";
@@ -71,6 +72,7 @@ declare module "@elegant-router/types" {
     | "iframe-page"
     | "paint"
     | "test-home"
+    | "test-report"
     | "test-subject"
     | "write"
     | "write-chat"
@@ -93,6 +95,7 @@ declare module "@elegant-router/types" {
   export type LastLevelRouteKey = Extract<
     RouteKey,
     | "test-home"
+    | "test-report"
     | "test-subject"
     | "403"
     | "404"
