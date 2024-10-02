@@ -99,6 +99,28 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'test-home',
+    path: '/test-home',
+    component: 'layout.base$view.test-home',
+    meta: {
+      title: 'test-home',
+      i18nKey: 'route.test-home',
+      hideInMenu: true,
+      isBlank: true
+    }
+  },
+  {
+    name: 'test-subject',
+    path: '/test-subject',
+    component: 'layout.base$view.test-subject',
+    meta: {
+      title: 'test-subject',
+      i18nKey: 'route.test-subject',
+      hideInMenu: true,
+      isBlank: true
+    }
+  },
+  {
     name: 'write',
     path: '/write',
     component: 'layout.base$view.write',

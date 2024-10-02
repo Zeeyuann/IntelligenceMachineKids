@@ -47,6 +47,9 @@ importers:
       json5:
         specifier: 2.2.3
         version: 2.2.3
+      katex:
+        specifier: ^0.16.11
+        version: 0.16.11
       marked:
         specifier: ^14.1.2
         version: 14.1.2

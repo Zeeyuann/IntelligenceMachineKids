@@ -52,6 +52,7 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
       const logoutCodes = import.meta.env.VITE_SERVICE_LOGOUT_CODES?.split(',') || [];
       if (logoutCodes.includes(responseCode)) {
         handleLogout();
+        window.$message?.info('登录已过期,请重新登录');
         return null;
       }
 

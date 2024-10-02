@@ -59,6 +59,7 @@
     "dayjs": "1.11.13",
     "echarts": "5.5.1",
     "json5": "2.2.3",
+    "katex": "^0.16.11",
     "marked": "^14.1.2",
     "marked-highlight": "^2.1.4",
     "marked-katex-extension": "^5.1.2",

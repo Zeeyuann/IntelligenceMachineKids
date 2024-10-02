@@ -1,11 +1,33 @@
 <script setup lang="ts">
 import { useNaiveForm } from '@/hooks/common/form';
+import { fetchGrades, fetchPress, fetchSubjects } from '@/service/api';
+import { useAuthStore } from '@/store/modules/auth';
+import { useRouterPush } from '@/hooks/common/router';
 import IconLocalFolder from '~icons/local/folder';
+const { routerPushByKey } = useRouterPush();
+const authStore = useAuthStore();
+
+const rules = {
+  gradeId: { required: true, message: '请选择班级' },
+  subjectId: { required: true, message: '请选科目' },
+  pressName: { required: true, message: '请选择版本' },
+  value4: { required: true, message: '请选择难度' }
+};
+
+const { formRef, validate } = useNaiveForm();
+const model: any = reactive({
+  gradeId: undefined,
+  subjectId: undefined,
+  pressName: undefined,
+  value4: undefined
+});
 
 const FORM_LIST: any = reactive([
   {
     label: '请选择班级',
-    key: 'value1',
+    labelField: 'gradeName',
+    valueField: 'gradeId',
+    key: 'gradeId',
     placeholder: h(
       'div',
       {
@@ -15,25 +37,14 @@ const FORM_LIST: any = reactive([
         default: () => [h(IconLocalFolder), h('span', { class: 'ml-10px' }, '请选择班级')]
       }
     ),
-    option: [
-      {
-        label: "Everybody's Got Something to Hide Except Me and My Monkey",
-        value: 'song0',
-        disabled: true
-      },
-      {
-        label: 'Drive My Car',
-        value: 'song1'
-      },
-      {
-        label: 'Norwegian Wood',
-        value: 'song2'
-      }
-    ]
+    option: []
   },
   {
     label: '请选科目',
-    key: 'value2',
+    key: 'subjectId',
+    labelField: 'subjectName',
+    valueField: 'subjectId',
+    disabled: computed(() => !model.gradeId),
     placeholder: h(
       'div',
       {
@@ -43,25 +54,12 @@ const FORM_LIST: any = reactive([
         default: () => [h(IconLocalFolder), h('span', { class: 'ml-10px' }, '请选科目')]
       }
     ),
-    option: [
-      {
-        label: "Everybody's Got Something to Hide Except Me and My Monkey",
-        value: 'song0',
-        disabled: true
-      },
-      {
-        label: 'Drive My Car',
-        value: 'song1'
-      },
-      {
-        label: 'Norwegian Wood',
-        value: 'song2'
-      }
-    ]
+    option: []
   },
   {
     label: '请选择版本',
-    key: 'value3',
+    disabled: computed(() => !model.subjectId),
+    key: 'pressName',
     placeholder: h(
       'div',
       {
@@ -71,72 +69,67 @@ const FORM_LIST: any = reactive([
         default: () => [h(IconLocalFolder), h('span', { class: 'ml-10px' }, '请选择版本')]
       }
     ),
-    option: [
-      {
-        label: "Everybody's Got Something to Hide Except Me and My Monkey",
-        value: 'song0',
-        disabled: true
-      },
-      {
-        label: 'Drive My Car',
-        value: 'song1'
-      },
-      {
-        label: 'Norwegian Wood',
-        value: 'song2'
-      }
-    ]
-  },
-  {
-    label: '请选择难度',
-    key: 'value4',
-    placeholder: h(
-      'div',
-      {
-        class: 'flex items-center'
-      },
-      {
-        default: () => [h(IconLocalFolder), h('span', { class: 'ml-10px' }, '请选择难度')]
-      }
-    ),
-    option: [
-      {
-        label: "Everybody's Got Something to Hide Except Me and My Monkey",
-        value: 'song0',
-        disabled: true
-      },
-      {
-        label: 'Drive My Car',
-        value: 'song1'
-      },
-      {
-        label: 'Norwegian Wood',
-        value: 'song2'
-      }
-    ]
+    option: []
   }
+  // {
+  //   label: '请选择难度',
+  //   key: 'value4',
+  //   placeholder: h(
+  //     'div',
+  //     {
+  //       class: 'flex items-center'
+  //     },
+  //     {
+  //       default: () => [h(IconLocalFolder), h('span', { class: 'ml-10px' }, '请选择难度')]
+  //     }
+  //   ),
+  //   option: [
+  //     {
+  //       label: "Everybody's Got Something to Hide Except Me and My Monkey",
+  //       value: 'song0',
+  //       disabled: true
+  //     },
+  //     {
+  //       label: 'Drive My Car',
+  //       value: 'song1'
+  //     },
+  //     {
+  //       label: 'Norwegian Wood',
+  //       value: 'song2'
+  //     }
+  //   ]
+  // }
 ]);
 
-const rules = {
-  value1: { required: true, message: '请选择班级' },
-  value2: { required: true, message: '请选科目' },
-  value3: { required: true, message: '请选择版本' },
-  value4: { required: true, message: '请选择难度' }
-};
+(async () => {
+  if (authStore.isLogin) {
+    const { data, error } = await fetchGrades();
+    console.log('🚀 ~ data:', data);
+    if (!error) {
+      Object.assign(FORM_LIST[0], { option: data });
+    }
+  }
+})();
 
-const { formRef, validate } = useNaiveForm();
-const model: any = reactive({
-  value1: undefined,
-  value2: undefined,
-  value3: undefined,
-  value4: undefined
+watch([() => model.gradeId, () => model.subjectId], async ([gid, sid]) => {
+  const { data: subject, error } = await fetchSubjects(gid);
+  if (!error) {
+    Object.assign(FORM_LIST[1], { option: subject });
+  }
+  if (!sid) return;
+  const { data: version, error: versionError } = await fetchPress(gid, sid);
+  if (!versionError) {
+    Object.assign(FORM_LIST[2], { option: version.map((item: string) => ({ label: item, value: item })) });
+  }
 });
 
 async function handleSubmit() {
-  await validate();
+  console.log(model);
+  console.log(FORM_LIST);
 
-  // request
-  window.$message?.success('1');
+  await validate();
+  const { gradeId, subjectId, pressName } = model;
+  routerPushByKey('test-home', { query: { gradeId, subjectId, pressName } });
 }
 </script>
 
@@ -156,7 +149,14 @@ async function handleSubmit() {
       <div class="w-614px">
         <NForm ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
           <NFormItem v-for="item in FORM_LIST" :key="item.key" :path="item.key">
-            <NSelect v-model:value="model[item.key]" :placeholder="item.placeholder" :options="item.option" />
+            <NSelect
+              v-model:value="model[item.key]"
+              :value-field="item.valueField"
+              :disabled="item.disabled"
+              :label-field="item.labelField"
+              :placeholder="item.placeholder"
+              :options="item.option"
+            />
           </NFormItem>
           <NButton
             type="primary"

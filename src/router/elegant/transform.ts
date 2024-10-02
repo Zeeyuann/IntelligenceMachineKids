@@ -171,6 +171,8 @@ const routeMap: RouteMap = {
   "home": "/home",
   "iframe-page": "/iframe-page/:url",
   "paint": "/paint",
+  "test-home": "/test-home",
+  "test-subject": "/test-subject",
   "write": "/write",
   "write-chat": "/write-chat",
   "write-chat-home": "/write-chat-home",
