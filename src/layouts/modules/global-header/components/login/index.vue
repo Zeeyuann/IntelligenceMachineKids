@@ -73,7 +73,7 @@ const handleClose = () => {
           </div>
         </div>
       </Transition>
-      <template #header-extra>
+      <template v-if="!authStore.token" #header-extra>
         <icon-local-close class="h-20px w-20px cursor-pointer" @click="handleClose" />
       </template>
     </NCard>

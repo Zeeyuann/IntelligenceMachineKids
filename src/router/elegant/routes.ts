@@ -99,6 +99,18 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'study',
+    path: '/study',
+    component: 'layout.base$view.study',
+    meta: {
+      title: 'study',
+      i18nKey: 'route.study',
+      hideInMenu: true,
+      isBlank: true,
+      activeMenu: 'classroom'
+    }
+  },
+  {
     name: 'test-home',
     path: '/test-home',
     component: 'layout.base$view.test-home',
@@ -117,7 +129,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'test-report',
       i18nKey: 'route.test-report',
       hideInMenu: true,
-      isBlank: true
+      isBlank: true,
+      constant: true
     }
   },
   {

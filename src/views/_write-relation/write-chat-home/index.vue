@@ -27,9 +27,10 @@ const hanldInput = () => {
     query: {
       query: prompt.value,
       file: fileList.value[0],
-      app_id: hasQuery ? itemInfo.value.app_id : '',
+      app_id: itemInfo.value?.app_id ? itemInfo.value.app_id : '9252b15b-9509-43fb-b857-b0c83cc5feaf',
       conversation_id: '',
-      fileName: fileName.value ? fileName.value : ''
+      fileName: fileName.value ? fileName.value : '',
+      title: route.query.title as string
     }
   });
 };
@@ -80,7 +81,7 @@ const handleGoBack = () => {
           <NUpload
             action="#"
             :default-file-list="fileList"
-            accept=".txt,.doc.pdf,.jpg,.png,.xls,.xlsx"
+            accept=".txt,.doc.,pdf,.jpg,.png,.xls,.xlsx"
             :max="1"
             :custom-request="customUploadFile"
             :on-remove="handleRemove"

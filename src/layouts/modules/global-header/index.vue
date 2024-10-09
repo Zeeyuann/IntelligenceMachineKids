@@ -46,6 +46,7 @@ const themeStore = useThemeStore();
       paintbg: routeName === 'paint',
       classbg:
         routeName === 'classroom' ||
+        routeName === 'study' ||
         routeName === 'test-home' ||
         routeName === 'test-subject' ||
         routeName === 'test-report',

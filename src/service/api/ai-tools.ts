@@ -61,6 +61,20 @@ export function fetchAgentSysuser(data: any = {}) {
     data
   });
 }
+export function aiSysUser(data: any = {}) {
+  return request<any>({
+    url: 'aiweb/chatai/sysuser',
+    method: 'post',
+    data
+  });
+}
+export function conversation(data: any = {}) {
+  return request<any>({
+    url: 'aiweb/chatai/conversation',
+    method: 'post',
+    data
+  });
+}
 
 export function upLoadFile(data: any) {
   return request<any>({

@@ -3,10 +3,14 @@ import { useLoading } from '@sa/hooks';
 import type { UploadInst } from 'naive-ui';
 import InfiniteLoading from 'v3-infinite-loading';
 import 'v3-infinite-loading/lib/style.css';
+import dayjs from 'dayjs';
 import { useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
 import { deleteDrawItem, drawConfig, drawTaskSearch, fetchDrawInfo, fetchDrawList, startDraw } from '@/service/api';
 import { useUpload } from '@/hooks/common/upload';
+
+// const route = useRoute();
+// const kind = computed(() => route.query.kind);
 
 const { loading, startLoading, endLoading } = useLoading();
 
@@ -160,13 +164,13 @@ const handlePositiveClick = async (record_id: number) => {
 const uploadRef = ref<UploadInst | null>(null);
 const handleRest = () => {
   model.prompt = '';
-  model.style = '';
+  model.style = '<auto>';
   selectedLora.value = 0;
   model.negative_prompt = '';
   model.ref_img = [];
   uploadRef.value?.clear();
   sizeIndex.value = 0;
-  model.size = '';
+  model.size = '1024*1024';
 };
 
 async function handleSubmit() {
@@ -208,7 +212,7 @@ async function handleSubmit() {
 <template>
   <div class="box-border size-full flex items-center of-hidden p-24px">
     <div
-      class="left animate__animated animate__fadeInLeft mr-16px box-border h-full w-522px flex flex-col rd-14px bg-#ffffff px-24px pb-20px pt-28px"
+      class="animate__animated left animate__fadeInLeft mr-16px box-border h-full w-522px flex flex-col rd-14px bg-#ffffff px-24px pb-20px pt-28px"
     >
       <NScrollbar class="box-border w-full flex-1 pr-15px">
         <NSpin :show="loading" class="box-border w-full flex-1">
@@ -484,8 +488,12 @@ async function handleSubmit() {
             </NSpin>
           </template>
         </div>
+        <!-- 绘图时间 -->
+        <div class="mi my16px text-14px text-[#3D3D3D] font-500 line-height-24px">
+          绘图时间: {{ dayjs.unix(item.create_time).format('YYYY-MM-DD') }}
+        </div>
         <!-- 拓展 -->
-        <div v-if="item.content.length > 0" class="mt-16px w-full">
+        <div v-if="false && item.content.length > 0" class="mt-16px w-full">
           <div class="mb-8px w-full flex items-center">
             <div class="text-14px">调整:</div>
             <icon-local-tooltip class="mx-10px" />

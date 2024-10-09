@@ -10,6 +10,7 @@ const { list, customUploadFile, handleRemove } = useUpload();
 const { loading, startLoading, endLoading } = useLoading();
 
 const fileStore = useFileStore();
+fileStore.clearUploadedFile();
 
 interface Data {
   app_id: string;
@@ -177,7 +178,9 @@ onMounted(() => {});
     <!-- title -->
     <div v-loading="true" class="mb-20px box-border flex flex-col items-center pl-560px pr-214px">
       <div class="w-full flex items-center justify-between overflow-visible">
-        <div class="animate__animated animate__fadeInLeft mr-127px flex-1 text-24px text-#3D3D3D">新会话</div>
+        <div class="animate__animated animate__fadeInLeft mr-127px flex-1 text-24px text-#3D3D3D">
+          {{ route.query.title }}
+        </div>
         <div class="animate__animated animate__fadeInRight">
           <!--
  <NButton
@@ -238,7 +241,7 @@ onMounted(() => {});
         <div v-for="item in chatList" :key="item.create_time" class="each mb-16px flex flex-col">
           <!-- ask -->
           <div
-            class="mb-16px box-border w-full rd-bl-12px rd-br-2px rd-lt-12px rd-rt-12px p-16px text-14px text-white font-500"
+            class="mb-16px box-border w-[fit-content] self-end rd-bl-12px rd-br-2px rd-lt-12px rd-rt-12px p-16px text-14px text-white font-500"
             :style="{ background: ' linear-gradient(180deg, #2B2D24 0%, #0B0C09 100%), #FFFFFF' }"
           >
             {{ item.query }}
@@ -268,7 +271,7 @@ onMounted(() => {});
             </template>
 
             <div v-else class="span" v-html="markedRender(item.content)"></div>
-            <div v-if="item.content" class="tool self-end justify-items-end pb-20px">
+            <div v-if="item.content" class="tool self-end justify-items-end">
               <NButton
                 class="box-border rd-14px text-18px text-#181818 font-600 !h-54px !w-54px !border-none !bg-white"
                 size="large"
@@ -277,8 +280,8 @@ onMounted(() => {});
                 <icon-local-copy-write class="scale-100" />
               </NButton>
             </div>
-            <div class="mb-16px border-b border-b-#E6E6E6"></div>
-            <div class="text-12px font-400">
+            <div v-if="false" class="mb-16px border-b border-b-#E6E6E6"></div>
+            <div v-if="false" class="text-12px font-400">
               <div class="mb-5px">你可能还想问</div>
               <div class="mb-5px cursor-pointer">·以秋天为主题，写一篇描绘秋天景色的文章。</div>
             </div>
@@ -325,7 +328,7 @@ onMounted(() => {});
       <!-- 上传和tag -->
       <div class="mb-16px w-full flex items-center justify-between">
         <div class="flex flex-1 items-center">
-          <div class="mi mr-8px rd-14px bg-white px-10px py5px text-14px">写景助手</div>
+          <div v-if="false" class="mi mr-8px rd-14px bg-white px-10px py5px text-14px">写景助手</div>
         </div>
         <NUpload
           ref="uploadRef"

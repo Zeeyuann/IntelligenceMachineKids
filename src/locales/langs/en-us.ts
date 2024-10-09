@@ -163,7 +163,8 @@ const local: App.I18n.Schema = {
     'generate-pic': '图片创作',
     'test-home': 'AI精准测',
     'test-subject': '测试答题',
-    'test-report': '测试报告'
+    'test-report': '测试报告',
+    study: '智慧课堂'
   },
   page: {
     login: {

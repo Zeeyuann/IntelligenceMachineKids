@@ -5,6 +5,9 @@ import useCountInterval from '@/hooks/common/count';
 import { fetchQuestions, fetchUserevaluate } from '@/service/api';
 import { useSubjectStore } from '@/store/modules/subject';
 import { markedRender } from '@/utils/highlight';
+import { useRouterPush } from '@/hooks/common/router';
+
+const { routerPushByKey } = useRouterPush();
 
 const subjectStore = useSubjectStore() as any;
 subjectStore.clearAnswerList();
@@ -55,6 +58,8 @@ const handleNext = () => {
 
 const handleSubmit = async () => {
   console.log(subjectStore.answerList);
+  routerPushByKey('test-report');
+  return;
 
   const data = {
     evaluateId: subjectStore.questionList.evaluateId,

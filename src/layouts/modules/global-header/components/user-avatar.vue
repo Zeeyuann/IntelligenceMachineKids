@@ -20,6 +20,7 @@ const { showModal } = storeToRefs(useLoginTypeStore());
 const authStore = useAuthStore();
 
 const isLogin = ref();
+console.log('🚀 ~ isLogin:', isLogin);
 watch(
   [() => authStore.token, () => authStore.offSpriingId],
   ([token, offid]) => {
@@ -107,7 +108,14 @@ function handleDropdown(key: DropdownKey) {
     立即登录
   </NButton>
 
-  <NModal v-model:show="showModal" role="dialog" size="huge" title="模态框">
+  <NModal
+    v-model:show="showModal"
+    display-directive="show"
+    role="dialog"
+    size="huge"
+    title="模态框"
+    :mask-closable="!authStore.token"
+  >
     <Login @close="showModal = false" />
   </NModal>
 </template>
