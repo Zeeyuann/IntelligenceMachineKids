@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import { useRouterPush } from '@/hooks/common/router';
+import { useAuthStore } from '@/store/modules/auth';
+import { useLoginTypeStore } from '@/store/modules/login';
+
+const { show } = useLoginTypeStore();
+
+const authStore = useAuthStore();
 const { routerPushByKey } = useRouterPush();
 const go = () => {
   routerPushByKey('study');
@@ -10,6 +16,44 @@ const goGeneratePic = () => {
 const goClass = (intoView?: any) => {
   routerPushByKey('write', { query: { intoView } });
 };
+
+// 使用正则读取url里的code
+const getQueryString = (name: string) => {
+  const params = new URLSearchParams(window.location.search);
+  return params.has(name) ? decodeURIComponent(params.get(name) as string) : null;
+};
+// 删除url中的code
+const removeQueryParameter = (param: string) => {
+  const url = new URL(window.location.href);
+  url.searchParams.delete(param);
+  window.history.replaceState({}, document.title, url.toString());
+};
+
+// 对接后端接口，获取用户信息
+const getLoginMes = async (code: string) => {
+  try {
+    authStore.wxLogin(code);
+    removeQueryParameter('code');
+    removeQueryParameter('state');
+    return true;
+  } catch (error) {
+    console.log('🚀 ~ getLoginMes ~ error:', error);
+    return false;
+  }
+};
+const getCodeMes = async () => {
+  const code = getQueryString('code');
+  if (code) {
+    const flag = await getLoginMes(code);
+    if (flag) {
+      show();
+    }
+  }
+};
+
+onMounted(() => {
+  getCodeMes();
+});
 </script>
 
 <template>

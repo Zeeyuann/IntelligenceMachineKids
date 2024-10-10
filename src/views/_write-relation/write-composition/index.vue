@@ -3,14 +3,14 @@ import type { UploadFileInfo, UploadInst } from 'naive-ui';
 import { useLoading } from '@sa/hooks';
 import { useUpload } from '@/hooks/common/upload';
 import { conversation } from '@/service/api';
-import { useFileStore } from '@/store/modules/file/index';
+// import { useFileStore } from '@/store/modules/file/index';
 import { markedRender } from '@/utils/highlight';
 const { list, customUploadFile, handleRemove } = useUpload();
 
 const { loading, startLoading, endLoading } = useLoading();
 
-const fileStore = useFileStore();
-fileStore.clearUploadedFile();
+// const fileStore = useFileStore();
+// fileStore.clearUploadedFile();
 
 interface Data {
   prompt: string;

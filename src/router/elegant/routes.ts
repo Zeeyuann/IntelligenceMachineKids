@@ -124,7 +124,7 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'test-report',
     path: '/test-report',
-    component: 'layout.base$view.test-report',
+    component: 'layout.blank$view.test-report',
     meta: {
       title: 'test-report',
       i18nKey: 'route.test-report',

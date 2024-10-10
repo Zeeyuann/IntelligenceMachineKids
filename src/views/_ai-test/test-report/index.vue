@@ -2,10 +2,11 @@
 import html2canvas from 'html2canvas';
 import printJS from 'print-js';
 import { useEcharts } from '@/hooks/common/echarts';
-import { createColumns, fullPieOptions, lineOption, pieOptions } from './data';
+import { chatPieOptions, createColumns, createSubjectColumns, fullPieOptions, lineOption, pieOptions } from './data';
 
 const { domRef: pieRef } = useEcharts(() => pieOptions, { onRender() {} });
 const { domRef: fullPieRef } = useEcharts(() => fullPieOptions, { onRender() {} });
+const { domRef: wechatPieRef } = useEcharts(() => chatPieOptions, { onRender() {} });
 const { domRef: lineRef } = useEcharts(() => lineOption, { onRender() {} });
 
 // 试卷分析
@@ -61,9 +62,9 @@ const seperateColumns = [
   }
 ];
 const data = [
-  { no: 3, title: 'Wonderwall', length: '4:18' },
-  { no: 4, title: "Don't Look Back in Anger", length: '4:48' },
-  { no: 12, title: 'Champagne Supernova', length: '7:27' }
+  { no: 3, title: '1', length: '4:18' },
+  { no: 4, title: '1', length: '4:48' },
+  { no: 12, title: '1', length: '7:27' }
 ];
 
 const captureDiv = ref(null); // 获取要截取的div
@@ -99,7 +100,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="windowWidth > 768" class="box-border size-full px-230px">
+  <div v-if="windowWidth > 768" class="box-border px-230px py-20px">
     <main class="box-border size-full flex flex-col rd-10px bg-white p-16px">
       <div
         class="topbg box-border h-218px w-full flex items-center justify-between rd-10px py-60px pl-60px pr-328px text-white"
@@ -290,39 +291,38 @@ onUnmounted(() => {
       </div>
     </main>
   </div>
-  <div v-else class="box-border size-full px-10px">
-    <main class="box-border w-full flex flex-col rd-10px bg-white p-16px">
-      <div
-        class="topbg box-border h-218px w-full flex items-center justify-between rd-10px py-60px pl-60px pr-328px text-white"
-      >
-        <div>
+  <div v-else class="box-border py-20px">
+    <main class="box-border w-full flex flex-col rd-10px bg-white p-0px">
+      <div class="topbg box-border w-full flex flex-col items-center justify-between rd-10px p24px text-white">
+        <div class="flex flex-col items-center">
           <div class="almm titlebg mb-20px text-26px text-white">恭喜完成测试</div>
           <div class="mb5px text-14px">测试得分</div>
           <div class="text-18px font-600">100</div>
         </div>
-        <div>
-          <div class="flex items-center text-13px">
-            <span>报告ID：</span>
-            <span>20240912849234</span>
+        <div class="flex items-center">
+          <div class="flex-1">
+            <div class="flex items-center text-13px">
+              <span>报告ID：</span>
+              <span>20240912849234</span>
+            </div>
+            <div class="my8px flex items-center text-13px">
+              <span>科目：</span>
+              <span>数学</span>
+            </div>
+            <div class="flex items-center text-13px">
+              <span>用时：</span>
+              <span>177S</span>
+            </div>
           </div>
-          <div class="my8px flex items-center text-13px">
-            <span>科目：</span>
-            <span>数学</span>
-          </div>
-          <div class="flex items-center text-13px">
-            <span>用时：</span>
-            <span>177S</span>
-          </div>
-        </div>
-        <div class="h64px w-1px bg-white"></div>
-        <div>
-          <div class="flex items-center text-13px">
-            <span>日期：2024-09-10 14：42</span>
-            <span>2024-09-10 14：42</span>
-          </div>
-          <div class="my8px flex items-center text-13px">
-            <span>测试范围：</span>
-            <span>数学</span>
+          <div class="flex-1">
+            <div class="flex items-center text-13px">
+              <span>日期：2024-09-10 14：42</span>
+              <span>2024-09-10 14：42</span>
+            </div>
+            <div class="my8px flex items-center text-13px">
+              <span>测试范围：</span>
+              <span>数学</span>
+            </div>
           </div>
         </div>
         <div>
@@ -381,26 +381,27 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="line2 mt16px flex items-center">
-          <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
+          <div class="boder-#D8D8D8 box-border h-700px flex flex-col flex-1 border rd-10px p24px">
             <div class="title mb-16px text-16px text-#000000 font-600">试卷分析</div>
             <div class="w-full flex flex-col flex-1">
-              <NDescriptions label-align="center" class="w-full" label-placement="left" bordered>
+              <NDescriptions :column="1" label-align="center" class="w-full" label-placement="left" bordered>
                 <NDescriptionsItem v-for="item in analylisList" :key="item.label" :label="item.label">
                   {{ item.label }}
                 </NDescriptionsItem>
               </NDescriptions>
-              <div ref="fullPieRef" class="box-border w-full flex-1 pt-20px"></div>
+              <div ref="wechatPieRef" class="box-border w-full flex-1 pt-20px"></div>
             </div>
           </div>
         </div>
-        <div class="line2 mt16px flex items-center">
+        <div class="line3 mt16px flex items-center">
           <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
-            <div class="title mb-16px flex items-center text-16px text-#000000 font-600">题目分布</div>
-            <div class="flex-center flex-1">
+            <div class="title mb-16px flex items-center text-16px text-#000000 font-600">知识点关系图</div>
+            <div class="flex flex-col flex-1">
               <NDataTable
-                :columns="seperateColumns"
+                class="gx flex-1"
+                :columns="createSubjectColumns()"
                 flex-height
-                align="center"
+                align="left"
                 :data="data"
                 bordered
                 :single-line="false"

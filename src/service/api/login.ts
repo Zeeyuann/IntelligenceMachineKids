@@ -21,6 +21,16 @@ export function fetchLogin(mobile: string, code: string) {
   });
 }
 
+export function wxCodeLogin(code: string) {
+  return request<Api.Auth.token>({
+    url: 'aiweb/login',
+    method: 'post',
+    data: {
+      code
+    }
+  });
+}
+
 export function fetchOffSpringId() {
   return request<Api.Auth.offSpriingId[]>({
     url: 'aiweb/offsprings',

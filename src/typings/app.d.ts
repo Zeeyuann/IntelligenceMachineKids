@@ -569,3 +569,4 @@ declare namespace App {
     };
   }
 }
+declare const WxLogin: any;

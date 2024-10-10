@@ -20,7 +20,6 @@ const { showModal } = storeToRefs(useLoginTypeStore());
 const authStore = useAuthStore();
 
 const isLogin = ref();
-console.log('🚀 ~ isLogin:', isLogin);
 watch(
   [() => authStore.token, () => authStore.offSpriingId],
   ([token, offid]) => {

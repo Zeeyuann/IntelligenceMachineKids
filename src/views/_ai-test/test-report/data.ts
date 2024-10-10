@@ -152,6 +152,71 @@ export const fullPieOptions: ECOption = {
     }
   ]
 };
+export const chatPieOptions: ECOption = {
+  title: {
+    show: true,
+    text: '知识点分布',
+    left: 'center',
+    top: '45%',
+    textStyle: {
+      fontSize: 12,
+      color: '#000'
+    }
+  },
+  tooltip: {
+    show: true,
+    trigger: 'item'
+  },
+  legend: {
+    orient: 'horizontal',
+    icon: 'circle',
+    left: 'right',
+    align: 'auto',
+    top: 'top',
+    padding: [10, 0, 100, 0],
+    data: ['立方根', '平方根', '算术平方根', '计算器-数的开方', '非负数的性质:算数平方根']
+    // formatter(name) {
+    //   return name;
+    // }
+  },
+  emphasis: {
+    disabled: true
+  },
+  series: [
+    {
+      name: '知识点分布',
+      type: 'pie',
+      radius: ['70%', '50%'],
+      center: ['50%', '50%'],
+      avoidLabelOverlap: true,
+      itemStyle: {
+        borderRadius: 2 // 内外圆角都设置
+      },
+      label: {
+        show: false,
+        position: 'center'
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: '20',
+          fontWeight: 'bold'
+        }
+      },
+
+      labelLine: {
+        show: false
+      },
+      data: [
+        { value: 25, name: '立方根', itemStyle: { color: '#ff6b6b' } },
+        { value: 15, name: '平方根', itemStyle: { color: '#4dabf7' } },
+        { value: 20, name: '算术平方根', itemStyle: { color: '#74c0fc' } },
+        { value: 18, name: '计算器-数的开方', itemStyle: { color: '#c084fc' } },
+        { value: 22, name: '非负数的性质:算数平方根', itemStyle: { color: '#38d9a9' } }
+      ]
+    }
+  ]
+};
 
 export const lineOption: ECOption = {
   color: ['#4691CC', '#2FBF78'],
@@ -236,6 +301,48 @@ export function createColumns(): DataTableColumns {
           }
         );
       }
+    }
+    // {
+    //   title: 'Action',
+    //   key: 'actions',
+    //   render(row) {
+    //     return h(
+    //       NButton,
+    //       {
+    //         size: 'small',
+    //         onClick: () => sendMail(row)
+    //       },
+    //       { default: () => 'Send Email' }
+    //     );
+    //   }
+    // }
+  ];
+}
+export function createSubjectColumns(): DataTableColumns {
+  return [
+    {
+      title: '难度系数',
+      key: 'title'
+    },
+    {
+      title: '题数',
+      key: 'title'
+    },
+    {
+      title: '占分',
+      key: 'title'
+    },
+    {
+      title: '做对数',
+      key: 'title'
+    },
+    {
+      title: '做错数',
+      key: 'title'
+    },
+    {
+      title: '正确率',
+      key: 'title'
     }
     // {
     //   title: 'Action',

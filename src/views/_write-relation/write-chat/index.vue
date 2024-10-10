@@ -10,7 +10,7 @@ const { list, customUploadFile, handleRemove } = useUpload();
 const { loading, startLoading, endLoading } = useLoading();
 
 const fileStore = useFileStore();
-fileStore.clearUploadedFile();
+// fileStore.clearUploadedFile();
 
 interface Data {
   app_id: string;

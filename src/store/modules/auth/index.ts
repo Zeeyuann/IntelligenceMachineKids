@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { useLoading } from '@sa/hooks';
 import { SetupStoreId } from '@/enum';
 import { useRouterPush } from '@/hooks/common/router';
-import { fetchLogin, fetchOffSpringId, fetchUserInfo } from '@/service/api/login';
+import { fetchLogin, fetchOffSpringId, fetchUserInfo, wxCodeLogin } from '@/service/api/login';
 import { localStg } from '@/utils/storage';
 import { $t } from '@/locales';
 import { useLoginTypeStoreWithOut } from '@/store/modules/login';
@@ -93,6 +93,25 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
 
     endLoading();
   }
+  async function wxLogin(code: string) {
+    startLoading();
+
+    const { data: loginToken, error } = await wxCodeLogin(code);
+
+    if (!error) {
+      localStg.set('token', loginToken);
+      token.value = loginToken;
+      const { data: offSpriingid, error: err } = await fetchOffSpringId();
+      if (!err) {
+        Object.assign(kidList, offSpriingid);
+        localStg.set('kidList', kidList);
+      }
+    } else {
+      resetStore();
+    }
+
+    endLoading();
+  }
 
   async function getUserInfo(chooseIndex: number) {
     const osid = kidList[chooseIndex].id;
@@ -149,6 +168,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     loginLoading,
     resetStore,
     login,
+    wxLogin,
     initUserInfo
   };
 });
