@@ -2,35 +2,43 @@
 import html2canvas from 'html2canvas';
 import printJS from 'print-js';
 import { useEcharts } from '@/hooks/common/echarts';
-import { chatPieOptions, createColumns, createSubjectColumns, fullPieOptions, lineOption, pieOptions } from './data';
+import { useSubjectStore } from '@/store/modules/subject';
+import { fetchUserevaluate } from '@/service/api';
+import { useRouterPush } from '@/hooks/common/router';
+import { chatPieOptions, fullPieOptions, lineOption, pieOptions } from './data';
 
-const { domRef: pieRef } = useEcharts(() => pieOptions, { onRender() {} });
-const { domRef: fullPieRef } = useEcharts(() => fullPieOptions, { onRender() {} });
-const { domRef: wechatPieRef } = useEcharts(() => chatPieOptions, { onRender() {} });
-const { domRef: lineRef } = useEcharts(() => lineOption, { onRender() {} });
+const { routerPushByKey } = useRouterPush();
 
+const { domRef: pieRef, updateOptions: updatePieOptions } = useEcharts(() => pieOptions, { onRender() {} });
+const { domRef: fullPieRef, updateOptions: updateFullPieOptions } = useEcharts(() => fullPieOptions, { onRender() {} });
+const { domRef: wechatPieRef, updateOptions: updateWechatPieRefOptions } = useEcharts(() => chatPieOptions, {
+  onRender() {}
+});
+const { domRef: lineRef, updateOptions: updateLineRefOptions } = useEcharts(() => lineOption, { onRender() {} });
+
+const route = useRoute();
 // 试卷分析
 
 const analylisList = [
   {
     label: '学科',
-    key: ''
+    key: 'subjectName'
   },
   {
     label: '分数',
-    key: ''
+    key: 'score'
   },
   {
-    label: '知识点书',
-    key: ''
+    label: '知识点数',
+    key: 'knowledgeNum'
   },
   {
     label: '综合难度',
-    key: ''
+    key: 'difficulty'
   },
   {
     label: '正确率',
-    key: ''
+    key: 'precision'
   }
 ];
 
@@ -38,34 +46,32 @@ const analylisList = [
 const seperateColumns = [
   {
     title: '难度系数',
-    key: 'title'
+    key: 'difficultyLevel'
   },
   {
     title: '题数',
-    key: 'title'
+    key: 'number'
   },
   {
     title: '占分',
-    key: 'title'
+    key: 'proportion'
   },
   {
     title: '做对数',
-    key: 'title'
+    key: 'rightCount'
   },
   {
     title: '做错数',
-    key: 'title'
+    key: 'errCount'
   },
   {
     title: '正确率',
-    key: 'title'
+    key: 'precision'
   }
 ];
-const data = [
-  { no: 3, title: '1', length: '4:18' },
-  { no: 4, title: '1', length: '4:48' },
-  { no: 12, title: '1', length: '7:27' }
-];
+const questionData = ref([]);
+
+const synthesizeList: any = ref([]);
 
 const captureDiv = ref(null); // 获取要截取的div
 const imageUrl = ref<any>(null); // 存储截图生成的图片地址
@@ -90,8 +96,103 @@ function handleResize() {
   windowWidth.value = window.innerWidth;
 }
 
-onMounted(() => {
+const subjectTepmp: any = ref({});
+onMounted(async () => {
   window.addEventListener('resize', handleResize);
+
+  const subjectStore = useSubjectStore() as any;
+
+  const params = {
+    evaluateId: subjectStore.questionList.evaluateId,
+    useTimes: route.query.time,
+    answers: subjectStore.answerList
+  };
+  const { data: reportData, error } = await fetchUserevaluate(params);
+  if (!error) {
+    console.log(reportData);
+    subjectTepmp.value = reportData;
+
+    questionData.value = reportData.questions;
+
+    synthesizeList.value = reportData.synthesize;
+
+    updatePieOptions((option: any) => {
+      return {
+        ...option,
+        series: [
+          {
+            ...option.series[0],
+            data: [{ value: reportData.examLevel, name: '等级评定' }]
+          }
+        ]
+      };
+    });
+
+    updateFullPieOptions((option: any) => {
+      return {
+        ...option,
+        legend: {
+          ...option.legend,
+          data: reportData.examParse.data.map((item: any) => item.name)
+        },
+        series: [
+          {
+            ...option.series[0],
+            data: option.series[0].data.map((item: any, index: any) => {
+              const obj = {
+                ...item,
+                value: reportData.examParse.data[index].value,
+                name: reportData.examParse.data[index].name
+              };
+              return obj;
+            })
+          }
+        ]
+      };
+    });
+
+    updateWechatPieRefOptions((option: any) => {
+      return {
+        ...option,
+        legend: {
+          ...option.legend,
+          data: reportData.examParse.data.map((item: any) => item.name)
+        },
+        series: [
+          {
+            ...option.series[0],
+            data: option.series[0].data.map((item: any, index: any) => {
+              const obj = {
+                ...item,
+                value: reportData.examParse.data[index].value,
+                name: reportData.examParse.data[index].name
+              };
+              return obj;
+            })
+          }
+        ]
+      };
+    });
+
+    updateLineRefOptions((option: any) => {
+      return {
+        ...option,
+        series: option.series.map((item: any) => {
+          const obj = {
+            ...item
+          };
+
+          if (item.name === '本次测试') {
+            obj.data = [reportData.effect.precision];
+          } else {
+            obj.data = [reportData.effect.promoteValue];
+          }
+
+          return obj;
+        })
+      };
+    });
+  }
 });
 
 onUnmounted(() => {
@@ -108,36 +209,38 @@ onUnmounted(() => {
         <div>
           <div class="almm titlebg mb-20px text-26px text-white">恭喜完成测试</div>
           <div class="mb5px text-14px">测试得分</div>
-          <div class="text-18px font-600">100</div>
+          <div class="text-18px font-600">{{ subjectTepmp?.examScore }}</div>
         </div>
         <div>
           <div class="flex items-center text-13px">
             <span>报告ID：</span>
-            <span>20240912849234</span>
+            <span>{{ subjectTepmp?.report }}</span>
           </div>
           <div class="my8px flex items-center text-13px">
             <span>科目：</span>
-            <span>数学</span>
+            <span>{{ subjectTepmp?.subject }}</span>
           </div>
           <div class="flex items-center text-13px">
             <span>用时：</span>
-            <span>177S</span>
+            <span>{{ subjectTepmp?.useTime }}</span>
           </div>
         </div>
         <div class="h64px w-1px bg-white"></div>
         <div>
           <div class="flex items-center text-13px">
-            <span>日期：2024-09-10 14：42</span>
-            <span>2024-09-10 14：42</span>
+            <span>
+              日期：
+              <span>{{ subjectTepmp?.createTime }}</span>
+            </span>
           </div>
           <div class="my8px flex items-center text-13px">
             <span>测试范围：</span>
-            <span>数学</span>
+            <span>{{ subjectTepmp?.subject }}</span>
           </div>
         </div>
         <div>
           <NButton class="mr10px rd-18px text-white" @click="capture">本机打印</NButton>
-          <NButton class="rd-18px text-white">微信分享</NButton>
+          <!-- <NButton class="rd-18px text-white">微信分享</NButton> -->
         </div>
       </div>
       <div ref="captureDiv" class="content w-full flex flex-col">
@@ -158,15 +261,19 @@ onUnmounted(() => {
               <span class="mi ml-13px text-12px text-#666666">T=Think D=Develop L=Learning Ability</span>
             </div>
             <div class="box-border flex-center flex-col flex-1 px-126px">
-              <div class="h-54px w-full flex-center rd-14px bg-#2CB6FF text-#ffffff">28.0</div>
+              <div class="h-54px w-full flex-center rd-14px bg-#2CB6FF text-#ffffff">
+                {{ subjectTepmp?.tdlTarget?.tdl }}
+              </div>
               <div class="mi mb-32px mt-5px text-12px text-#666666">TDL数值越高表示该环节的水平越高,最高值是30</div>
               <div class="grid grid-cols-3 w-full gap-x-16px">
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
-                  <div class="text-18px text-#2CB6FF font-600">115</div>
+                  <div v-if="Object.keys(subjectTepmp).length > 0" class="text-18px text-#2CB6FF font-600">
+                    {{ subjectTepmp?.tdlTarget?.avgtime }}
+                  </div>
                   <div class="mi text-12px text-#666666">平均答题时间</div>
                 </div>
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
-                  <div class="text-18px text-#2CB6FF font-600">100.0%</div>
+                  <div class="text-18px text-#2CB6FF font-600">{{ subjectTepmp?.tdlTarget?.precision }}%</div>
                   <div class="mi text-12px text-#666666">正确率</div>
                 </div>
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
@@ -179,7 +286,7 @@ onUnmounted(() => {
                       color="#1A89EF"
                       rail-color="#DBDCDF"
                     >
-                      <div class="mi text-12px text-#666666">6/10</div>
+                      <div class="mi text-12px text-#666666">{{ subjectTepmp?.tdlTarget?.difficulty }}/10</div>
                     </NProgress>
                   </div>
                   <div class="mi mt6px text-12px text-#666666">平均难度</div>
@@ -194,7 +301,8 @@ onUnmounted(() => {
             <div class="w-full flex flex-col flex-1">
               <NDescriptions label-align="center" class="w-full" label-placement="left" bordered>
                 <NDescriptionsItem v-for="item in analylisList" :key="item.label" :label="item.label">
-                  {{ item.label }}
+                  <template v-if="item.label === '正确率'">{{ subjectTepmp?.examParse?.[item.key] }}%</template>
+                  <template v-else>{{ subjectTepmp?.examParse?.[item.key] }}</template>
                 </NDescriptionsItem>
               </NDescriptions>
               <div ref="fullPieRef" class="box-border w-full flex-1 pt-20px"></div>
@@ -203,61 +311,72 @@ onUnmounted(() => {
           <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title mb-16px flex items-center text-16px text-#000000 font-600">题目分布</div>
             <div class="flex-center flex-1">
-              <NDataTable :columns="seperateColumns" align="center" :data="data" bordered :single-line="false" />
+              <NDataTable :columns="seperateColumns" align="left" :data="questionData" bordered :single-line="false" />
             </div>
           </div>
         </div>
         <div class="line3 mt16px flex items-center">
-          <div class="boder-#D8D8D8 mr16px box-border h-330px flex flex-col flex-1 border rd-10px p24px">
+          <div class="boder-#D8D8D8 mr16px box-border min-h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title mb-16px text-16px text-#000000 font-600">评测结果综合评估知识点掌握度</div>
-            <div class="flex-center flex-1 of-hidden">
-              <NScrollbar class="w-full flex-1">
-                <div v-for="item in 10" :key="item" class="mb-12px flex flex-col">
-                  <div class="mi mb-16px text-14px">
-                    1.第二单元 万以内数的加法和减法(一) /两位数加两位数的口算方法(不进位)
-                  </div>
-                  <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
-                    <NDescriptionsItem block label="相关题目">
-                      <div class="flex items-center">
-                        <div
-                          class="mr-10px h-22px w-22px flex items-center justify-center border border-#0ECBCB rd-50% text-12px text-#0ECBCB"
-                        >
-                          16
-                        </div>
-                        <div
-                          class="mr-10px h-22px w-22px flex items-center justify-center border border-#0ECBCB rd-50% text-12px text-#0ECBCB"
-                        >
-                          16
-                        </div>
-                      </div>
-                    </NDescriptionsItem>
-                  </NDescriptions>
-                  <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
-                    <NDescriptionsItem block label="相关题目">
-                      <NProgress
-                        type="line"
-                        :percentage="50"
-                        :height="13"
-                        :show-indicator="false"
-                        color="#2FBF78"
-                        rail-color="#DBDCDF"
-                      ></NProgress>
-                    </NDescriptionsItem>
-                  </NDescriptions>
-                  <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
-                    <NDescriptionsItem block label="相关题目">
-                      <div class="flex items-center">
-                        <div class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#2FBF78 text-12px text-white">
-                          掌握
-                        </div>
-                      </div>
-                    </NDescriptionsItem>
-                  </NDescriptions>
+            <div class="flex-center flex-col flex-1 of-hidden">
+              <div v-for="item in synthesizeList" :key="item.no" class="mb-12px w-full flex flex-col flex-1">
+                <div class="mi mb-16px text-14px">
+                  {{ item.knowledgeName }}
                 </div>
-              </NScrollbar>
+                <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
+                  <NDescriptionsItem block label="相关题目">
+                    <div class="flex items-center">
+                      <div
+                        v-for="ele in item.questionIds"
+                        :key="ele"
+                        class="mr-10px h-22px w-22px flex items-center justify-center border border-#0ECBCB rd-50% text-12px text-#0ECBCB"
+                      >
+                        {{ ele }}
+                      </div>
+                    </div>
+                  </NDescriptionsItem>
+                </NDescriptions>
+                <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
+                  <NDescriptionsItem block label="正确率">
+                    <NProgress
+                      type="line"
+                      :percentage="item.rightRatio"
+                      :height="13"
+                      :show-indicator="false"
+                      color="#2FBF78"
+                      rail-color="#DBDCDF"
+                    ></NProgress>
+                  </NDescriptionsItem>
+                </NDescriptions>
+                <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
+                  <NDescriptionsItem block label="掌握程度">
+                    <div class="flex items-center">
+                      <div
+                        v-if="item.graspLevel === 3"
+                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#2FBF78 text-12px text-white"
+                      >
+                        <span>掌握</span>
+                      </div>
+                      <div
+                        v-if="item.graspLevel === 2"
+                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#FF9500 text-12px text-white"
+                      >
+                        <span>及格</span>
+                      </div>
+                      <div
+                        v-if="item.graspLevel === 1"
+                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#F0516D text-12px text-white"
+                      >
+                        <span>生疏</span>
+                      </div>
+                    </div>
+                  </NDescriptionsItem>
+                </NDescriptions>
+              </div>
             </div>
           </div>
-          <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
+          <!--
+ <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title mb-16px flex items-center text-16px text-#000000 font-600">知识点关系图</div>
             <div class="flex flex-col flex-1">
               <div class="mi mb-16px text-12px text-#666666">
@@ -274,6 +393,7 @@ onUnmounted(() => {
               />
             </div>
           </div>
+-->
         </div>
         <div class="line3 mt16px flex items-center">
           <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
@@ -288,6 +408,15 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
+        <NButton
+          type="primary"
+          class="btnbg my-48px h-40px !w-full !text-18px !font-600"
+          round
+          block
+          @click="routerPushByKey('classroom')"
+        >
+          返回首页
+        </NButton>
       </div>
     </main>
   </div>
@@ -297,37 +426,39 @@ onUnmounted(() => {
         <div class="flex flex-col items-center">
           <div class="almm titlebg mb-20px text-26px text-white">恭喜完成测试</div>
           <div class="mb5px text-14px">测试得分</div>
-          <div class="text-18px font-600">100</div>
+          <div class="text-18px font-600">{{ subjectTepmp?.examScore }}</div>
         </div>
         <div class="flex items-center">
           <div class="flex-1">
             <div class="flex items-center text-13px">
               <span>报告ID：</span>
-              <span>20240912849234</span>
+              <span>{{ subjectTepmp?.report }}</span>
             </div>
             <div class="my8px flex items-center text-13px">
               <span>科目：</span>
-              <span>数学</span>
+              <span>{{ subjectTepmp?.subject }}</span>
             </div>
             <div class="flex items-center text-13px">
               <span>用时：</span>
-              <span>177S</span>
+              <span>{{ subjectTepmp?.useTime }}</span>
             </div>
           </div>
-          <div class="flex-1">
+          <div class="ml-10px flex-1">
             <div class="flex items-center text-13px">
-              <span>日期：2024-09-10 14：42</span>
-              <span>2024-09-10 14：42</span>
+              <span>
+                日期：
+                <span>{{ subjectTepmp?.createTime }}</span>
+              </span>
             </div>
             <div class="my8px flex items-center text-13px">
               <span>测试范围：</span>
-              <span>数学</span>
+              <span>{{ subjectTepmp?.subject }}</span>
             </div>
           </div>
         </div>
         <div>
           <NButton class="mr10px rd-18px text-white" @click="capture">本机打印</NButton>
-          <NButton class="rd-18px text-white">微信分享</NButton>
+          <!-- <NButton class="rd-18px text-white">微信分享</NButton> -->
         </div>
       </div>
       <div ref="captureDiv" class="content w-full flex flex-col">
@@ -350,15 +481,17 @@ onUnmounted(() => {
               <span class="mi ml-13px text-12px text-#666666">T=Think D=Develop L=Learning Ability</span>
             </div>
             <div class="box-border flex-center flex-col flex-1 px-20px">
-              <div class="h-54px w-full flex-center rd-14px bg-#2CB6FF text-#ffffff">28.0</div>
+              <div class="h-54px w-full flex-center rd-14px bg-#2CB6FF text-#ffffff">
+                {{ subjectTepmp?.tdlTarget?.tdl }}
+              </div>
               <div class="mi mb-32px mt-5px text-12px text-#666666">TDL数值越高表示该环节的水平越高,最高值是30</div>
               <div class="grid grid-cols-3 w-full gap-x-16px">
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
-                  <div class="text-18px text-#2CB6FF font-600">115</div>
+                  <div class="text-18px text-#2CB6FF font-600">{{ subjectTepmp?.tdlTarget?.avgtime }}</div>
                   <div class="mi text-12px text-#666666">平均答题时间</div>
                 </div>
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
-                  <div class="text-18px text-#2CB6FF font-600">100.0%</div>
+                  <div class="text-18px text-#2CB6FF font-600">{{ subjectTepmp?.tdlTarget?.precision }}%</div>
                   <div class="mi text-12px text-#666666">正确率</div>
                 </div>
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
@@ -371,7 +504,7 @@ onUnmounted(() => {
                       color="#1A89EF"
                       rail-color="#DBDCDF"
                     >
-                      <div class="mi text-12px text-#666666">6/10</div>
+                      <div class="mi text-12px text-#666666">{{ subjectTepmp?.tdlTarget?.difficulty }}/10</div>
                     </NProgress>
                   </div>
                   <div class="mi mt6px text-12px text-#666666">平均难度</div>
@@ -386,99 +519,86 @@ onUnmounted(() => {
             <div class="w-full flex flex-col flex-1">
               <NDescriptions :column="1" label-align="center" class="w-full" label-placement="left" bordered>
                 <NDescriptionsItem v-for="item in analylisList" :key="item.label" :label="item.label">
-                  {{ item.label }}
+                  <template v-if="item.label === '正确率'">{{ subjectTepmp?.examParse?.[item.key] }}%</template>
+                  <template v-else>{{ subjectTepmp?.examParse?.[item.key] }}</template>
                 </NDescriptionsItem>
               </NDescriptions>
               <div ref="wechatPieRef" class="box-border w-full flex-1 pt-20px"></div>
             </div>
           </div>
         </div>
+
         <div class="line3 mt16px flex items-center">
           <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
-            <div class="title mb-16px flex items-center text-16px text-#000000 font-600">知识点关系图</div>
-            <div class="flex flex-col flex-1">
-              <NDataTable
-                class="gx flex-1"
-                :columns="createSubjectColumns()"
-                flex-height
-                align="left"
-                :data="data"
-                bordered
-                :single-line="false"
-              />
+            <div class="title mb-16px flex items-center text-16px text-#000000 font-600">题目分布</div>
+            <div class="flex-center flex-1">
+              <NDataTable :columns="seperateColumns" align="left" :data="questionData" bordered :single-line="false" />
             </div>
           </div>
         </div>
+
         <div class="line3 mt16px flex items-center">
-          <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
+          <div class="boder-#D8D8D8 box-border min-h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title mb-16px text-16px text-#000000 font-600">评测结果综合评估知识点掌握度</div>
-            <div class="flex-center flex-1 of-hidden">
-              <NScrollbar class="w-full flex-1">
-                <div v-for="item in 10" :key="item" class="mb-12px flex flex-col">
-                  <div class="mi mb-16px text-14px">
-                    1.第二单元 万以内数的加法和减法(一) /两位数加两位数的口算方法(不进位)
-                  </div>
-                  <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
-                    <NDescriptionsItem block label="相关题目">
-                      <div class="flex items-center">
-                        <div
-                          class="mr-10px h-22px w-22px flex items-center justify-center border border-#0ECBCB rd-50% text-12px text-#0ECBCB"
-                        >
-                          16
-                        </div>
-                        <div
-                          class="mr-10px h-22px w-22px flex items-center justify-center border border-#0ECBCB rd-50% text-12px text-#0ECBCB"
-                        >
-                          16
-                        </div>
-                      </div>
-                    </NDescriptionsItem>
-                  </NDescriptions>
-                  <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
-                    <NDescriptionsItem block label="相关题目">
-                      <NProgress
-                        type="line"
-                        :percentage="50"
-                        :height="13"
-                        :show-indicator="false"
-                        color="#2FBF78"
-                        rail-color="#DBDCDF"
-                      ></NProgress>
-                    </NDescriptionsItem>
-                  </NDescriptions>
-                  <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
-                    <NDescriptionsItem block label="相关题目">
-                      <div class="flex items-center">
-                        <div class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#2FBF78 text-12px text-white">
-                          掌握
-                        </div>
-                      </div>
-                    </NDescriptionsItem>
-                  </NDescriptions>
+            <div class="flex-center flex-col flex-1 of-hidden">
+              <div v-for="item in synthesizeList" :key="item.no" class="mb-12px w-full flex flex-col flex-1">
+                <div class="mi mb-16px text-14px">
+                  {{ item.knowledgeName }}
                 </div>
-              </NScrollbar>
-            </div>
-          </div>
-        </div>
-        <div class="line3 mt16px flex items-center">
-          <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
-            <div class="title mb-16px flex items-center text-16px text-#000000 font-600">知识点关系图</div>
-            <div class="flex flex-col flex-1">
-              <div class="mi mb-16px text-12px text-#666666">
-                *先打印计划、再学习巩固，最后在打印稿上记录下学习后的2次复测成绩，让你的进步随时可见
+                <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
+                  <NDescriptionsItem block label="相关题目">
+                    <div class="flex items-center">
+                      <div
+                        v-for="ele in item.questionIds"
+                        :key="ele"
+                        class="mr-10px h-22px w-22px flex items-center justify-center border border-#0ECBCB rd-50% text-12px text-#0ECBCB"
+                      >
+                        {{ ele }}
+                      </div>
+                    </div>
+                  </NDescriptionsItem>
+                </NDescriptions>
+                <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
+                  <NDescriptionsItem block label="正确率">
+                    <NProgress
+                      type="line"
+                      :percentage="item.rightRatio"
+                      :height="13"
+                      :show-indicator="false"
+                      color="#2FBF78"
+                      rail-color="#DBDCDF"
+                    ></NProgress>
+                  </NDescriptionsItem>
+                </NDescriptions>
+                <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
+                  <NDescriptionsItem block label="掌握程度">
+                    <div class="flex items-center">
+                      <div
+                        v-if="item.graspLevel === 3"
+                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#2FBF78 text-12px text-white"
+                      >
+                        <span>掌握</span>
+                      </div>
+                      <div
+                        v-if="item.graspLevel === 2"
+                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#FF9500 text-12px text-white"
+                      >
+                        <span>及格</span>
+                      </div>
+                      <div
+                        v-if="item.graspLevel === 1"
+                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#F0516D text-12px text-white"
+                      >
+                        <span>生疏</span>
+                      </div>
+                    </div>
+                  </NDescriptionsItem>
+                </NDescriptions>
               </div>
-              <NDataTable
-                class="gx flex-1"
-                :columns="createColumns()"
-                flex-height
-                align="left"
-                :data="data"
-                bordered
-                :single-line="false"
-              />
             </div>
           </div>
         </div>
+
         <div class="line3 mt16px flex items-center">
           <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title mb-16px flex items-center text-16px text-#000000 font-600">
@@ -515,9 +635,9 @@ onUnmounted(() => {
   align-items: center !important;
   justify-content: center !important;
 }
-:deep(.n-data-table-th__title) {
+/* :deep(.n-data-table-th__title) {
   text-align: center;
-}
+} */
 :deep(.n-data-table-th) {
   background-color: #eff7fe !important;
 }
@@ -531,5 +651,13 @@ onUnmounted(() => {
 }
 :deep(.gx .n-data-table-th__title) {
   text-align: left;
+}
+:deep(.btnbg) {
+  background: linear-gradient(180deg, #2cb6ff 10%, #a1ecff 100%), #d8d8d8;
+  --n-border: 1px solid transparent !important;
+  --n-border-hover: 1px solid transparent !important;
+  --n-border-pressed: 1px solid transparent !important;
+  --n-border-focus: 1px solid transparent !important;
+  --n-border-disabled: 1px solid transparent !important;
 }
 </style>

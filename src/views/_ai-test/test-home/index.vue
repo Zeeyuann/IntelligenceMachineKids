@@ -90,8 +90,8 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="testbg box-border px-230px py-16px text-#000000">
-    <main class="box-border size-full flex flex-col items-center rd-10px bg-white px-330px py-40px">
+  <div class="testbg box-border px-100px py-16px text-#000000 lg:px-80px sm:px-50px xl:px-230px">
+    <main class="box-border size-full flex flex-col items-center rd-10px bg-white px-330px py-40px sm:px-50px">
       <div class="mi mb-50px text-24px text-#2CB6FF font-600">{{ title }}</div>
       <!-- 学期 -->
       <div class="mb-32px w-full flex flex-col">

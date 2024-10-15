@@ -22,6 +22,7 @@ function renderXgPlayer() {
     poster: props.poster,
     playbackRate: [0.5, 0.75, 1, 1.5, 2],
     width: '100%',
+    autoplay: true,
     height: '100%'
   });
   player.value.on(Events.ENDED, () => {
@@ -35,12 +36,10 @@ function destroyXgPlayer() {
   player.value?.destroy();
 }
 watch([() => props.url, () => props.poster], ([url, poster]) => {
-  console.log('🚀 ~ watch ~ url:', url);
-  player.value?.setConfig({
+  player.value?.playNext({
     url,
     poster
   });
-  player.value?.play();
 });
 onMounted(() => {
   renderXgPlayer();

@@ -1,10 +1,24 @@
 <script lang="ts" setup>
 import type { UploadFileInfo, UploadInst } from 'naive-ui';
 import { useLoading } from '@sa/hooks';
+import InfiniteLoading from 'v3-infinite-loading';
 import { useUpload } from '@/hooks/common/upload';
-import { fetchArticle } from '@/service/api';
+import { fetchArticle, getConversationList } from '@/service/api';
 import { useFileStore } from '@/store/modules/file/index';
 import { markedRender } from '@/utils/highlight';
+import { audioInstance, initializeAudio } from '@/utils/audio';
+import 'v3-infinite-loading/lib/style.css';
+
+const playAudio = async (content: string) => {
+  await initializeAudio(content);
+
+  if (audioInstance.value) {
+    audioInstance.value();
+  } else {
+    console.error('音频未加载或播放方法不可用');
+  }
+};
+
 const { list, customUploadFile, handleRemove } = useUpload();
 
 const { loading, startLoading, endLoading } = useLoading();
@@ -170,6 +184,29 @@ if (hasQuery) {
   handleGenerateFromHome(temp);
 }
 
+const textHistory = ref<any>([]);
+const query = reactive({
+  page: 1,
+  pageSize: 10
+});
+// 绘图列表
+const stateInstance = ref<any>(null);
+
+const hanldeLoad = async (state: any) => {
+  stateInstance.value = state;
+  const { data, error } = await getConversationList(query);
+  if (!error) {
+    textHistory.value.push(...data.data);
+    if (data.data.length < query.pageSize) state.complete();
+    else {
+      state.loaded();
+    }
+    query.page += 1;
+  } else {
+    state.error();
+  }
+};
+
 onMounted(() => {});
 </script>
 
@@ -206,26 +243,45 @@ onMounted(() => {});
                   <icon-local-close class="cursor-pointer" @click="drawActice = false" />
                 </div>
               </template>
-              <div class="box-border w-full">
+              <div v-if="drawActice" class="box-border size-full flex flex-col of-y-auto">
                 <div
-                  v-for="item in 10"
-                  :key="item"
+                  v-for="item in textHistory"
+                  :key="item.id"
                   class="hisitem mb-10px box-border w-full flex flex-col cursor-pointer border border-#DADADA rd-14px p-16px"
                 >
                   <div class="mi text-14px font-500">
-                    请帮我写一首关于春天的作文，要重点描述春天的绿色和花朵的鲜艳。
+                    {{ item.title }}
                   </div>
-                  <div class="flex items-center">
-                    <div
+                  <div class="my-10px flex items-center">
+                    <!--
+ <div
                       class="mi my-10px mr-8px flex items-center justify-center rd-14px bg-#F5F8F7 px-10px py5px text-12px"
                     >
                       写景
                     </div>
+-->
                   </div>
                   <div class="mi line-clamp-3 text-12px text-#666666 line-height-20px">
-                    请帮我写一首关于春天的作文，要重点描述春天的绿色和花朵的鲜艳。请帮我写一首关于春天的作文，要重点描述春天的绿色和花朵的鲜艳。请帮我写一首关于春天的作文，要重点描述春天的绿色和花朵的鲜艳。请帮我写一首关于春天的作文，要重点描述春天的绿色和花朵的鲜艳。
+                    {{ item.content }}
                   </div>
                 </div>
+                <InfiniteLoading
+                  v-if="drawActice"
+                  class="mi flex items-center justify-center text-#181818"
+                  @infinite="hanldeLoad"
+                >
+                  <template #complete>
+                    <span class="text-16px text-#9E9E9E font-500">
+                      {{ textHistory.length === 0 ? '您还没有记录' : '没有更多啦!' }}
+                    </span>
+                  </template>
+                  <template #error="{ retry }">
+                    <div class="flex flex-col items-center">
+                      <span class="mb-5px text-16px text-#9E9E9E font-500">啊哦,加载绘图记录出了点问题~</span>
+                      <NButton @click="retry">重试</NButton>
+                    </div>
+                  </template>
+                </InfiniteLoading>
               </div>
             </NDrawerContent>
           </NDrawer>
@@ -278,6 +334,13 @@ onMounted(() => {});
                 @click="handleCopy(item.content)"
               >
                 <icon-local-copy-write class="scale-100" />
+              </NButton>
+              <NButton
+                class="box-border rd-14px text-18px text-#181818 font-600 !h-54px !w-54px !border-none !bg-white"
+                size="large"
+                @click="playAudio(item.content)"
+              >
+                <icon-local-playaudio class="scale-100" />
               </NButton>
             </div>
             <div v-if="false" class="mb-16px border-b border-b-#E6E6E6"></div>

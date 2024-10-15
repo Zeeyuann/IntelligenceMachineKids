@@ -57,8 +57,12 @@ const handleNext = () => {
 };
 
 const handleSubmit = async () => {
+  if (!selectValue.value) {
+    window.$message?.info('请选择答案哦');
+    return;
+  }
   console.log(subjectStore.answerList);
-  routerPushByKey('test-report');
+  routerPushByKey('test-report', { query: { time: `${stop() * 1000}` } });
   return;
 
   const data = {

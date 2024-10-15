@@ -154,7 +154,7 @@ const local: App.I18n.Schema = {
     500: '服务器错误',
     'iframe-page': '外链页面',
     home: '系统首页',
-    classroom: '智慧课堂',
+    classroom: '智学课堂',
     write: '文本创作',
     paint: '智能绘图',
     'write-chat': '文本创作',
@@ -164,7 +164,7 @@ const local: App.I18n.Schema = {
     'test-home': 'AI精准测',
     'test-subject': '测试答题',
     'test-report': '测试报告',
-    study: '智慧课堂'
+    study: '智学课堂'
   },
   page: {
     login: {

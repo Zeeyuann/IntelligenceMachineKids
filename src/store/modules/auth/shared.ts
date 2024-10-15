@@ -20,7 +20,8 @@ export function getUserInfoPreisit() {
       name: '',
       sex: 0,
       status: 0,
-      user_id: 0
+      user_id: 0,
+      vip_time: 0
     }
   );
 }

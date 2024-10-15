@@ -51,7 +51,9 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
       // when the backend response code is in `logoutCodes`, it means the user will be logged out and redirected to login page
       const logoutCodes = import.meta.env.VITE_SERVICE_LOGOUT_CODES?.split(',') || [];
       if (logoutCodes.includes(responseCode)) {
-        handleLogout();
+        await authStore.resetStore();
+        authStore.token = '';
+        authStore.offSpriingId = '';
         window.$message?.info('登录已过期,请重新登录');
         return null;
       }

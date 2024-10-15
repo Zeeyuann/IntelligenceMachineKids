@@ -68,6 +68,7 @@ declare namespace Api {
       sex: number;
       status: number;
       user_id: number;
+      vip_time: number;
     }
 
     interface LoginToken {

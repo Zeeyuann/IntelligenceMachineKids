@@ -17,7 +17,7 @@ onMounted(() => {
           id: 'login_container',
           appid: 'wxfc5b5aaa55283fc2',
           scope: 'snsapi_login',
-          redirect_uri: encodeURI('http://192.168.0.44:9527'),
+          redirect_uri: encodeURI('https://yuanchuang.superxi.cn/'),
           state: '',
           style: 'black',
           href: '',

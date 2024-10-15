@@ -21,17 +21,19 @@ export const useSubjectStore = defineStore(
     };
 
     const handleAddAnswer = (val: any, index: any, question: any) => {
+      console.log('🚀 ~ handleAddAnswer ~ val:', val);
       console.log('🚀 ~ handleAddAnswer ~ question:', question);
       const { knowledgeId, questionId, diffLevel, questionOptions } = question;
       const item = questionOptions.find((ele: any) => ele.optionContent === val);
       const obj = {
         knowledgeId,
         questionId,
-        isRight: item.isRight,
+        isRight: Number(item.isRight),
         level: diffLevel,
         userAnswer: val,
         time: 10
       };
+      console.log('🚀 ~ handleAddAnswer ~ obj:', obj);
       answerList.value[index] = obj;
       // const index = answerList.value.findIndex((item: any) => item === val);
       // if (index !== -1) {

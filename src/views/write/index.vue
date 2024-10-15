@@ -87,7 +87,7 @@ const goWriteComposition = (item: any) => {
           class="boxitem box-border h-80px w-95% flex cursor-pointer items-center border border-[#DADADA] rd-14px border-solid bg-white p-12px shadow-md transition-all transition-duration-300 ease hover:border-[#BAFD00]"
           @click="goWriteChatByitem(item)"
         >
-          <img :src="item.icon" class="mr-10px h-46px w-46px rd-50%" alt="" />
+          <img :src="item.icon" class="mr-10px h-46px w-46px" alt="" />
           <div>
             <div class="text-16px font-600">{{ item.title }}</div>
             <div class="text-14px text-#9E9E9E">{{ item.description }}</div>

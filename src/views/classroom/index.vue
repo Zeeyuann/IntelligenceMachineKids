@@ -8,7 +8,7 @@ const { routerPushByKey } = useRouterPush();
 const authStore = useAuthStore();
 
 const rules = {
-  gradeId: { required: true, message: '请选择班级' },
+  gradeId: { required: true, message: '请选择年级' },
   subjectId: { required: true, message: '请选科目' },
   pressName: { required: true, message: '请选择版本' },
   value4: { required: true, message: '请选择难度' }

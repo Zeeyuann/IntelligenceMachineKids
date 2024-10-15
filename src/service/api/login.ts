@@ -23,7 +23,7 @@ export function fetchLogin(mobile: string, code: string) {
 
 export function wxCodeLogin(code: string) {
   return request<Api.Auth.token>({
-    url: 'aiweb/login',
+    url: 'aiweb/codelogin',
     method: 'post',
     data: {
       code

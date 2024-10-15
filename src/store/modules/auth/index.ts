@@ -7,9 +7,11 @@ import { fetchLogin, fetchOffSpringId, fetchUserInfo, wxCodeLogin } from '@/serv
 import { localStg } from '@/utils/storage';
 import { $t } from '@/locales';
 import { useLoginTypeStoreWithOut } from '@/store/modules/login';
+import { store } from '@/store';
 import { useRouteStore } from '../route';
 import { useTabStore } from '../tab';
 import { clearAuthStorage, getOffSpriingId, getToken, getUserInfoPreisit } from './shared';
+
 const LoginTypeStoreWithOut = useLoginTypeStoreWithOut();
 export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   // const route = useRoute();
@@ -56,7 +58,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
       name: '',
       sex: 0,
       status: 0,
-      user_id: 0
+      user_id: 0,
+      vip_time: 0
     });
 
     authStore.$reset();
@@ -85,7 +88,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
       const { data: offSpriingid, error: err } = await fetchOffSpringId();
       if (!err) {
         Object.assign(kidList, offSpriingid);
-        localStg.set('kidList', kidList);
+        localStg.set('kidList', offSpriingid);
       }
     } else {
       resetStore();
@@ -104,7 +107,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
       const { data: offSpriingid, error: err } = await fetchOffSpringId();
       if (!err) {
         Object.assign(kidList, offSpriingid);
-        localStg.set('kidList', kidList);
+        localStg.set('kidList', offSpriingid);
       }
     } else {
       resetStore();
@@ -172,3 +175,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     initUserInfo
   };
 });
+// Need to be used outside the setup
+export function useAuthStoreWithOut() {
+  return useAuthStore(store);
+}

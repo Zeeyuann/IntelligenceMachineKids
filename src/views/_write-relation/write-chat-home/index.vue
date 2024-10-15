@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import { useRouterPush } from '@/hooks/common/router';
 import { useUpload } from '@/hooks/common/upload';
+import { useAuthStore } from '@/store/modules/auth';
 const { routerPushByKey } = useRouterPush();
+const authStore = useAuthStore();
+
 const { list, fileName, customUploadFile, handleRemove } = useUpload();
 
 const route = useRoute();
@@ -18,6 +22,11 @@ const prompt = ref('');
 const fileList = ref<any>(list.value);
 
 const hanldInput = () => {
+  if (authStore.userInfo.vip_time < dayjs().valueOf()) {
+    window?.$message?.error('抱歉,您没有使用权限');
+    return;
+  }
+
   if (!prompt.value.trim()) {
     window?.$message?.info('请输入内容');
     return;

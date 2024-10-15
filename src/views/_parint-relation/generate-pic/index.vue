@@ -174,6 +174,11 @@ const handleRest = () => {
 };
 
 async function handleSubmit() {
+  if (authStore.userInfo.vip_time < dayjs().valueOf()) {
+    window?.$message?.error('抱歉,您没有使用权限');
+    return;
+  }
+
   await validate();
 
   startLoading();
@@ -205,6 +210,10 @@ async function handleSubmit() {
         endLoading();
       }
     }, 1000);
+  } else {
+    handleRestList();
+    stop();
+    endLoading();
   }
 }
 </script>
@@ -419,7 +428,7 @@ async function handleSubmit() {
       <div class="mt-20px flex items-center justify-between">
         <div class="flex items-center">
           <icon-local-point />
-          <span class="ml3px text-16px font-500">890点</span>
+          <span class="ml3px text-16px font-500">0点</span>
         </div>
         <div class="flex items-center">
           <NButton
@@ -438,7 +447,7 @@ async function handleSubmit() {
           >
             <div class="text-#E5FF7D">
               {{ loading ? '生成中' : '立即生成' }}
-              <span class="text-12px text-#E5FF7D">（消耗3个点）</span>
+              <span class="text-12px text-#E5FF7D">（消耗0个点）</span>
             </div>
           </NButton>
         </div>

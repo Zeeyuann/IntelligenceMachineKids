@@ -109,7 +109,7 @@ export const fullPieOptions: ECOption = {
     left: 'right',
     align: 'left',
     top: 'center',
-    data: ['立方根', '平方根', '算术平方根', '计算器-数的开方', '非负数的性质:算数平方根']
+    data: []
     // formatter(name) {
     //   return name;
     // }
@@ -143,11 +143,11 @@ export const fullPieOptions: ECOption = {
         show: false
       },
       data: [
-        { value: 25, name: '立方根', itemStyle: { color: '#ff6b6b' } },
-        { value: 15, name: '平方根', itemStyle: { color: '#4dabf7' } },
-        { value: 20, name: '算术平方根', itemStyle: { color: '#74c0fc' } },
-        { value: 18, name: '计算器-数的开方', itemStyle: { color: '#c084fc' } },
-        { value: 22, name: '非负数的性质:算数平方根', itemStyle: { color: '#38d9a9' } }
+        { value: 25, name: '', itemStyle: { color: '#ff6b6b' } },
+        { value: 15, name: '', itemStyle: { color: '#4dabf7' } },
+        { value: 20, name: '', itemStyle: { color: '#74c0fc' } },
+        { value: 18, name: '', itemStyle: { color: '#c084fc' } },
+        { value: 22, name: '', itemStyle: { color: '#38d9a9' } }
       ]
     }
   ]
@@ -174,7 +174,7 @@ export const chatPieOptions: ECOption = {
     align: 'auto',
     top: 'top',
     padding: [10, 0, 100, 0],
-    data: ['立方根', '平方根', '算术平方根', '计算器-数的开方', '非负数的性质:算数平方根']
+    data: []
     // formatter(name) {
     //   return name;
     // }
@@ -208,11 +208,11 @@ export const chatPieOptions: ECOption = {
         show: false
       },
       data: [
-        { value: 25, name: '立方根', itemStyle: { color: '#ff6b6b' } },
-        { value: 15, name: '平方根', itemStyle: { color: '#4dabf7' } },
-        { value: 20, name: '算术平方根', itemStyle: { color: '#74c0fc' } },
-        { value: 18, name: '计算器-数的开方', itemStyle: { color: '#c084fc' } },
-        { value: 22, name: '非负数的性质:算数平方根', itemStyle: { color: '#38d9a9' } }
+        { value: 0, name: '', itemStyle: { color: '#ff6b6b' } },
+        { value: 0, name: '', itemStyle: { color: '#4dabf7' } },
+        { value: 0, name: '', itemStyle: { color: '#74c0fc' } },
+        { value: 0, name: '', itemStyle: { color: '#c084fc' } },
+        { value: 0, name: '', itemStyle: { color: '#38d9a9' } }
       ]
     }
   ]
@@ -238,7 +238,7 @@ export const lineOption: ECOption = {
     icon: 'circle',
     align: 'left',
     left: 'right',
-    data: ['本次测试']
+    data: ['本次测试', '下次测试']
     // formatter(name) {
     //   return name;
     // }
@@ -246,7 +246,7 @@ export const lineOption: ECOption = {
   xAxis: [
     {
       type: 'category',
-      data: ['本次测试'],
+      data: ['测试结果'],
       axisTick: {
         alignWithLabel: true
       }
@@ -261,7 +261,12 @@ export const lineOption: ECOption = {
     {
       name: '本次测试',
       type: 'bar',
-      data: [100]
+      data: []
+    },
+    {
+      name: '下次测试',
+      type: 'bar',
+      data: []
     }
   ]
 };

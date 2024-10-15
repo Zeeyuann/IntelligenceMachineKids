@@ -12,18 +12,27 @@ const isVerify = ref(false);
   const { data: verify, error: err } = await subjectVerify('1');
   if (!err) {
     console.log('🚀 ~ verify:', verify);
-    isVerify.value = verify;
+    isVerify.value = true;
+  } else {
+    isVerify.value = false;
   }
   const { data, error } = await subjectDetail('1');
   if (!error) {
     console.log('🚀 ~ data:', data);
     subjectInfo.value = data;
+    if (!isVerify.value) return;
     activeVideo.value = data.course[0].courses[0];
   }
 })();
 
 const handlePlay = (item: any) => {
+  console.log('🚀 ~ handlePlay ~ isVerify:', isVerify);
+
+  if (!isVerify.value) {
+    return;
+  }
   activeVideo.value = item;
+  console.log(1);
 };
 </script>
 
@@ -33,7 +42,7 @@ const handlePlay = (item: any) => {
       SuperX AI学院
     </div>
     <main class="box-border w-full flex flex-col flex-1 px-160px py-32px text-#ffffff">
-      <div class="mb-20px text-20px font-600">队长营线上AI培训师(协议版)</div>
+      <div class="mb-20px text-20px font-600">{{ subjectInfo.name }}</div>
       <div class="w-full flex flex-1">
         <div class="box-border h-full flex-1">
           <VideoPlayer
@@ -92,14 +101,14 @@ const handlePlay = (item: any) => {
               >
                 <div class="line-clamp-1 flex-1 text-#ffffff">{{ ele.title }}</div>
                 <div
-                  v-if="videoStore.finishList.includes(ele.title)"
+                  v-if="isVerify && videoStore.finishList.includes(ele.title)"
                   :style="{ background: 'linear-gradient(117deg, #F0FF77 13%, #DDFF8D 88%)' }"
                   class="h-21px w-52px flex items-center justify-center rd-100px text-#181818"
                 >
                   已学习
                 </div>
                 <div
-                  v-else
+                  v-if="isVerify && !videoStore.finishList.includes(ele.title)"
                   class="h-21px w-52px flex items-center justify-center rd-100px"
                   :style="{ color: 'rgba(255, 255, 255, 0.85)', border: '1px solid rgba(255, 255, 255, 0.1)' }"
                 >

@@ -51,7 +51,7 @@ const getCodeMes = async () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   getCodeMes();
 });
 </script>
