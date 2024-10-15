@@ -54,6 +54,14 @@ export function getAgentLists(data: any = {}) {
     data
   });
 }
+
+export function evaluateReport(evaluateId: string | number) {
+  return request<any>({
+    url: 'aiweb/evaluate/report',
+    method: 'post',
+    data: { evaluateId }
+  });
+}
 export function fetchAgentSysuser(data: any = {}) {
   return request<any>({
     url: 'aiweb/airecord/getsysuser',
@@ -76,6 +84,38 @@ export function conversation(data: any = {}) {
   });
 }
 
+export function fetchTtsId(context: string) {
+  return request<any>({
+    url: '/tts',
+    method: 'post',
+    data: { context }
+  });
+}
+
+export function fetchAudio(fileid: string) {
+  return request<any>({
+    url: '/downmp3',
+    method: 'get',
+    params: { fileid }
+  });
+}
+
+export function getConversationList(data: any = {}) {
+  return request<any>({
+    url: 'aiweb/airecord/getconversationlist',
+    method: 'post',
+    data
+  });
+}
+
+export function getChatrecordsList(data: any = {}) {
+  return request<any>({
+    url: 'aiweb/airecord/getchatrecordslist',
+    method: 'post',
+    data
+  });
+}
+
 export function upLoadFile(data: any) {
   return request<any>({
     url: 'openness/upimgs',
@@ -86,6 +126,7 @@ export function upLoadFile(data: any) {
     method: 'post'
   });
 }
+
 export function upLoadFiles(data: any) {
   return request<any>({
     url: 'openness/upfiles',
