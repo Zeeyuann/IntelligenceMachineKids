@@ -125,6 +125,16 @@ watch([() => model.gradeId, () => model.subjectId], async ([gid, sid]) => {
 const go = () => {
   routerPushByKey('study');
 };
+
+const view = ref();
+
+const intoView = () => {
+  view.value.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center'
+  });
+};
+
 async function handleSubmit() {
   console.log(model);
   console.log(FORM_LIST);
@@ -141,11 +151,28 @@ async function handleSubmit() {
       <div class="text-60px text-#0B0B0B font-400">王队长成长营</div>
       <div class="title almm text-65px font-700">家长和孩子的第一堂AI课</div>
       <div class="text-34px text-#000000 font-400">基于元创AI,智能高效全能问答</div>
-      <NButton type="primary" class="global-btn my-48px h-68px !w-233px !text-22px !font-600" round block @click="go">
-        开始学习
-      </NButton>
+      <div class="flex items-center">
+        <NButton
+          type="primary"
+          class="global-btn my-48px mr-40px h-68px !w-233px !text-22px !font-600"
+          round
+          block
+          @click="go"
+        >
+          开始学习
+        </NButton>
+        <NButton
+          type="primary"
+          class="global-btn my-48px h-68px !w-233px !text-22px !font-600"
+          round
+          block
+          @click="intoView"
+        >
+          AI精准测
+        </NButton>
+      </div>
     </header>
-    <main class="contentbg box-border flex flex-col items-center justify-center">
+    <main ref="view" class="contentbg box-border flex flex-col items-center justify-center">
       <div class="text-65px text-#2a2a2a font-700">AI精准测</div>
       <div class="mb-70px mt-16px text-24px text-#3d3d3d font-400">精准识别学科知识薄弱点，查漏补缺助学习</div>
       <div class="w-614px">

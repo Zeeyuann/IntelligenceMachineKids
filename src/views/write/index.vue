@@ -32,7 +32,7 @@ const roleList: any = ref([]);
     const { data: user, error: usererr } = await aiSysUser();
     if (!usererr) {
       console.log('🚀 ~ user:', user);
-      roleList.value = user.filter((item: any) => item.title === '心灵导师' || item.title === '小凯助手');
+      roleList.value = user.filter((item: any) => item.title === '小凯助手');
     }
   }
   const { data, error } = await getAgentLists();
@@ -41,6 +41,15 @@ const roleList: any = ref([]);
     console.log('🚀 ~ config:', config);
   }
 })();
+
+const view = ref();
+
+const intoView = () => {
+  view.value.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center'
+  });
+};
 
 const goWriteChatByitem = (item?: any) => {
   if (item) {
@@ -66,7 +75,6 @@ const goWriteComposition = (item: any) => {
           v-for="item in roleList"
           :key="item.id"
           type="primary"
-          :class="{ 'ml-48px': item.id === 5 }"
           class="global-btn my-88px h-80px !w-197px !text-22px !font-600"
           round
           block
@@ -74,9 +82,18 @@ const goWriteComposition = (item: any) => {
         >
           {{ item.title }}
         </NButton>
+        <NButton
+          type="primary"
+          class="global-btn my-88px ml-48px h-80px !w-197px !text-22px !font-600"
+          round
+          block
+          @click="intoView"
+        >
+          学科智能体
+        </NButton>
       </div>
     </header>
-    <main class="contentbg box-border flex flex-col flex-1 items-center pb-50px pt-161px">
+    <main ref="view" class="contentbg box-border flex flex-col flex-1 items-center pb-50px pt-161px">
       <div class="text-65px text-#2a2a2a font-700">学科智能体</div>
       <div class="mb-70px mt-16px text-24px text-#3d3d3d font-400">塑造未来教育：智能体在学科教学中的创新应用</div>
       <!-- ref="role" -->
