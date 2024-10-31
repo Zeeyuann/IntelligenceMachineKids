@@ -25,7 +25,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
 
   const userInfo: Api.Auth.offSpriingId = reactive(getUserInfoPreisit());
 
-  const kidList: Api.Auth.offSpriingId[] | [] = reactive(localStg.get('kidList') || []);
+  const kidList: any = ref([]);
 
   /** is super role in static route */
   // const isStaticSuper = computed(() => {
@@ -46,6 +46,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     token.value = '';
 
     offSpriingId.value = '';
+
+    kidList.value = [];
 
     Object.assign(userInfo, {
       avatar: '',
@@ -87,8 +89,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
       token.value = loginToken;
       const { data: offSpriingid, error: err } = await fetchOffSpringId();
       if (!err) {
-        Object.assign(kidList, offSpriingid);
-        localStg.set('kidList', offSpriingid);
+        kidList.value = offSpriingid;
       }
     } else {
       resetStore();
@@ -106,8 +107,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
       token.value = loginToken;
       const { data: offSpriingid, error: err } = await fetchOffSpringId();
       if (!err) {
-        Object.assign(kidList, offSpriingid);
-        localStg.set('kidList', offSpriingid);
+        kidList.value = offSpriingid;
       }
     } else {
       resetStore();
@@ -117,13 +117,13 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   }
 
   async function getUserInfo(chooseIndex: number) {
-    const osid = kidList[chooseIndex].id;
+    const osid = kidList.value[chooseIndex].id;
     const { data: info, error } = await fetchUserInfo(osid);
 
     if (!error) {
-      localStg.set('Offspriingid', String(kidList[chooseIndex].id));
+      localStg.set('Offspriingid', String(kidList.value[chooseIndex].id));
       localStg.set('UserInfo', info);
-      offSpriingId.value = String(kidList[chooseIndex].id);
+      offSpriingId.value = String(kidList.value[chooseIndex].id);
 
       // update store
       Object.assign(userInfo, info);

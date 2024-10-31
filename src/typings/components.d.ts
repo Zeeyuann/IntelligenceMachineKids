@@ -19,7 +19,6 @@ declare module 'vue' {
     IconGridiconsFullscreenExit: typeof import('~icons/gridicons/fullscreen-exit')['default']
     'IconLetsIcons:sadLight': typeof import('~icons/lets-icons/sad-light')['default']
     IconLocalAdjust: typeof import('~icons/local/adjust')['default']
-    IconLocalAiwdz: typeof import('~icons/local/aiwdz')['default']
     IconLocalChooseKid: typeof import('~icons/local/choose-kid')['default']
     IconLocalClock: typeof import('~icons/local/clock')['default']
     IconLocalClose: typeof import('~icons/local/close')['default']
