@@ -231,7 +231,7 @@ async function handleSubmit() {
               <!-- title   -->
               <div class="flex items-center">
                 <icon-local-require />
-                <span class="mx-5px text-14px">正向画面描述</span>
+                <span class="mx-5px text-14px text-#181818">正向画面描述</span>
                 <icon-local-tooltip />
               </div>
               <!-- 介绍 -->
@@ -263,7 +263,7 @@ async function handleSubmit() {
               <!-- title   -->
               <div class="flex items-center">
                 <icon-local-require />
-                <span class="mx-5px text-14px">LORA风格选择</span>
+                <span class="mx-5px text-14px text-#181818">LORA风格选择</span>
                 <icon-local-tooltip />
               </div>
               <!-- 风格 -->
@@ -299,7 +299,7 @@ async function handleSubmit() {
               <!-- title   -->
               <div class="flex items-center">
                 <icon-local-require />
-                <span class="mx-5px text-14px">负向画面描述</span>
+                <span class="mx-5px text-14px text-#181818">负向画面描述</span>
                 <icon-local-tooltip />
               </div>
               <!-- 提示词 -->
@@ -321,7 +321,7 @@ async function handleSubmit() {
               <!-- title   -->
               <div class="flex items-center">
                 <icon-local-require />
-                <span class="mx-5px text-14px">参考图片</span>
+                <span class="mx-5px text-14px text-#181818">参考图片</span>
                 <icon-local-tooltip />
               </div>
               <!-- 参考图片 -->
@@ -342,7 +342,7 @@ async function handleSubmit() {
               <!-- title   -->
               <div class="flex items-center">
                 <icon-local-require />
-                <span class="mx-5px text-14px">请选择图片尺寸</span>
+                <span class="mx-5px text-14px text-#181818">请选择图片尺寸</span>
                 <icon-local-tooltip />
               </div>
               <!-- 图片尺寸 -->
@@ -362,7 +362,7 @@ async function handleSubmit() {
                       }"
                       class="rd-6px bg-#DDDDDD transition-all transition-duration-300 ease-in"
                     ></div>
-                    <div>{{ item.label }}</div>
+                    <div class="text-#181818">{{ item.label }}</div>
                   </div>
                 </div>
               </NFormItem>
@@ -372,7 +372,7 @@ async function handleSubmit() {
               <!-- title   -->
               <div class="flex items-center">
                 <icon-local-require />
-                <span class="mx-5px text-14px">模型选择</span>
+                <span class="mx-5px text-14px text-#181818">模型选择</span>
                 <icon-local-tooltip />
               </div>
               <!-- 模型选择 -->
@@ -394,7 +394,7 @@ async function handleSubmit() {
               <!-- title   -->
               <div class="flex items-center">
                 <icon-local-require />
-                <span class="mx-5px text-14px">请设置提示词相关性</span>
+                <span class="mx-5px text-14px text-#181818">请设置提示词相关性</span>
                 <icon-local-tooltip />
               </div>
               <!-- 提示词相关性 -->
@@ -410,7 +410,7 @@ async function handleSubmit() {
               <!-- title   -->
               <div class="flex items-center">
                 <icon-local-require />
-                <span class="mx-5px text-14px">图片质量 --q</span>
+                <span class="mx-5px text-14px text-#181818">图片质量 --q</span>
                 <icon-local-tooltip />
               </div>
               <!-- 提示词相关性 -->
@@ -428,7 +428,7 @@ async function handleSubmit() {
       <div class="mt-20px flex items-center justify-between">
         <div class="flex items-center">
           <icon-local-point />
-          <span class="ml3px text-16px font-500">0点</span>
+          <span class="ml3px text-16px text-#181818 font-500">0点</span>
         </div>
         <div class="flex items-center">
           <NButton

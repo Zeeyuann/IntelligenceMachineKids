@@ -32,7 +32,7 @@ const roleList: any = ref([]);
     const { data: user, error: usererr } = await aiSysUser();
     if (!usererr) {
       console.log('🚀 ~ user:', user);
-      roleList.value = user.filter((item: any) => item.title === '小凯助手');
+      roleList.value = user.filter((item: any) => item.title === '小凯智能机器人');
     }
   }
   const { data, error } = await getAgentLists();
@@ -67,37 +67,42 @@ const goWriteComposition = (item: any) => {
 
 <template>
   <DarkModeContainer class="flex-center flex-col p-unset">
-    <header class="bg box-border flex flex-col items-center justify-center">
-      <div class="title text-80px text-#0B0B0B font-700">孩子的AI好朋友</div>
-      <div class="text-26px font-400">和AI一起分享你的故事吧</div>
-      <div class="flex items-center">
-        <NButton
-          v-for="item in roleList"
-          :key="item.id"
-          type="primary"
-          class="global-btn my-88px h-80px !w-197px !text-22px !font-600"
-          round
-          block
-          @click="goWriteComposition(item)"
-        >
-          {{ item.title }}
-        </NButton>
-        <NButton
-          type="primary"
-          class="global-btn my-88px ml-48px h-80px !w-197px !text-22px !font-600"
-          round
-          block
-          @click="intoView"
-        >
-          学科智能体
-        </NButton>
+    <header class="bg box-border flex flex-col items-center justify-center lg:h-770px xl:h-860px lg:!bg-center">
+      <div class="size-full flex flex-col scale-50 items-center justify-center lg:scale-90 xl:scale-100">
+        <div class="title text-80px text-#0B0B0B font-700">AI辅学 智慧成长</div>
+        <div class="text-26px font-400">用AI帮你更好掌握学科知识，提高综合能力</div>
+        <div class="flex items-center">
+          <NButton
+            v-for="item in roleList"
+            :key="item.id"
+            type="primary"
+            class="global-btn my-88px h-80px !w-197px !text-22px !font-600"
+            round
+            block
+            @click="goWriteComposition(item)"
+          >
+            {{ item.title }}
+          </NButton>
+          <NButton
+            type="primary"
+            class="global-btn my-88px ml-48px h-80px !w-197px !text-22px !font-600"
+            round
+            block
+            @click="intoView"
+          >
+            学科智能体
+          </NButton>
+        </div>
       </div>
     </header>
     <main ref="view" class="contentbg box-border flex flex-col flex-1 items-center pb-50px pt-161px">
-      <div class="text-65px text-#2a2a2a font-700">学科智能体</div>
+      <div class="flex items-center text-65px text-#2a2a2a font-700">
+        <icon-local-xkznt class="mr-20px" />
+        学科智能体
+      </div>
       <div class="mb-70px mt-16px text-24px text-#3d3d3d font-400">塑造未来教育：智能体在学科教学中的创新应用</div>
       <!-- ref="role" -->
-      <div class="grid grid-cols-3 box-border w-full flex-1 gap-x-0 gap-y-16px px-280px">
+      <div class="grid grid-cols-3 box-border w-full flex-1 gap-x-0 gap-y-16px px-20px xl:px-280px">
         <div
           v-for="item in config.agents"
           :key="item"
@@ -118,9 +123,10 @@ const goWriteComposition = (item: any) => {
 <style scoped>
 .bg {
   width: 100%;
-  height: 860px;
+
   background: url('https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/webclassbg.png') no-repeat;
   background-size: cover;
+  background-position: 0 0;
 }
 .title {
   background: linear-gradient(82deg, #000000 64%, #352a2a 78%, #774d4d 96%), #2a2a2a;

@@ -1,4 +1,4 @@
-import { request } from '../request';
+import { jzcRequest, request } from '../request';
 
 export function startDraw(data: any) {
   return request<any>({
@@ -105,6 +105,60 @@ export function getConversationList(data: any = {}) {
     url: 'aiweb/airecord/getconversationlist',
     method: 'post',
     data
+  });
+}
+
+export function getEvaluateGrade(data: any = {}) {
+  return jzcRequest<any>({
+    url: 'evaluate/grade',
+    method: 'get',
+    data,
+    proxy: false
+  });
+}
+
+export function getEvaluateSubject(gid: any = {}) {
+  return jzcRequest<any>({
+    url: `evaluate/subject/${gid}`,
+    method: 'get'
+  });
+}
+
+export function getEvaluatePress(gid: any = {}, sid: any = {}) {
+  return jzcRequest<any>({
+    url: `evaluate/press/${gid}/${sid}`,
+    method: 'get'
+  });
+}
+
+export function getEvaluateBooks(data: any = {}) {
+  return jzcRequest<any>({
+    url: `evaluate/books`,
+    method: 'post',
+    data
+  });
+}
+
+export function getEvaluateQuestion(data: any = {}) {
+  return jzcRequest<any>({
+    url: `evaluate/question`,
+    method: 'post',
+    data
+  });
+}
+
+export function getEvaluate(data: any = {}) {
+  return jzcRequest<any>({
+    url: `evaluate/evaluate`,
+    method: 'post',
+    data
+  });
+}
+
+export function getReport(id: any = {}) {
+  return jzcRequest<any>({
+    url: `evaluate/report/${id}`,
+    method: 'get'
   });
 }
 

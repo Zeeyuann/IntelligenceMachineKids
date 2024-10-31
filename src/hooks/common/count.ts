@@ -40,7 +40,7 @@ export default function useTimer() {
   function stop() {
     pause();
     const result = totalSeconds.value; // 获取总秒数
-    totalSeconds.value = 0; // 重置总秒数
+
     seconds.value = 0;
     minutes.value = 0;
     hours.value = 0;

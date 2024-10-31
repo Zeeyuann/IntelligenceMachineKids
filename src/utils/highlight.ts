@@ -17,7 +17,6 @@ import plaintext from 'highlight.js/lib/languages/plaintext';
 
 import { markedHighlight } from 'marked-highlight';
 import { Marked, Renderer } from 'marked';
-import markedKatex from 'marked-katex-extension';
 
 const languages = {
   javascript,
@@ -42,9 +41,9 @@ for (const [name, module] of Object.entries(languages)) {
   hljs.registerLanguage(name, module);
 }
 const renderer = new Renderer();
-// renderer.paragraph = ({ text }) => {
-//   return `<p class="w-full whitespace-normal break-all " style="word-break:break-all">${text}</p>\n`;
-// };
+renderer.paragraph = ({ text }) => {
+  return `<p class="w-full whitespace-normal break-all" >${text}</p>\n`;
+};
 
 const marked = new Marked(
   markedHighlight({
@@ -63,7 +62,6 @@ marked.use({
   renderer,
   gfm: true // 启动类似于Github样式的Markdown语法
 });
-marked.use(markedKatex({ throwOnError: false, output: 'mathml', nonStandard: true }));
 
 // 导出 markedRender
 export const markedRender = (val: string) => {

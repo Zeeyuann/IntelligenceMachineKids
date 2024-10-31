@@ -20,6 +20,12 @@ export default defineConfig<Theme>({
       icon: '1.125rem',
       'icon-large': '1.5rem',
       'icon-xl': '2rem'
+    },
+    breakpoints: {
+      sm: '640px',
+      md: '768px',
+      lg: '1025px',
+      xl: '1390px'
     }
   },
   shortcuts: {

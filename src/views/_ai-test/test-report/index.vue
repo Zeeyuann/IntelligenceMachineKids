@@ -2,8 +2,8 @@
 import html2canvas from 'html2canvas';
 import printJS from 'print-js';
 import { useEcharts } from '@/hooks/common/echarts';
-import { useSubjectStore } from '@/store/modules/subject';
-import { fetchUserevaluate } from '@/service/api';
+// import { useSubjectStore } from '@/store/modules/subject';
+import { getReport } from '@/service/api';
 import { useRouterPush } from '@/hooks/common/router';
 import { chatPieOptions, fullPieOptions, lineOption, pieOptions } from './data';
 
@@ -22,7 +22,7 @@ const route = useRoute();
 const analylisList = [
   {
     label: '学科',
-    key: 'subjectName'
+    key: 'subject'
   },
   {
     label: '分数',
@@ -30,15 +30,15 @@ const analylisList = [
   },
   {
     label: '知识点数',
-    key: 'knowledgeNum'
+    key: 'catalogCount'
   },
   {
     label: '综合难度',
-    key: 'difficulty'
+    key: 'avgDifficulty'
   },
   {
     label: '正确率',
-    key: 'precision'
+    key: 'accuracy'
   }
 ];
 
@@ -46,15 +46,18 @@ const analylisList = [
 const seperateColumns = [
   {
     title: '难度系数',
-    key: 'difficultyLevel'
+    key: 'difficulty'
   },
   {
     title: '题数',
-    key: 'number'
+    key: 'count'
   },
   {
-    title: '占分',
-    key: 'proportion'
+    title: '占比',
+    key: 'allotment',
+    render(row: any) {
+      return row.allotment !== null || undefined ? `${Math.round(row.allotment * 100)}%` : '';
+    }
   },
   {
     title: '做对数',
@@ -62,11 +65,15 @@ const seperateColumns = [
   },
   {
     title: '做错数',
-    key: 'errCount'
+    key: 'errorCount'
   },
   {
     title: '正确率',
-    key: 'precision'
+    key: 'rightRatio',
+    render(row: any) {
+      if (row.rightRatio === 'NaN') return '';
+      return row.rightRatio !== undefined || null ? `${Math.round(row.rightRatio * 100)}%` : '';
+    }
   }
 ];
 const questionData = ref([]);
@@ -100,21 +107,21 @@ const subjectTepmp: any = ref({});
 onMounted(async () => {
   window.addEventListener('resize', handleResize);
 
-  const subjectStore = useSubjectStore() as any;
+  // const subjectStore = useSubjectStore() as any;
 
-  const params = {
-    evaluateId: subjectStore.questionList.evaluateId,
-    useTimes: route.query.time,
-    answers: subjectStore.answerList
-  };
-  const { data: reportData, error } = await fetchUserevaluate(params);
+  // const params = {
+  //   evaluateId: subjectStore.questionList.evaluateId,
+  //   useTimes: route.query.time,
+  //   answers: subjectStore.answerList
+  // };
+  const { data: reportData, error } = await getReport(route.query.id);
   if (!error) {
     console.log(reportData);
     subjectTepmp.value = reportData;
 
-    questionData.value = reportData.questions;
+    questionData.value = reportData.quesPatterns;
 
-    synthesizeList.value = reportData.synthesize;
+    synthesizeList.value = reportData.evaluationResults;
 
     updatePieOptions((option: any) => {
       return {
@@ -122,7 +129,7 @@ onMounted(async () => {
         series: [
           {
             ...option.series[0],
-            data: [{ value: reportData.examLevel, name: '等级评定' }]
+            data: [{ value: reportData.rating, name: '等级评定' }]
           }
         ]
       };
@@ -133,16 +140,15 @@ onMounted(async () => {
         ...option,
         legend: {
           ...option.legend,
-          data: reportData.examParse.data.map((item: any) => item.name)
+          data: reportData?.catalogNames.map((item: any) => item.catalogName)
         },
         series: [
           {
             ...option.series[0],
-            data: option.series[0].data.map((item: any, index: any) => {
+            data: reportData?.catalogNames.map((_: any, index: any) => {
               const obj = {
-                ...item,
-                value: reportData.examParse.data[index].value,
-                name: reportData.examParse.data[index].name
+                value: reportData?.catalogNames?.[index].ratio * 100,
+                name: reportData?.catalogNames?.[index].catalogName
               };
               return obj;
             })
@@ -156,16 +162,15 @@ onMounted(async () => {
         ...option,
         legend: {
           ...option.legend,
-          data: reportData.examParse.data.map((item: any) => item.name)
+          data: reportData?.catalogNames.map((item: any) => item.catalogName)
         },
         series: [
           {
             ...option.series[0],
-            data: option.series[0].data.map((item: any, index: any) => {
+            data: reportData?.catalogNames.map((_: any, index: any) => {
               const obj = {
-                ...item,
-                value: reportData.examParse.data[index].value,
-                name: reportData.examParse.data[index].name
+                value: reportData?.catalogNames?.[index].ratio * 100,
+                name: reportData?.catalogNames?.[index].catalogName
               };
               return obj;
             })
@@ -183,9 +188,9 @@ onMounted(async () => {
           };
 
           if (item.name === '本次测试') {
-            obj.data = [reportData.effect.precision];
+            obj.data = [reportData?.promoteValue[0]];
           } else {
-            obj.data = [reportData.effect.promoteValue];
+            obj.data = [reportData?.promoteValue[1]];
           }
 
           return obj;
@@ -201,20 +206,21 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="windowWidth > 768" class="box-border px-230px py-20px">
+  <div v-if="windowWidth > 1389" class="box-border px-230px py-20px">
     <main class="box-border size-full flex flex-col rd-10px bg-white p-16px">
+      <!-- 头 -->
       <div
         class="topbg box-border h-218px w-full flex items-center justify-between rd-10px py-60px pl-60px pr-328px text-white"
       >
         <div>
           <div class="almm titlebg mb-20px text-26px text-white">恭喜完成测试</div>
           <div class="mb5px text-14px">测试得分</div>
-          <div class="text-18px font-600">{{ subjectTepmp?.examScore }}</div>
+          <div class="text-18px font-600">{{ subjectTepmp?.score }}</div>
         </div>
         <div>
           <div class="flex items-center text-13px">
             <span>报告ID：</span>
-            <span>{{ subjectTepmp?.report }}</span>
+            <span>{{ subjectTepmp?.evaluateId }}</span>
           </div>
           <div class="my8px flex items-center text-13px">
             <span>科目：</span>
@@ -240,11 +246,12 @@ onUnmounted(() => {
         </div>
         <div>
           <NButton class="mr10px rd-18px text-white" @click="capture">本机打印</NButton>
-          <!-- <NButton class="rd-18px text-white">微信分享</NButton> -->
+          <NButton class="rd-18px text-white" @click="routerPushByKey('classroom')">返回首页</NButton>
         </div>
       </div>
       <div ref="captureDiv" class="content w-full flex flex-col">
         <div class="line1 mt16px flex items-center">
+          <!-- 评测结果等级评定 -->
           <div class="boder-#D8D8D8 mr16px box-border h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title text-16px text-#000000 font-600">评测结果等级评定</div>
             <div class="flex-center flex-col flex-1">
@@ -255,6 +262,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
+          <!-- TDL指标 -->
           <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title flex items-center text-16px text-#000000 font-600">
               TDL指标
@@ -262,18 +270,20 @@ onUnmounted(() => {
             </div>
             <div class="box-border flex-center flex-col flex-1 px-126px">
               <div class="h-54px w-full flex-center rd-14px bg-#2CB6FF text-#ffffff">
-                {{ subjectTepmp?.tdlTarget?.tdl }}
+                {{ subjectTepmp?.tdlBlock?.tdl }}
               </div>
               <div class="mi mb-32px mt-5px text-12px text-#666666">TDL数值越高表示该环节的水平越高,最高值是30</div>
               <div class="grid grid-cols-3 w-full gap-x-16px">
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
                   <div v-if="Object.keys(subjectTepmp).length > 0" class="text-18px text-#2CB6FF font-600">
-                    {{ subjectTepmp?.tdlTarget?.avgtime }}
+                    {{ subjectTepmp?.tdlBlock?.avgTime }}
                   </div>
                   <div class="mi text-12px text-#666666">平均答题时间</div>
                 </div>
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
-                  <div class="text-18px text-#2CB6FF font-600">{{ subjectTepmp?.tdlTarget?.precision }}%</div>
+                  <div class="text-18px text-#2CB6FF font-600">
+                    {{ Math.round(subjectTepmp?.tdlBlock?.accuracy * 100) }}%
+                  </div>
                   <div class="mi text-12px text-#666666">正确率</div>
                 </div>
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
@@ -286,7 +296,7 @@ onUnmounted(() => {
                       color="#1A89EF"
                       rail-color="#DBDCDF"
                     >
-                      <div class="mi text-12px text-#666666">{{ subjectTepmp?.tdlTarget?.difficulty }}/10</div>
+                      <div class="mi text-12px text-#666666">{{ subjectTepmp?.tdlBlock?.avgDifficulty }}/10</div>
                     </NProgress>
                   </div>
                   <div class="mi mt6px text-12px text-#666666">平均难度</div>
@@ -296,25 +306,37 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="line2 mt16px flex items-center">
+          <!-- 试卷分析 -->
           <div class="boder-#D8D8D8 mr16px box-border h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title mb-16px text-16px text-#000000 font-600">试卷分析</div>
             <div class="w-full flex flex-col flex-1">
               <NDescriptions label-align="center" class="w-full" label-placement="left" bordered>
                 <NDescriptionsItem v-for="item in analylisList" :key="item.label" :label="item.label">
-                  <template v-if="item.label === '正确率'">{{ subjectTepmp?.examParse?.[item.key] }}%</template>
-                  <template v-else>{{ subjectTepmp?.examParse?.[item.key] }}</template>
+                  <template v-if="item.label === '正确率'">
+                    {{
+                      subjectTepmp?.tdlBlock?.[item.key]
+                        ? Math.round(subjectTepmp?.tdlBlock?.[item.key] * 100) + '%'
+                        : ''
+                    }}
+                  </template>
+                  <template v-if="item.label === '综合难度'">
+                    {{ subjectTepmp?.tdlBlock?.[item.key] ? subjectTepmp?.tdlBlock?.[item.key] : '' }}
+                  </template>
+                  <template v-else>{{ subjectTepmp?.[item.key] }}</template>
                 </NDescriptionsItem>
               </NDescriptions>
               <div ref="fullPieRef" class="box-border w-full flex-1 pt-20px"></div>
             </div>
           </div>
-          <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
+          <!-- 题目分布 -->
+          <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 overflow-auto border rd-10px p24px">
             <div class="title mb-16px flex items-center text-16px text-#000000 font-600">题目分布</div>
             <div class="flex-center flex-1">
               <NDataTable :columns="seperateColumns" align="left" :data="questionData" bordered :single-line="false" />
             </div>
           </div>
         </div>
+        <!-- 评测结果综合评估知识点掌握度 -->
         <div class="line3 mt16px flex items-center">
           <div class="boder-#D8D8D8 mr16px box-border min-h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title mb-16px text-16px text-#000000 font-600">评测结果综合评估知识点掌握度</div>
@@ -337,10 +359,10 @@ onUnmounted(() => {
                   </NDescriptionsItem>
                 </NDescriptions>
                 <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
-                  <NDescriptionsItem block label="正确率">
+                  <NDescriptionsItem block label="综合评估">
                     <NProgress
                       type="line"
-                      :percentage="item.rightRatio"
+                      :percentage="item.p"
                       :height="13"
                       :show-indicator="false"
                       color="#2FBF78"
@@ -352,22 +374,22 @@ onUnmounted(() => {
                   <NDescriptionsItem block label="掌握程度">
                     <div class="flex items-center">
                       <div
-                        v-if="item.graspLevel === 3"
+                        v-if="item.p >= 50 && item.p <= 85"
+                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#FF9500 text-12px text-white"
+                      >
+                        <span>一般</span>
+                      </div>
+                      <div
+                        v-if="item.p > 85"
                         class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#2FBF78 text-12px text-white"
                       >
                         <span>掌握</span>
                       </div>
                       <div
-                        v-if="item.graspLevel === 2"
-                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#FF9500 text-12px text-white"
-                      >
-                        <span>及格</span>
-                      </div>
-                      <div
-                        v-if="item.graspLevel === 1"
+                        v-if="item.p < 50"
                         class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#F0516D text-12px text-white"
                       >
-                        <span>生疏</span>
+                        <span>未掌握</span>
                       </div>
                     </div>
                   </NDescriptionsItem>
@@ -420,19 +442,22 @@ onUnmounted(() => {
       </div>
     </main>
   </div>
-  <div v-else class="box-border py-20px">
+  <div v-else class="box-border px-20px py-20px">
     <main class="box-border w-full flex flex-col rd-10px bg-white p-0px">
+      <!-- 头 -->
       <div class="topbg box-border w-full flex flex-col items-center justify-between rd-10px p24px text-white">
         <div class="flex flex-col items-center">
-          <div class="almm titlebg mb-20px text-26px text-white">恭喜完成测试</div>
-          <div class="mb5px text-14px">测试得分</div>
-          <div class="text-18px font-600">{{ subjectTepmp?.examScore }}</div>
+          <div class="almm titlebg text-26px text-white">恭喜完成测试</div>
+          <div class="flex items-center">
+            <div class="mb5px text-14px">测试得分</div>
+            <div class="ml-20px text-18px font-600">{{ subjectTepmp?.score }}</div>
+          </div>
         </div>
         <div class="flex items-center">
           <div class="flex-1">
-            <div class="flex items-center text-13px">
+            <div class="w-[200px] flex items-center text-13px">
               <span>报告ID：</span>
-              <span>{{ subjectTepmp?.report }}</span>
+              <span>{{ subjectTepmp?.evaluateId }}</span>
             </div>
             <div class="my8px flex items-center text-13px">
               <span>科目：</span>
@@ -482,16 +507,18 @@ onUnmounted(() => {
             </div>
             <div class="box-border flex-center flex-col flex-1 px-20px">
               <div class="h-54px w-full flex-center rd-14px bg-#2CB6FF text-#ffffff">
-                {{ subjectTepmp?.tdlTarget?.tdl }}
+                {{ subjectTepmp?.tdlBlock?.tdl }}
               </div>
               <div class="mi mb-32px mt-5px text-12px text-#666666">TDL数值越高表示该环节的水平越高,最高值是30</div>
               <div class="grid grid-cols-3 w-full gap-x-16px">
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
-                  <div class="text-18px text-#2CB6FF font-600">{{ subjectTepmp?.tdlTarget?.avgtime }}</div>
+                  <div class="text-18px text-#2CB6FF font-600">{{ subjectTepmp?.tdlBlock?.avgTime }}</div>
                   <div class="mi text-12px text-#666666">平均答题时间</div>
                 </div>
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
-                  <div class="text-18px text-#2CB6FF font-600">{{ subjectTepmp?.tdlTarget?.precision }}%</div>
+                  <div class="text-18px text-#2CB6FF font-600">
+                    {{ Math.round(subjectTepmp?.tdlBlock?.accuracy * 100) }}%
+                  </div>
                   <div class="mi text-12px text-#666666">正确率</div>
                 </div>
                 <div class="h-54px w-full flex-center flex-col rd-10px bg-#EFF7FE">
@@ -504,7 +531,7 @@ onUnmounted(() => {
                       color="#1A89EF"
                       rail-color="#DBDCDF"
                     >
-                      <div class="mi text-12px text-#666666">{{ subjectTepmp?.tdlTarget?.difficulty }}/10</div>
+                      <div class="mi text-12px text-#666666">{{ subjectTepmp?.tdlBlock?.avgDifficulty }}/10</div>
                     </NProgress>
                   </div>
                   <div class="mi mt6px text-12px text-#666666">平均难度</div>
@@ -519,8 +546,13 @@ onUnmounted(() => {
             <div class="w-full flex flex-col flex-1">
               <NDescriptions :column="1" label-align="center" class="w-full" label-placement="left" bordered>
                 <NDescriptionsItem v-for="item in analylisList" :key="item.label" :label="item.label">
-                  <template v-if="item.label === '正确率'">{{ subjectTepmp?.examParse?.[item.key] }}%</template>
-                  <template v-else>{{ subjectTepmp?.examParse?.[item.key] }}</template>
+                  <template v-if="item.label === '正确率'">
+                    {{ subjectTepmp?.tdlBlock?.[item.key] ? subjectTepmp?.tdlBlock?.[item.key] * 100 + '%' : '' }}
+                  </template>
+                  <template v-if="item.label === '综合难度'">
+                    {{ subjectTepmp?.tdlBlock?.[item.key] ? subjectTepmp?.tdlBlock?.[item.key] : '' }}
+                  </template>
+                  <template v-else>{{ subjectTepmp?.[item.key] }}</template>
                 </NDescriptionsItem>
               </NDescriptions>
               <div ref="wechatPieRef" class="box-border w-full flex-1 pt-20px"></div>
@@ -529,7 +561,7 @@ onUnmounted(() => {
         </div>
 
         <div class="line3 mt16px flex items-center">
-          <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
+          <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 of-auto border rd-10px p24px">
             <div class="title mb-16px flex items-center text-16px text-#000000 font-600">题目分布</div>
             <div class="flex-center flex-1">
               <NDataTable :columns="seperateColumns" align="left" :data="questionData" bordered :single-line="false" />
@@ -559,10 +591,10 @@ onUnmounted(() => {
                   </NDescriptionsItem>
                 </NDescriptions>
                 <NDescriptions label-align="center" class="zw w-full" label-placement="left" bordered>
-                  <NDescriptionsItem block label="正确率">
+                  <NDescriptionsItem block label="综合评估">
                     <NProgress
                       type="line"
-                      :percentage="item.rightRatio"
+                      :percentage="item.p"
                       :height="13"
                       :show-indicator="false"
                       color="#2FBF78"
@@ -574,22 +606,22 @@ onUnmounted(() => {
                   <NDescriptionsItem block label="掌握程度">
                     <div class="flex items-center">
                       <div
-                        v-if="item.graspLevel === 3"
+                        v-if="item.p >= 50 && item.p <= 85"
+                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#FF9500 text-12px text-white"
+                      >
+                        <span>一般</span>
+                      </div>
+                      <div
+                        v-if="item.p > 85"
                         class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#2FBF78 text-12px text-white"
                       >
                         <span>掌握</span>
                       </div>
                       <div
-                        v-if="item.graspLevel === 2"
-                        class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#FF9500 text-12px text-white"
-                      >
-                        <span>及格</span>
-                      </div>
-                      <div
-                        v-if="item.graspLevel === 1"
+                        v-if="item.p < 50"
                         class="mi mr-10px h-20px w-54px flex-center rd-100px bg-#F0516D text-12px text-white"
                       >
-                        <span>生疏</span>
+                        <span>未掌握</span>
                       </div>
                     </div>
                   </NDescriptionsItem>

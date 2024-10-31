@@ -115,6 +115,47 @@ function getSiderCollapsedWidth() {
 
   return w;
 }
+
+const handleExfold = () => {
+  window.$notification?.create({
+    title() {
+      return h('div', { class: 'text-18px text-#000000 font-600 alph flex items-end' }, [
+        h('div', {}, '精准练任务'),
+        h('div', { class: 'text-10px font-400 text-#9E9E9E mb-5px ml-10px' }, '今日(2024年10月16日)')
+      ]);
+    },
+    content() {
+      return h('div', { class: 'w-full p-24px box-border bg-#A1ECFF' }, [
+        h(
+          'div',
+          {
+            class:
+              'w-full px-11px py-16px box-border flex items-center justify-between alph bg-white shadow-md cursor-pointer',
+            onClick() {
+              window.$message?.info('功能将于12月份开通');
+            }
+          },
+          [
+            h('div', { class: 'text-18px font-600 text-#000000 alph' }, `数学`),
+            h('div', { class: 'text-12px text-#9E9E9E' }, `题量：10题`),
+            h(
+              'div',
+              {
+                class: `text-12px font-600 text-#ffffff alph w-52px h-18px bg-#FF0000 flex items-center justify-center`
+              },
+              `未完成`
+            ),
+            h(
+              'div',
+              { class: `w-77px h-23px flex items-center justify-center bg-#FF8F1F rd-12px text-12px font-600` },
+              `去完成`
+            )
+          ]
+        )
+      ]);
+    }
+  });
+};
 </script>
 
 <template>
@@ -138,6 +179,15 @@ function getSiderCollapsedWidth() {
     :fixed-footer="themeStore.footer.fixed"
     :right-footer="themeStore.footer.right"
   >
+    <div
+      v-if="false"
+      :style="{ background: 'rgba(255, 255, 255, 0.85)', borderRadius: '5px 0px 0px 5px' }"
+      class="alph fixed right-10px top-120px box-border h-54px flex flex-col cursor-pointer items-center justify-between p-6px text-12px text-#9E9E9E"
+      @click="handleExfold"
+    >
+      <icon-local-fold />
+      展开
+    </div>
     <template #header>
       <GlobalHeader v-bind="headerProps" />
     </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { fetchBooks } from '@/service/api';
+import { getEvaluateBooks } from '@/service/api';
 import { useRouterPush } from '@/hooks/common/router';
 import { useSubjectStore } from '@/store/modules/subject';
 
@@ -19,7 +19,7 @@ const params = reactive({
 
 (async () => {
   if (route.query) {
-    const { data, error } = await fetchBooks(route.query);
+    const { data, error } = await getEvaluateBooks(route.query);
     if (!error) {
       console.log(data);
       params.bookId = data[0].bookId;
@@ -57,7 +57,12 @@ watch(
     title.value = bookItem.bookName;
     Object.assign(
       catalogList,
-      bookItem.catalogs.map((item: any) => [item])
+      bookItem?.catalogs?.map((item: any) => {
+        item.childrens.forEach((ele: any) => {
+          delete ele.childrens;
+        });
+        return [item];
+      })
     );
   }
 );
@@ -131,7 +136,7 @@ const handleSubmit = async () => {
             :selected-keys="showSelectKeys"
             key-field="id"
             default-expand-all
-            children-field="childs"
+            children-field="childrens"
             :data="item"
             @update:checked-keys="(keys: Array<string | number>) => updateCheckedKeys(keys, index)"
           />

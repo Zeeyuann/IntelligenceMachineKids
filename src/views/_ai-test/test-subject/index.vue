@@ -1,8 +1,6 @@
 <script setup lang="ts">
-// import katex from 'katex';
-// import { marked } from 'marked';
 import useCountInterval from '@/hooks/common/count';
-import { fetchQuestions, fetchUserevaluate } from '@/service/api';
+import { getEvaluate, getEvaluateQuestion } from '@/service/api';
 import { useSubjectStore } from '@/store/modules/subject';
 import { markedRender } from '@/utils/highlight';
 import { useRouterPush } from '@/hooks/common/router';
@@ -29,12 +27,16 @@ const selectValue = computed({
   },
   set() {}
 });
+
 (async () => {
   if (Object.keys(subjectStore.questionList).length === 0) {
-    const { data, error } = await fetchQuestions(subjectStore.subjectInfo?.params);
+    const { data, error } = await getEvaluateQuestion(subjectStore.subjectInfo?.params);
     if (!error) {
       console.log(data);
       subjectStore.setQuestionList(data);
+      nextTick(() => {
+        renderMath();
+      });
     }
   }
 })();
@@ -42,7 +44,6 @@ const selectValue = computed({
 const handlePre = () => {
   if (subNo.value > 0) {
     subNo.value -= 1;
-    // renderMarkdown(); // 在切换问题时调用
   }
 };
 const handleNext = () => {
@@ -52,7 +53,6 @@ const handleNext = () => {
   }
   if (subNo.value < quetionList.value.length - 1) {
     subNo.value += 1;
-    // renderMarkdown(); // 在切换问题时调用
   }
 };
 
@@ -62,104 +62,53 @@ const handleSubmit = async () => {
     return;
   }
   console.log(subjectStore.answerList);
-  routerPushByKey('test-report', { query: { time: `${stop() * 1000}` } });
-  return;
+  // return;
 
   const data = {
     evaluateId: subjectStore.questionList.evaluateId,
     useTimes: stop() * 1000,
     answers: subjectStore.answerList
   };
-  const { data: reportData, error } = await fetchUserevaluate(data);
+  console.log(stop());
+  const { data: reportData, error } = await getEvaluate(data);
   if (!error) {
     console.log(reportData);
+    console.log(stop());
+
+    routerPushByKey('test-report', { query: { id: reportData.evaluateId } });
   }
 };
-
-// const cleanedString = originalString.replace(/<span class="mathdisplay">(.*?)<\/span>/g, '$1');
-
-// console.log(cleanedString);
-// function escapeLatex(latex: any) {
-//   return latex
-//     .replace(/\\/g, '\\\\') // 转义反斜杠
-//     .replace(/\\left/g, '\\left\\') // 转义 \left
-//     .replace(/\\right/g, '\\right\\') // 转义 \left
-//     .replace(/\{/g, '\\{') // 转义左大括号
-//     .replace(/\}/g, '\\}') // 转义右大括号
-//     .replace(/\$/g, '\\$') // 转义美元符号
-//     .replace(/&/g, '\\&') // 转义和符号
-//     .replace(/_/g, '\\_') // 转义下划线
-//     .replace(/%/g, '\\%') // 转义百分号
-//     .replace(/#/g, '\\#') // 转义井号
-//     .replace(/~/g, '\\~') // 转义波浪号
-//     .replace(/</g, '\\lt') // 转义小于符号
-//     .replace(/>/g, '\\gt'); // 转义大于符号
-// }
-// function renderMarkdown() {
-//   const content = document.getElementsByClassName('mathdisplay');
-//   if (content) {
-//     Array.from(content).forEach(element => {
-//       if (!element.classList.contains('rendered')) {
-//         // 检查是否已渲染
-//         const latex = element.textContent as string;
-//         console.log('🚀 ~ Array.from ~ latex:', latex);
-
-//         try {
-//           katex.render(latex, element, {
-//             displayMode: false,
-//             leqno: false,
-//             fleqn: false,
-//             throwOnError: false,
-//             errorColor: '#cc0000',
-//             strict: 'warn',
-//             output: 'mathml',
-//             trust: false,
-//             macros: {
-//               '\\x': '\\\\x',
-//               '\\y': '\\\\y',
-//               '\\ax': '\\\\ax',
-//               '\\bx': '\\\\bx',
-//               '{': '\\{',
-//               '{{': '\\{{',
-//               '}': '\\}',
-//               '\\\\{': '\\\\\\\\{',
-//               '\\*': '\\\\*'
-//             }
-//           });
-//           element.classList.add('rendered'); // 添加标志
-//         } catch (error) {
-//           console.error(error);
-//         }
-//       }
-//     });
-//   }
-// }
-// const parseMath = (text: any) => {
-//   return text.replace(/<span class="mathdisplay">([^<]+)<\/span>/g, (_, formula) => {
-//     return formula;
-//   });
-// };
-// const removeMathDisplay = text => {
-//   const cleanedString = text.replace(/<span class="mathdisplay">(.*?)<\/span>/g, '$1');
-//   console.log('🚀 ~ removeMathDisplay ~ cleanedString:', cleanedString);
-//   console.log('🚀 ~ removeMathDisplay ~ text:', text);
-//   return cleanedString;
-// };
+function renderMath() {
+  // 检查 MathJax 是否已加载
+  if (window.MathJax) {
+    window.MathJax.typeset();
+    // .then(() => {
+    //   console.log('MathJax 渲染完成');
+    //   text.value = 'cg';
+    // })
+    // .catch((err: any) => {
+    //   console.error('MathJax 渲染失败', err);
+    //   text.value = 'sb';
+    // });
+  }
+}
 
 onMounted(() => {
-  // renderMarkdown();
+  nextTick(() => {
+    renderMath();
+  });
 });
 </script>
 
 <template>
   <div class="testbg">
-    <main class="box-border size-full flex flex-col flex-1 px-230px py-16px text-#000000">
+    <main class="box-border size-full flex flex-col flex-1 px-40px py-16px text-#000000 xl:px-230px">
       <div class="top box-border h-90px w-full flex items-center justify-between rd-10px bg-white px-40px py-35px">
         <div class="flex items-center text-24px text-#FF9500 font-600">
           <icon-local-timeclock class="mr-5px" />
           {{ formattedTime }}
         </div>
-        <div class="text-28px font-600">{{ subjectStore.subjectInfo?.title }}</div>
+        <div class="text-22px font-600 xl:text-28px">{{ subjectStore.subjectInfo?.title }}</div>
         <div class="w-250px flex flex-col items-end">
           <div class="h-26px flex items-end text-14px">
             <span class="mb-5px text-[rgba(0,0,0,0.6)]">答题进度</span>
@@ -171,7 +120,7 @@ onMounted(() => {
         </div>
       </div>
       <div
-        class="bot mt-16px box-border w-full flex flex-col flex-1 items-center justify-between rd-10px bg-white px-350px pb-24px pt-54px"
+        class="bot mt-16px box-border w-full flex flex-col flex-1 items-center justify-between rd-10px bg-white px-50px pb-24px pt-54px xl:px-350px"
       >
         <template v-for="(question, index) in quetionList" :key="question.questionId">
           <div v-show="index === subNo" class="box-border w-full flex flex-1 of-hidden">
@@ -190,7 +139,7 @@ onMounted(() => {
                     class="flex-1 items-center !h-full !flex"
                     :value="item.optionContent"
                   >
-                    <div v-html="markedRender(item.optionContent)"></div>
+                    <div class="maths" v-html="markedRender(item.optionContent)"></div>
                   </NRadioButton>
                 </NRadioGroup>
               </div>

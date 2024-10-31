@@ -37,7 +37,7 @@ const handlePlay = (item: any) => {
 </script>
 
 <template>
-  <div class="alph flex flex-col overflow-hidden !bg-#0C0D0A !p-unset">
+  <div class="alph flex flex-col lg:overflow-hidden xl:overflow-hidden !bg-#0C0D0A !p-unset">
     <div class="title box-border h-50px w-full flex items-center bg-#191B15 px-160px text-18px text-#ffffff">
       SuperX AI学院
     </div>
@@ -57,7 +57,7 @@ const handlePlay = (item: any) => {
         </div>
         <div
           :style="{ border: '1px solid rgba(255, 255, 255, 0.1)' }"
-          class="ml-1px box-border h-660px w-428px of-scroll p-20px"
+          class="ml-1px box-border h-660px w-300px of-scroll p-20px xl:w-428px"
         >
           <div class="flex items-center justify-between">
             <div class="mb-20px flex items-center">

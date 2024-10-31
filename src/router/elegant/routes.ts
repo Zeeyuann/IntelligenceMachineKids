@@ -142,7 +142,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'test-subject',
       i18nKey: 'route.test-subject',
       hideInMenu: true,
-      isBlank: true
+      isBlank: true,
+      activeMenu: 'classroom'
     }
   },
   {

@@ -52,7 +52,7 @@ const themeStore = useThemeStore();
         routeName === 'test-report',
       writebg: routeName === 'write'
     }"
-    class="h-full flex-y-center px-230px shadow-header"
+    class="h-full flex-y-center px-20px shadow-header xl:px-230px"
   >
     <GlobalLogo v-if="showLogo" class="h-full" :style="{ width: themeStore.sider.width + 'px' }" />
     <MenuToggler v-if="showMenuToggler" :collapsed="appStore.siderCollapse" @click="appStore.toggleSiderCollapse" />

@@ -50,7 +50,7 @@ const handleGoBack = () => {
 </script>
 
 <template>
-  <div class="box-border size-full flex justify-center bg-#F5F7FA pt-220px">
+  <div class="box-border size-full flex justify-center bg-#F5F7FA pt-50px xl:pt-220px">
     <div class="box-border w-768px flex flex-col items-center">
       <div
         v-if="!hasQuery"

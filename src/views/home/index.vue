@@ -58,25 +58,102 @@ onMounted(async () => {
 
 <template>
   <DarkModeContainer class="flex-center flex-col p-unset">
-    <header class="bg box-border flex flex-col justify-center pb-50px pl-234px">
-      <div class="text-60px text-#0B0B0B font-400">元宇宙王队长</div>
-      <div class="almm title text-65px font-700">AI成长营青少年端</div>
-      <div class="text-34px text-#000000 font-400">由元宇宙王队长发起的全民AI学习计划</div>
-      <NButton type="primary" class="global-btn my-48px h-68px !w-233px !text-22px !font-600" round block @click="go">
-        开始学习
-      </NButton>
+    <header
+      class="bg box-border flex flex-col items-start justify-center pb-50px lg:h-770px xl:h-860px lg:px-100px xl:pl-234px lg:xl:h-860px"
+    >
+      <div class="scale-50 md:mr-50px lg:scale-90 xl:scale-100">
+        <div class="text-60px text-#0B0B0B font-400 xl:scale-100">
+          <img class="h-60px w-475px" src="/src/assets/imgs/homelogo.png" alt="" />
+        </div>
+        <div class="almm title text-65px font-700 xl:scale-100">AI成长营青少年端</div>
+        <div class="text-34px text-#000000 font-400 xl:scale-100">由元宇宙王队长发起的全民AI学习计划</div>
+        <NButton
+          type="primary"
+          class="global-btn my-48px h-68px !w-233px xl:scale-100 !text-22px !font-600"
+          round
+          block
+          @click="go"
+        >
+          <icon-local-startplay class="mr-10px" />
+          开始学习
+        </NButton>
+      </div>
     </header>
-    <main class="contentbg box-border flex flex-col pb-150px pl-255px pr-268px">
-      <!-- AI绘画快速生成 -->
-      <div class="first flex flex-1 items-center justify-between">
+    <main class="contentbg box-border flex flex-col px-50px pb-150px xl:pl-255px xl:pr-268px">
+      <!-- 轻松创作 -->
+      <div class="first mt-50px flex flex-col flex-1 items-center justify-between xl:mt-unset lg:flex-row xl:flex-row">
         <!-- 左边 -->
-        <div class="mr-160px flex flex-col">
+        <div class="flex flex-col lg:mr-50px xl:mr-unset">
           <div class="relative text-65px text-#2a2a2a font-700">
-            AI绘画快速生成
+            AI智学
+            <icon-local-flysec class="absolute right-65px top--30px" />
+          </div>
+          <div class="mb-60px mt-16px w-400px whitespace-normal text-24px text-#3D3D3D font-400">
+            包含多种“学科智能体”精准辅学，还可以与“小凯智能机器人”聊天对话
+          </div>
+          <NButton v-if="false" type="primary" class="global-btn h-50px !w-153px !text-22px !font-600" round block>
+            立即开始
+          </NButton>
+        </div>
+        <!-- 右边 -->
+        <div class="flex flex-col flex-1 lg:ml-50px xl:ml-250px">
+          <div
+            class="box-border flex items-center justify-between rd-22px px-72px py-48px"
+            :style="{ background: 'linear-gradient(180deg, #42C700 18%, #D8FD9D 100%)' }"
+          >
+            <div class="flex flex-col">
+              <div class="relative text-44px text-#0B0B0B font-600">学科智能体</div>
+              <div class="mb-60px mt-16px whitespace-normal text-28px text-#000000 font-400">
+                基于元创Ai的学科智能体应用
+              </div>
+              <NButton
+                type="primary"
+                class="global-btn h-50px !w-153px !text-22px !font-600"
+                round
+                block
+                @click="e => goClass()"
+              >
+                开始体验
+              </NButton>
+            </div>
+            <img src="https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/flower.png" alt="" />
+          </div>
+          <div
+            class="mt-50px box-border flex items-center justify-between rd-22px px-72px py-48px"
+            :style="{
+              background:
+                'linear-gradient(180deg, #FD7925 0%, #FDDF90 100%), radial-gradient(56% 56% at 62% 43%, rgba(208, 254, 24, 0.26) 0%, #D0FE18 100%)'
+            }"
+          >
+            <div class="w-full flex flex-col">
+              <div class="relative w-full text-44px text-#0B0B0B font-600">小凯智能机器人</div>
+              <div class="mb-60px mt-16px whitespace-normal text-28px text-#000000 font-400">
+                回应你的每一个奇思妙想
+              </div>
+              <NButton
+                type="primary"
+                class="global-btn h-50px !w-153px !text-22px !font-600"
+                round
+                block
+                @click="goClass('true')"
+              >
+                立即开始
+              </NButton>
+            </div>
+            <img src="https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/image.png" alt="" />
+          </div>
+        </div>
+      </div>
+      <!-- AI绘画快速生成 -->
+      <div class="sec flex flex-col flex-1 items-center justify-between lg:flex-row xl:flex-row">
+        <!-- 左边 -->
+        <div class="flex flex-col lg:mr-50px xl:mr-160px">
+          <div class="relative text-65px text-#2a2a2a font-700">
+            AI绘画
             <icon-local-fly class="absolute right--65px top--30px" />
           </div>
           <div class="mb-60px mt-16px w-372px whitespace-normal text-24px text-#3D3D3D font-400">
-            基于最新AI技术，可快速生成各种风格的高质量图片
+            通过AI创作出各种风格的高质量图片，激发孩子的无限想象力
           </div>
           <NButton
             type="primary"
@@ -89,7 +166,7 @@ onMounted(async () => {
           </NButton>
         </div>
         <!-- 右边  -->
-        <div class="flex flex-1 items-center">
+        <div class="flex flex-1 scale-90 items-center xl:scale-100">
           <!-- 第一列 -->
           <div
             :style="{ background: 'linear-gradient(180deg, #FDEF9B 0%, #F4F1E2 100%)' }"
@@ -169,69 +246,6 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-
-      <!-- 轻松创作 -->
-      <div class="sec flex flex-1 items-center justify-between">
-        <!-- 左边 -->
-        <div class="mr-160px flex flex-col">
-          <div class="relative text-65px text-#2a2a2a font-700">
-            轻松创作
-            <icon-local-flysec class="absolute right-65px top--30px" />
-          </div>
-          <div class="mb-60px mt-16px w-372px whitespace-normal text-24px text-#3D3D3D font-400">
-            基于最新AI技术，可快速生成各种风格的高质量图片
-          </div>
-          <NButton v-if="false" type="primary" class="global-btn h-50px !w-153px !text-22px !font-600" round block>
-            立即开始
-          </NButton>
-        </div>
-        <!-- 右边 -->
-        <div class="ml-250px flex flex-col flex-1">
-          <div
-            class="box-border flex items-center justify-between rd-22px px-72px py-48px"
-            :style="{ background: 'linear-gradient(180deg, #42C700 18%, #D8FD9D 100%)' }"
-          >
-            <div class="flex flex-col">
-              <div class="relative text-44px text-#0B0B0B font-600">学科智能体</div>
-              <div class="mb-60px mt-16px whitespace-normal text-28px text-#000000 font-400">
-                基于元创Ai的学科智能体应用
-              </div>
-              <NButton
-                type="primary"
-                class="global-btn h-50px !w-153px !text-22px !font-600"
-                round
-                block
-                @click="e => goClass()"
-              >
-                开始体验
-              </NButton>
-            </div>
-            <img src="https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/flower.png" alt="" />
-          </div>
-          <div
-            class="mt-50px box-border flex items-center justify-between rd-22px px-72px py-48px"
-            :style="{
-              background:
-                'linear-gradient(180deg, #FD7925 0%, #FDDF90 100%), radial-gradient(56% 56% at 62% 43%, rgba(208, 254, 24, 0.26) 0%, #D0FE18 100%)'
-            }"
-          >
-            <div class="flex flex-col">
-              <div class="relative text-44px text-#0B0B0B font-600">智能问答</div>
-              <div class="mb-60px mt-16px whitespace-normal text-28px text-#000000 font-400">和AI小伙伴一起聊天</div>
-              <NButton
-                type="primary"
-                class="global-btn h-50px !w-153px !text-22px !font-600"
-                round
-                block
-                @click="goClass('true')"
-              >
-                立即开始
-              </NButton>
-            </div>
-            <img src="https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/image.png" alt="" />
-          </div>
-        </div>
-      </div>
     </main>
   </DarkModeContainer>
 </template>
@@ -239,10 +253,10 @@ onMounted(async () => {
 <style scoped>
 .bg {
   width: 100%;
-  height: 860px;
+
   background: url('https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/webbg.png') no-repeat;
   background-size: cover;
-  background-position-y: 30%;
+  background-position-y: 70%;
 }
 .title {
   font-variation-settings: 'opsz' auto;

@@ -34,7 +34,7 @@ const handleClose = () => {
               </div>
             </div>
           </div>
-          <div class="h-full flex flex-col flex-1 items-center justify-center lt-sm:w-300px">
+          <div class="box-border h-full flex flex-col flex-1 items-center justify-center px-20px lt-sm:w-300px">
             <div class="flex flex-col items-center pt-24px">
               <h3 class="text-20px text-#000000 font-600">手机号码登录</h3>
               <div class="pt-24px">

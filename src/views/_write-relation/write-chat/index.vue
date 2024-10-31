@@ -6,18 +6,18 @@ import { useUpload } from '@/hooks/common/upload';
 import { fetchArticle, getConversationList } from '@/service/api';
 import { useFileStore } from '@/store/modules/file/index';
 import { markedRender } from '@/utils/highlight';
-import { audioInstance, initializeAudio } from '@/utils/audio';
+// import { audioInstance, initializeAudio } from '@/utils/audio';
 import 'v3-infinite-loading/lib/style.css';
 
-const playAudio = async (content: string) => {
-  await initializeAudio(content);
+// const playAudio = async (content: string) => {
+//   await initializeAudio(content);
 
-  if (audioInstance.value) {
-    audioInstance.value();
-  } else {
-    console.error('音频未加载或播放方法不可用');
-  }
-};
+//   if (audioInstance.value) {
+//     audioInstance.value();
+//   } else {
+//     console.error('音频未加载或播放方法不可用');
+//   }
+// };
 
 const { list, customUploadFile, handleRemove } = useUpload();
 
@@ -211,9 +211,9 @@ onMounted(() => {});
 </script>
 
 <template>
-  <div class="box-border size-full flex flex-col of-hidden pb-40px pt-30px">
+  <div class="bg box-border size-full flex flex-col of-hidden pb-40px pt-30px">
     <!-- title -->
-    <div v-loading="true" class="mb-20px box-border flex flex-col items-center pl-560px pr-214px">
+    <div v-loading="true" class="mb-20px box-border flex flex-col items-center px-50px xl:pl-560px xl:pr-214px">
       <div class="w-full flex items-center justify-between overflow-visible">
         <div class="animate__animated animate__fadeInLeft mr-127px flex-1 text-24px text-#3D3D3D">
           {{ route.query.title }}
@@ -291,7 +291,7 @@ onMounted(() => {});
     <!-- 对话 -->
     <NScrollbar
       ref="scrollBar"
-      class="animate__animated content animate__fadeIn mb-16px box-border flex flex-col flex-1 px-560px"
+      class="animate__animated content animate__fadeIn mb-16px box-border flex flex-col flex-1 px-50px xl:px-560px"
     >
       <template v-if="true">
         <div v-for="item in chatList" :key="item.create_time" class="each mb-16px flex flex-col">
@@ -335,13 +335,15 @@ onMounted(() => {});
               >
                 <icon-local-copy-write class="scale-100" />
               </NButton>
-              <NButton
+              <!--
+ <NButton
                 class="box-border rd-14px text-18px text-#181818 font-600 !h-54px !w-54px !border-none !bg-white"
                 size="large"
                 @click="playAudio(item.content)"
               >
                 <icon-local-playaudio class="scale-100" />
               </NButton>
+-->
             </div>
             <div v-if="false" class="mb-16px border-b border-b-#E6E6E6"></div>
             <div v-if="false" class="text-12px font-400">
@@ -387,7 +389,7 @@ onMounted(() => {});
       </template>
     </NScrollbar>
     <!-- 输入框 -->
-    <div class="animate__animated animate__fadeIn px-560px">
+    <div class="animate__animated animate__fadeIn px-50px xl:px-560px">
       <!-- 上传和tag -->
       <div class="mb-16px w-full flex items-center justify-between">
         <div class="flex flex-1 items-center">
@@ -440,6 +442,12 @@ onMounted(() => {});
 </template>
 
 <style scoped>
+.bg {
+  width: 100%;
+
+  background: url('https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/zntbg.png') no-repeat;
+  background-size: cover;
+}
 :deep(.n-button) {
   --n-border: none !important;
   --n-border-focus: none !important;
