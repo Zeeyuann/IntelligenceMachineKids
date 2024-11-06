@@ -18,7 +18,7 @@ function init() {
     cursor: true,
     speed: 10,
     afterComplete(instance: any) {
-      if (props.strings[0]) instance.destroy();
+      if (props.strings[0] !== '<p class="w-full whitespace-normal break-all" >生成中...</p>\n') instance.destroy();
       emit('complete');
     }
   };

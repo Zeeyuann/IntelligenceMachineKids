@@ -76,6 +76,14 @@ export function aiSysUser(data: any = {}) {
     data
   });
 }
+
+export function aiSysList(data: any = {}) {
+  return request<any>({
+    url: 'openness/aisyslist',
+    method: 'post',
+    data
+  });
+}
 export function conversation(data: any = {}) {
   return request<any>({
     url: 'aiweb/chatai/conversation',
@@ -195,6 +203,17 @@ export function upLoadFiles(data: any) {
 export function fetchArticle(data: any) {
   return request<any>({
     url: 'aiweb/chatai/article',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data,
+    method: 'post'
+  });
+}
+
+export function ocraiSolve(data: any) {
+  return request<any>({
+    url: 'ocrai/solve',
     headers: {
       'Content-Type': 'multipart/form-data'
     },

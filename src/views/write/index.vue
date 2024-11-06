@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useRouterPush } from '@/hooks/common/router';
-import { aiSysUser, fetchAgentSysuser, getAgentLists } from '@/service/api/index';
+import { fetchAgentSysuser, getAgentLists } from '@/service/api/index';
 import { useAuthStore } from '@/store/modules/auth';
 const authStore = useAuthStore();
-const { routerPushByPath, routerPushByKey } = useRouterPush();
+const { routerPushByKey } = useRouterPush();
 
 // const route = useRoute();
 
@@ -21,7 +21,6 @@ const config: any = reactive({
   agents: [{}]
 });
 
-const roleList: any = ref([]);
 (async () => {
   if (authStore.isLogin) {
     const { data, error } = await fetchAgentSysuser();
@@ -29,13 +28,8 @@ const roleList: any = ref([]);
     if (!error) {
       Object.assign(config, data);
     }
-    const { data: user, error: usererr } = await aiSysUser();
-    if (!usererr) {
-      console.log('🚀 ~ user:', user);
-      roleList.value = user.filter((item: any) => item.title === '小凯智能机器人');
-    }
   }
-  const { data, error } = await getAgentLists();
+  const { data, error } = await getAgentLists({ page: 1, pageSize: 10 });
   if (!error) {
     Object.assign(config.agents, [...data.data]);
     console.log('🚀 ~ config:', config);
@@ -60,9 +54,6 @@ const goWriteChatByitem = (item?: any) => {
 // const goWriteChat = () => {
 //   routerPushByPath('/write-composition');
 // };
-const goWriteComposition = (item: any) => {
-  routerPushByPath('/write-composition', { query: { item: JSON.stringify(item) } });
-};
 </script>
 
 <template>
@@ -71,21 +62,10 @@ const goWriteComposition = (item: any) => {
       <div class="size-full flex flex-col scale-50 items-center justify-center lg:scale-90 xl:scale-100">
         <div class="title text-80px text-#0B0B0B font-700">AI辅学 智慧成长</div>
         <div class="text-26px font-400">用AI帮你更好掌握学科知识，提高综合能力</div>
-        <div class="flex items-center">
+        <div class="flex items-center justify-center">
           <NButton
-            v-for="item in roleList"
-            :key="item.id"
             type="primary"
             class="global-btn my-88px h-80px !w-197px !text-22px !font-600"
-            round
-            block
-            @click="goWriteComposition(item)"
-          >
-            {{ item.title }}
-          </NButton>
-          <NButton
-            type="primary"
-            class="global-btn my-88px ml-48px h-80px !w-197px !text-22px !font-600"
             round
             block
             @click="intoView"

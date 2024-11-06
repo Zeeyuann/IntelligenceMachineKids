@@ -32,6 +32,11 @@ const hanldInput = () => {
     return;
   }
 
+  if (fileList.value.length === 0) {
+    window?.$message?.info('请上传图片');
+    return;
+  }
+
   routerPushByKey('write-chat', {
     query: {
       query: prompt.value,

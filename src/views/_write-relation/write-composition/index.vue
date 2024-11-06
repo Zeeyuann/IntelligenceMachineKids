@@ -135,7 +135,7 @@ const handleGenerateFromBtn = async () => {
     isSending: true,
     completion_tokens: undefined,
     prompt: prompt.value,
-    content: ' '
+    content: '生成中...'
   };
 
   chatList.push(forShow);
@@ -333,7 +333,7 @@ onMounted(async () => {});
     <!-- 输入框 -->
     <div class="animate__animated animate__fadeIn px-50px xl:px-560px">
       <!-- 上传和tag -->
-      <div class="mb-16px w-full flex items-center justify-between">
+      <div v-if="false" class="mb-16px w-full flex items-center justify-between">
         <div class="flex flex-1 items-center">
           <div v-if="false" class="mi mr-8px rd-14px bg-white px-10px py5px text-14px">写景助手</div>
         </div>

@@ -82,4 +82,13 @@ export const themeSettings: App.Theme.ThemeSetting = {
  *
  * If publish new version, use `overrideThemeSettings` to override certain theme settings
  */
-export const overrideThemeSettings: Partial<App.Theme.ThemeSetting> = {};
+export const overrideThemeSettings: Partial<App.Theme.ThemeSetting> = {
+  sider: {
+    inverted: false,
+    width: 240,
+    collapsedWidth: 64,
+    mixWidth: 90,
+    mixCollapsedWidth: 64,
+    mixChildMenuWidth: 200
+  }
+};

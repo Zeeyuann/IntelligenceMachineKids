@@ -1,9 +1,42 @@
 <script setup lang="ts">
 import { useRouterPush } from '@/hooks/common/router';
+import { aiSysList } from '@/service/api/index';
+import { useAuthStore } from '@/store/modules/auth';
+const userStore = useAuthStore();
+
 const { routerPushByPath } = useRouterPush();
+
+const userList: any = ref([]);
+
+watch(
+  () => userStore?.userInfo?.user_id,
+  async val => {
+    if (val) {
+      const { data: ailist, error: listerr } = await aiSysList({ user_id: val });
+      if (!listerr) {
+        console.log('🚀 ~ user:', ailist);
+        userList.value = ailist;
+      }
+    }
+  }
+);
+
+onMounted(async () => {
+  const { data: ailist, error: listerr } = await aiSysList({
+    user_id: userStore.userInfo.user_id ? userStore.userInfo.user_id : 0
+  });
+  if (!listerr) {
+    console.log('🚀 ~ user:', ailist);
+    userList.value = ailist;
+  }
+});
 
 const goGeneratePic = () => {
   routerPushByPath('/generate-pic');
+};
+
+const goWriteComposition = (item: any) => {
+  routerPushByPath('/write-composition', { query: { item: JSON.stringify(item) } });
 };
 </script>
 
@@ -16,19 +49,52 @@ const goGeneratePic = () => {
           <div class="text-26px font-400">基于元创AI,可以高质量帮你完成各种需求</div>
           <div class="flex items-center">
             <NButton
+              v-for="item in userList.filter((item: any) => item.title === '小凯智能机器人')"
+              :key="item.id"
               type="primary"
               class="global-btn my-88px h-80px !w-197px !text-22px !font-600"
               round
               block
+              @click="goWriteComposition(item)"
+            >
+              {{ item.title }}
+            </NButton>
+            <NButton
+              type="primary"
+              class="global-btn my-88px ml-48px h-80px !w-197px !text-22px !font-600"
+              round
+              block
               @click="goGeneratePic"
             >
-              开始创作
+              创作绘图
             </NButton>
           </div>
         </div>
       </div>
     </header>
     <main class="contentbg box-border flex flex-col items-center pt-161px">
+      <div class="mb-100px flex flex-col items-center">
+        <div class="flex items-center text-65px text-#2a2a2a font-700">
+          <icon-local-xkznt class="mr-20px" />
+          我的角色
+        </div>
+        <div class="mb-70px mt-16px text-24px text-#3d3d3d font-400">让AI扮演成你喜欢的角色</div>
+        <!-- ref="role" -->
+        <div class="grid grid-cols-3 box-border w-873px w-full flex-1 gap-x-0 gap-y-16px px-20px">
+          <div
+            v-for="item in userList"
+            :key="item.id"
+            class="boxitem box-border h-80px w-95% flex cursor-pointer items-center border border-[#DADADA] rd-14px border-solid bg-white p-12px shadow-md transition-all transition-duration-300 ease hover:border-[#BAFD00]"
+            @click="goWriteComposition(item)"
+          >
+            <img :src="item.icon" class="mr-10px h-46px w-46px" alt="" />
+            <div>
+              <div class="text-16px font-600">{{ item.title }}</div>
+              <div class="text-14px text-#9E9E9E">{{ item.description }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="text-65px text-#2a2a2a font-700">优秀绘画作品</div>
       <div class="mb-70px mt-16px text-24px text-#3d3d3d font-400">优秀AI绘图作图,激发孩子创意</div>
       <div class="box-border h-539px w-873px flex items-center justify-between md:scale-80">

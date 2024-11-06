@@ -482,17 +482,17 @@ onUnmounted(() => {
           </div>
         </div>
         <div>
-          <NButton class="mr10px rd-18px text-white" @click="capture">本机打印</NButton>
+          <!-- <NButton class="mr10px rd-18px text-white" @click="capture">本机打印</NButton> -->
           <!-- <NButton class="rd-18px text-white">微信分享</NButton> -->
         </div>
       </div>
       <div ref="captureDiv" class="content w-full flex flex-col">
         <div class="line1 mt16px flex items-center">
-          <div class="boder-#D8D8D8 box-border h-330px flex flex-col flex-1 border rd-10px p24px">
+          <div class="boder-#D8D8D8 box-border box-border h-330px flex flex-col flex-1 border rd-10px p24px">
             <div class="title text-16px text-#000000 font-600">评测结果等级评定</div>
             <div class="flex-center flex-col flex-1">
-              <div ref="pieRef" class="size-full"></div>
-              <div class="mi w-343px text-12px text-#666666">
+              <div ref="pieRef" class="box-border w-full flex-1"></div>
+              <div class="mi w-full text-12px text-#666666">
                 *根据教育部《关于普通高中学业水平考试的实施意见》(教基二(2016)7号)所给的标准，以等级呈现成绩，位次由高到低为A至E等级。
                 其中A等级15%，B等级30%，C等级30%，D、E等级共25%，智能提分系统参照此文件，在义务教育阶段同等适用。
               </div>

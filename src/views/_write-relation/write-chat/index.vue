@@ -1,13 +1,15 @@
 <script lang="ts" setup>
 import type { UploadFileInfo, UploadInst } from 'naive-ui';
 import { useLoading } from '@sa/hooks';
-import InfiniteLoading from 'v3-infinite-loading';
 import { useUpload } from '@/hooks/common/upload';
-import { fetchArticle, getConversationList } from '@/service/api';
+import { ocraiSolve } from '@/service/api';
 import { useFileStore } from '@/store/modules/file/index';
 import { markedRender } from '@/utils/highlight';
 // import { audioInstance, initializeAudio } from '@/utils/audio';
 import 'v3-infinite-loading/lib/style.css';
+import { useRouterPush } from '@/hooks/common/router';
+
+const { routerBack } = useRouterPush();
 
 // const playAudio = async (content: string) => {
 //   await initializeAudio(content);
@@ -37,10 +39,25 @@ const route = useRoute();
 console.log('🚀 ~ route:', route.query);
 const hasQuery = computed(() => Object.keys(route.query).length > 0);
 
-const drawActice = ref(false);
+// const drawActice = ref(false);
 
-function handleDraw() {
-  drawActice.value = true;
+// function handleDraw() {
+//   drawActice.value = true;
+// }
+
+function renderMath() {
+  // 检查 MathJax 是否已加载
+  if (window.MathJax) {
+    window.MathJax.typeset();
+    // .then(() => {
+    //   console.log('MathJax 渲染完成');
+    //   text.value = 'cg';
+    // })
+    // .catch((err: any) => {
+    //   console.error('MathJax 渲染失败', err);
+    //   text.value = 'sb';
+    // });
+  }
 }
 
 // 剪切板
@@ -87,6 +104,7 @@ function handleScroll() {
       scrollBar.value.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
     }
     isComplete.value = false;
+    renderMath();
   });
 }
 
@@ -97,10 +115,11 @@ const handleGenerate = async (data: any, forShow: any) => {
   Object.keys(data).forEach(key => {
     formData.append(key, data[key as keyof Data]);
   });
-  const { data: textData, error } = await fetchArticle(formData);
+  const { data: textData, error } = await ocraiSolve(formData);
   if (!error) {
     await nextTick();
-    cid.value = textData.conversation_id;
+
+    cid.value = textData.sessionId;
     const index = chatList.length - 1;
     chatList[index] = { ...forShow, ...textData };
     handleScroll();
@@ -113,25 +132,35 @@ const handleGenerateFromHome = async (temp: any) => {
   isComplete.value = false;
   startLoading();
   const forShow = {
-    coin: undefined,
+    // coin: undefined,
+    // isSending: true,
+    // conversation_id: cid.value || '',
+    // query: route.query.query,
+    // content: ` `,
+    // create_time: undefined,
+    // offspring_id: undefined,
+    // file_ids: route.query.file,
+    // user_id: undefined,
     isSending: true,
-    conversation_id: cid.value || '',
-    query: route.query.query,
-    content: ` `,
-    create_time: undefined,
-    offspring_id: undefined,
-    file_ids: route.query.file,
-    user_id: undefined
+    imgUrl: route.query.file,
+    answer: `生成中...`,
+    question: ''
   };
   chatList.push(forShow);
   handleScroll();
 
-  const { app_id, query } = temp;
-  const data: Data = {
-    app_id,
-    conversation_id: cid.value || '',
-    file: fileStore.uploadedFile as File,
-    query
+  const { app_id } = temp;
+  // const data: Data = {
+  //   app_id,
+  //   conversation_id: cid.value || '',
+  //   file: fileStore.uploadedFile as File,
+  //   query
+  // };
+  console.log('🚀 ~ handleGenerateFromHome ~ data.list:', fileStore);
+
+  const data = {
+    appid: app_id,
+    image: fileStore.uploadedFile
   };
 
   handleGenerate(data, forShow);
@@ -184,28 +213,28 @@ if (hasQuery) {
   handleGenerateFromHome(temp);
 }
 
-const textHistory = ref<any>([]);
-const query = reactive({
-  page: 1,
-  pageSize: 10
-});
+// const textHistory = ref<any>([]);
+// const query = reactive({
+//   page: 1,
+//   pageSize: 10
+// });
 // 绘图列表
-const stateInstance = ref<any>(null);
+// const stateInstance = ref<any>(null);
 
-const hanldeLoad = async (state: any) => {
-  stateInstance.value = state;
-  const { data, error } = await getConversationList(query);
-  if (!error) {
-    textHistory.value.push(...data.data);
-    if (data.data.length < query.pageSize) state.complete();
-    else {
-      state.loaded();
-    }
-    query.page += 1;
-  } else {
-    state.error();
-  }
-};
+// const hanldeLoad = async (state: any) => {
+//   stateInstance.value = state;
+//   const { data, error } = await getConversationList(query);
+//   if (!error) {
+//     textHistory.value.push(...data.data);
+//     if (data.data.length < query.pageSize) state.complete();
+//     else {
+//       state.loaded();
+//     }
+//     query.page += 1;
+//   } else {
+//     state.error();
+//   }
+// };
 
 onMounted(() => {});
 </script>
@@ -228,63 +257,6 @@ onMounted(() => {});
             <span class="ml8px">新建对话</span>
           </NButton>
 -->
-          <NButton
-            class="ml-30px box-border rd-14px text-18px text-#181818 font-600 !h-54px !w-54px !border-none !bg-white"
-            size="large"
-            @click="handleDraw"
-          >
-            <icon-local-clock class="scale-100" />
-          </NButton>
-          <NDrawer v-model:show="drawActice" width="50%" placement="right">
-            <NDrawerContent>
-              <template #header>
-                <div class="w-full flex items-center justify-between">
-                  文本创作记录
-                  <icon-local-close class="cursor-pointer" @click="drawActice = false" />
-                </div>
-              </template>
-              <div v-if="drawActice" class="box-border size-full flex flex-col of-y-auto">
-                <div
-                  v-for="item in textHistory"
-                  :key="item.id"
-                  class="hisitem mb-10px box-border w-full flex flex-col cursor-pointer border border-#DADADA rd-14px p-16px"
-                >
-                  <div class="mi text-14px font-500">
-                    {{ item.title }}
-                  </div>
-                  <div class="my-10px flex items-center">
-                    <!--
- <div
-                      class="mi my-10px mr-8px flex items-center justify-center rd-14px bg-#F5F8F7 px-10px py5px text-12px"
-                    >
-                      写景
-                    </div>
--->
-                  </div>
-                  <div class="mi line-clamp-3 text-12px text-#666666 line-height-20px">
-                    {{ item.content }}
-                  </div>
-                </div>
-                <InfiniteLoading
-                  v-if="drawActice"
-                  class="mi flex items-center justify-center text-#181818"
-                  @infinite="hanldeLoad"
-                >
-                  <template #complete>
-                    <span class="text-16px text-#9E9E9E font-500">
-                      {{ textHistory.length === 0 ? '您还没有记录' : '没有更多啦!' }}
-                    </span>
-                  </template>
-                  <template #error="{ retry }">
-                    <div class="flex flex-col items-center">
-                      <span class="mb-5px text-16px text-#9E9E9E font-500">啊哦,加载绘图记录出了点问题~</span>
-                      <NButton @click="retry">重试</NButton>
-                    </div>
-                  </template>
-                </InfiniteLoading>
-              </div>
-            </NDrawerContent>
-          </NDrawer>
         </div>
       </div>
     </div>
@@ -294,15 +266,17 @@ onMounted(() => {});
       class="animate__animated content animate__fadeIn mb-16px box-border flex flex-col flex-1 px-50px xl:px-560px"
     >
       <template v-if="true">
-        <div v-for="item in chatList" :key="item.create_time" class="each mb-16px flex flex-col">
+        <div v-for="item in chatList" :key="item.createTime" class="each mb-16px flex flex-col">
           <!-- ask -->
           <div
             class="mb-16px box-border w-[fit-content] self-end rd-bl-12px rd-br-2px rd-lt-12px rd-rt-12px p-16px text-14px text-white font-500"
             :style="{ background: ' linear-gradient(180deg, #2B2D24 0%, #0B0C09 100%), #FFFFFF' }"
           >
-            {{ item.query }}
+            <!-- {{ item.question }} -->
             <div class="flex items-center">
-              <template v-if="item.file_ids && item.file_ids.indexOf('jpg' || 'png') > 0">
+              <NImage object-fit="cover" class="w-full" :src="item.imgUrl" />
+              <!--
+ <template v-if="item.file_ids && item.file_ids.indexOf('jpg' || 'png') > 0">
                 <NImage object-fit="cover" class="w-full" :src="item.file_ids" />
               </template>
               <template
@@ -311,6 +285,7 @@ onMounted(() => {});
                 <icon-ph:file class="mr-5px h-16px w-16px" />
                 {{ item.file_ids }}
               </template>
+-->
             </div>
           </div>
           <!-- answer -->
@@ -319,19 +294,19 @@ onMounted(() => {});
           >
             <template v-if="item.isSending">
               <VueTyped
-                v-if="item.content"
-                :strings="[markedRender(item.content)]"
+                v-if="item.answer"
+                :strings="[markedRender(item.answer)]"
                 @complete="isComplete = true"
                 @reset="handleTypeComplete(item)"
               />
             </template>
 
-            <div v-else class="span" v-html="markedRender(item.content)"></div>
-            <div v-if="item.content" class="tool self-end justify-items-end">
+            <div v-else class="span" v-html="markedRender(item.answer)"></div>
+            <div v-if="item.answer" class="tool self-end justify-items-end">
               <NButton
                 class="box-border rd-14px text-18px text-#181818 font-600 !h-54px !w-54px !border-none !bg-white"
                 size="large"
-                @click="handleCopy(item.content)"
+                @click="handleCopy(item.answer)"
               >
                 <icon-local-copy-write class="scale-100" />
               </NButton>
@@ -389,7 +364,17 @@ onMounted(() => {});
       </template>
     </NScrollbar>
     <!-- 输入框 -->
-    <div class="animate__animated animate__fadeIn px-50px xl:px-560px">
+    <div class="animate__animated animate__fadeIn flex items-center justify-center px-50px xl:px-560px">
+      <NButton
+        round
+        type="primary"
+        class="global-btn !w-full !flex !items-center !justify-center !text-18px !font-600"
+        @click="routerBack"
+      >
+        返回
+      </NButton>
+    </div>
+    <div v-if="false" class="animate__animated animate__fadeIn px-50px xl:px-560px">
       <!-- 上传和tag -->
       <div class="mb-16px w-full flex items-center justify-between">
         <div class="flex flex-1 items-center">
@@ -498,5 +483,12 @@ onMounted(() => {});
     0 1px 2px -2px rgba(0, 0, 0, 0.08),
     0 3px 6px 0 rgba(0, 0, 0, 0.06),
     0 5px 12px 4px rgba(0, 0, 0, 0.04);
+}
+
+:deep(.global-btn .n-button__content) {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
