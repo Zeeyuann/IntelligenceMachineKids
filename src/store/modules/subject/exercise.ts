@@ -1,6 +1,6 @@
 import { store } from '@/store';
-export const useSubjectStore = defineStore(
-  'subject',
+export const useExerciseSubjectStore = defineStore(
+  'ExerciseSubject',
   () => {
     const subjectInfo = ref({});
 
@@ -20,26 +20,20 @@ export const useSubjectStore = defineStore(
       questionList.value = {};
     };
 
+    // eslint-disable-next-line max-params
     const handleAddAnswer = (val: any, index: any, question: any) => {
-      console.log('🚀 ~ handleAddAnswer ~ val:', val);
-      console.log('🚀 ~ handleAddAnswer ~ question:', question);
-      const { knowledgeId, questionId, diffLevel, questionOptions } = question;
-      const item = questionOptions.find((ele: any) => ele.optionContent === val);
+      const { id, kpoints, difficultyLevel, answer, difficulty } = question;
+      // const item = questionOptions.find((ele: any) => ele.optionContent === val);
       const obj = {
-        knowledgeId,
-        questionId,
-        isRight: Number(item.isRight),
-        level: diffLevel,
+        knowledgeId: kpoints.map((item: any) => item.id).join(','),
+        questionId: Number(id),
+        difficulty,
+        isright: Number(answer.includes(val)),
+        difficultyLevel,
         userAnswer: val
       };
       console.log('🚀 ~ handleAddAnswer ~ obj:', obj);
       answerList.value[index] = obj;
-      // const index = answerList.value.findIndex((item: any) => item === val);
-      // if (index !== -1) {
-      //   answerList.value[index] = val;
-      // } else {
-      //   answerList.value.push(val);
-      // }
     };
 
     const clearAnswerList = () => {
@@ -60,6 +54,6 @@ export const useSubjectStore = defineStore(
   { persist: { enabled: true } }
 );
 // Need to be used outside the setup
-export function useSubjectStoreWithOut() {
-  return useSubjectStore(store);
+export function useExerciseSubjectStoreWithOut() {
+  return useExerciseSubjectStore(store);
 }

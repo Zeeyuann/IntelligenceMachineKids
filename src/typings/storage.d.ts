@@ -14,6 +14,8 @@ declare namespace StorageType {
     lang: App.I18n.LangType;
     /** The token */
     token: string;
+    /** The tokenExpireTime */
+    expireTime: number;
     /** The Offspriingid */
     Offspriingid: string;
     /** The Offspriingid */

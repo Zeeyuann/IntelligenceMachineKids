@@ -46,8 +46,10 @@ const intoView = () => {
 };
 
 const goWriteChatByitem = (item?: any) => {
-  if (item) {
+  if (item && item.status === 1) {
     routerPushByKey('write-chat-home', { query: item });
+  } else {
+    window.$message?.info('即将上线,敬请期待');
   }
 };
 
@@ -116,7 +118,7 @@ const goWriteChatByitem = (item?: any) => {
 }
 .contentbg {
   width: 100%;
-  height: 1155px;
+
   background: url('https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/contentbg.png') no-repeat;
   background-size: cover;
 }

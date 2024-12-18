@@ -16,7 +16,7 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <RouterLink to="/" class="w-full flex-center">
+  <RouterLink to="/" class="w-[fit-content] flex-center">
     <SystemLogo class="text-32px text-primary" />
     <h2 v-show="showTitle" class="ddjb pl-8px text-22px text-#0B0B0B font-bold transition duration-300 ease-in-out">
       元创AI | 为学习而生

@@ -52,6 +52,30 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'exercise-report',
+    path: '/exercise-report',
+    component: 'layout.blank$view.exercise-report',
+    meta: {
+      title: 'exercise-report',
+      i18nKey: 'route.exercise-report',
+      hideInMenu: true,
+      isBlank: true,
+      constant: true
+    }
+  },
+  {
+    name: 'exercise-test-subject',
+    path: '/exercise-test-subject',
+    component: 'layout.base$view.exercise-test-subject',
+    meta: {
+      title: 'exercise-test-subject',
+      i18nKey: 'route.exercise-test-subject',
+      hideInMenu: true,
+      isBlank: true,
+      activeMenu: 'classroom'
+    }
+  },
+  {
     name: 'generate-pic',
     path: '/generate-pic',
     component: 'layout.blank$view.generate-pic',

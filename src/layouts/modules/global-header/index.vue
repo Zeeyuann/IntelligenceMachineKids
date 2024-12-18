@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { useFullscreen } from '@vueuse/core';
 import { useAppStore } from '@/store/modules/app';
-import { useThemeStore } from '@/store/modules/theme';
+// import { useThemeStore } from '@/store/modules/theme';
 import { GLOBAL_HEADER_MENU_ID } from '@/constants/app';
 import GlobalLogo from '../global-logo/index.vue';
 import GlobalBreadcrumb from '../global-breadcrumb/index.vue';
@@ -35,7 +35,7 @@ interface Props {
 defineProps<Props>();
 
 const appStore = useAppStore();
-const themeStore = useThemeStore();
+// const themeStore = useThemeStore();
 // const { isFullscreen, toggle } = useFullscreen();
 </script>
 
@@ -49,12 +49,14 @@ const themeStore = useThemeStore();
         routeName === 'study' ||
         routeName === 'test-home' ||
         routeName === 'test-subject' ||
+        routeName === 'exercise-test-subject' ||
+        routeName === 'exercise-report' ||
         routeName === 'test-report',
       writebg: routeName === 'write'
     }"
     class="h-full flex-y-center px-20px shadow-header xl:px-230px"
   >
-    <GlobalLogo v-if="showLogo" class="h-full" :style="{ width: themeStore.sider.width + 'px' }" />
+    <GlobalLogo v-if="showLogo" class="h-full" />
     <MenuToggler v-if="showMenuToggler" :collapsed="appStore.siderCollapse" @click="appStore.toggleSiderCollapse" />
     <div v-if="showMenu" :id="GLOBAL_HEADER_MENU_ID" class="h-full flex-y-center flex-1-hidden"></div>
     <div v-else class="bg h-full flex-y-center flex-1-hidden">

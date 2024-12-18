@@ -2,8 +2,12 @@
 import { computed, defineAsyncComponent } from 'vue';
 import { AdminLayout, LAYOUT_SCROLL_EL_ID } from '@sa/materials';
 import type { LayoutMode } from '@sa/materials';
+import dayjs from 'dayjs';
 import { useAppStore } from '@/store/modules/app';
 import { useThemeStore } from '@/store/modules/theme';
+import { getTaskList } from '@/service/api';
+import { useAuthStore } from '@/store/modules/auth';
+import { useRouterPush } from '@/hooks/common/router';
 import GlobalHeader from '../modules/global-header/index.vue';
 import GlobalSider from '../modules/global-sider/index.vue';
 import GlobalTab from '../modules/global-tab/index.vue';
@@ -11,6 +15,8 @@ import GlobalContent from '../modules/global-content/index.vue';
 import GlobalFooter from '../modules/global-footer/index.vue';
 import ThemeDrawer from '../modules/theme-drawer/index.vue';
 import { setupMixMenuContext } from '../context';
+
+const authStore = useAuthStore();
 const route = useRoute();
 defineOptions({
   name: 'BaseLayout'
@@ -116,43 +122,65 @@ function getSiderCollapsedWidth() {
   return w;
 }
 
-const handleExfold = () => {
-  window.$notification?.create({
+const { routerPushByKey } = useRouterPush();
+
+const nowDay = dayjs().format('YYYY-MM-DD');
+
+const taskList = ref([]);
+
+const handleExfold = async () => {
+  const { data, error } = await getTaskList({ date: nowDay });
+  if (!error) {
+    console.log('🚀 ~ data:', data);
+    taskList.value = data.ispulishs;
+  }
+
+  const n = window.$notification?.create({
     title() {
       return h('div', { class: 'text-18px text-#000000 font-600 alph flex items-end' }, [
         h('div', {}, '精准练任务'),
-        h('div', { class: 'text-10px font-400 text-#9E9E9E mb-5px ml-10px' }, '今日(2024年10月16日)')
+        h('div', { class: 'text-12px font-400 text-#9E9E9E mb-5px ml-10px' }, `今日( ${nowDay} )`)
       ]);
     },
     content() {
-      return h('div', { class: 'w-full p-24px box-border bg-#A1ECFF' }, [
-        h(
-          'div',
-          {
-            class:
-              'w-full px-11px py-16px box-border flex items-center justify-between alph bg-white shadow-md cursor-pointer',
-            onClick() {
-              window.$message?.info('功能将于12月份开通');
-            }
-          },
-          [
-            h('div', { class: 'text-18px font-600 text-#000000 alph' }, `数学`),
-            h('div', { class: 'text-12px text-#9E9E9E' }, `题量：10题`),
-            h(
-              'div',
-              {
-                class: `text-12px font-600 text-#ffffff alph w-52px h-18px bg-#FF0000 flex items-center justify-center`
-              },
-              `未完成`
-            ),
-            h(
-              'div',
-              { class: `w-77px h-23px flex items-center justify-center bg-#FF8F1F rd-12px text-12px font-600` },
-              `去完成`
-            )
-          ]
-        )
-      ]);
+      return h(
+        'div',
+        { class: 'w-full p-18px box-border bg-#A1ECFF rd-16px gap-y-10px grid grid-cols-1' },
+        taskList.value.map((item: any) => {
+          return h(
+            'div',
+            {
+              class:
+                'w-full px-11px py-16px box-border flex items-center justify-between alph bg-white hover:shadow-md cursor-pointer transition-all-300',
+              onClick() {
+                // window.$message?.info('功能将于12月份开通');
+                if (item.state) {
+                  routerPushByKey('exercise-report', { query: { id: item?.id } });
+                } else {
+                  routerPushByKey('exercise-test-subject', { query: { id: item?.id } });
+                }
+                n?.destroy();
+              }
+            },
+            [
+              h('div', { class: 'text-16px font-600 text-#000000 alph' }, `${item?.courseName ?? '科目'}`),
+              h('div', { class: 'text-12px text-#9E9E9E' }, `题量：${item?.catalogIds.split(',').length}题`),
+              h(
+                'div',
+                {
+                  class: `text-12px font-600 text-#ffffff alph w-52px h-18px bg-#FF0000 flex items-center justify-center`
+                },
+                `${item?.state ? '已完成' : '未完成'}`
+              ),
+              h(
+                'div',
+                { class: `w-77px h-23px flex items-center justify-center bg-#FF8F1F rd-12px text-12px font-600` },
+                `${item?.state ? '查看报告' : '去完成'}`
+              )
+            ]
+          );
+        })
+      );
     }
   });
 };
@@ -180,7 +208,7 @@ const handleExfold = () => {
     :right-footer="themeStore.footer.right"
   >
     <div
-      v-if="false"
+      v-if="authStore.isLogin"
       :style="{ background: 'rgba(255, 255, 255, 0.85)', borderRadius: '5px 0px 0px 5px' }"
       class="alph fixed right-10px top-120px box-border h-54px flex flex-col cursor-pointer items-center justify-between p-6px text-12px text-#9E9E9E"
       @click="handleExfold"

@@ -2,7 +2,7 @@ import type { AxiosResponse } from 'axios';
 import { BACKEND_ERROR_CODE, createFlatRequest, createRequest } from '@sa/axios';
 import { useAuthStore } from '@/store/modules/auth';
 import { $t } from '@/locales';
-import { localStg } from '@/utils/storage';
+// import { localStg } from '@/utils/storage';
 import { getServiceBaseURL } from '@/utils/service';
 import { getAuthorization, getOffSpriingId, handleExpiredRequest, showErrorMsg } from './shared';
 import type { RequestInstanceState } from './type';
@@ -23,7 +23,12 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
         Object.assign(config.headers, { Authorization });
         return config;
       }
-      Object.assign(config.headers, { Authorization, Offspriingid });
+
+      if (Authorization) {
+        Object.assign(config.headers, { Authorization, Offspriingid });
+        return config;
+      }
+
       return config;
     },
     isBackendSuccess(response) {
@@ -136,12 +141,17 @@ export const uploadRequest = createRequest<App.Service.DemoResponse>(
   },
   {
     async onRequest(config) {
-      const { headers } = config;
+      const Authorization = getAuthorization();
+      const Offspriingid = getOffSpriingId();
+      if (config.url === 'aiweb/center/detail') {
+        Object.assign(config.headers, { Authorization });
+        return config;
+      }
 
-      // set token
-      const token = localStg.get('token');
-      const Authorization = token ? `Bearer ${token}` : null;
-      Object.assign(headers, { Authorization });
+      if (Authorization) {
+        Object.assign(config.headers, { Authorization, Offspriingid });
+        return config;
+      }
 
       return config;
     },
@@ -263,6 +273,8 @@ export const jzcRequest = createFlatRequest<App.Service.Response, RequestInstanc
       return response.data.data;
     },
     onError(error) {
+      if (error.config?.headers?.hideErr === 'true') return;
+
       // when the request is fail, you can show error message
 
       let message = error.message;
@@ -286,7 +298,7 @@ export const jzcRequest = createFlatRequest<App.Service.Response, RequestInstanc
         return;
       }
 
-      showErrorMsg(request.state, message);
+      showErrorMsg(jzcRequest.state, message);
     }
   }
 );

@@ -67,7 +67,7 @@ declare namespace Api {
       name: string;
       sex: number;
       status: number;
-      user_id: number;
+      user_id: number | null;
       vip_time: number;
     }
 

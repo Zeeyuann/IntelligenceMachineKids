@@ -3,9 +3,12 @@ import { useNaiveForm } from '@/hooks/common/form';
 import { getEvaluateGrade, getEvaluatePress, getEvaluateSubject } from '@/service/api';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouterPush } from '@/hooks/common/router';
+import { useLoginClassStore } from '@/store/modules/login-class';
 import IconLocalFolder from '~icons/local/folder';
+
 const { routerPushByKey } = useRouterPush();
 const authStore = useAuthStore();
+const loginClassStore = useLoginClassStore();
 
 const rules = {
   gradeId: { required: true, message: '请选择年级' },
@@ -24,7 +27,7 @@ const model: any = reactive({
 
 const FORM_LIST: any = reactive([
   {
-    label: '请选择班级',
+    label: '请选择年级',
     labelField: 'gradeName',
     valueField: 'gradeId',
     key: 'gradeId',
@@ -34,7 +37,7 @@ const FORM_LIST: any = reactive([
         class: 'flex items-center'
       },
       {
-        default: () => [h(IconLocalFolder), h('span', { class: 'ml-10px' }, '请选择班级')]
+        default: () => [h(IconLocalFolder), h('span', { class: 'ml-10px' }, '请选择年级')]
       }
     ),
     option: []
@@ -102,12 +105,10 @@ const FORM_LIST: any = reactive([
 ]);
 
 (async () => {
-  if (authStore.isLogin) {
-    const { data, error } = await getEvaluateGrade();
-    console.log('🚀 ~ data:', data);
-    if (!error) {
-      Object.assign(FORM_LIST[0], { option: data });
-    }
+  const { data, error } = await getEvaluateGrade();
+  console.log('🚀 ~ data:', data);
+  if (!error) {
+    Object.assign(FORM_LIST[0], { option: data });
   }
 })();
 
@@ -146,6 +147,14 @@ const intoLianView = () => {
 async function handleSubmit() {
   // window?.$message?.info('版本功能升级中,请耐心等待');
   // return;
+  if (!authStore.isLogin) {
+    loginClassStore.setFlag(true);
+    window?.$message?.info('请先登录哦');
+    setTimeout(() => {
+      loginClassStore.setFlag(false);
+    }, 1000);
+    return;
+  }
   console.log(model);
   console.log(FORM_LIST);
 

@@ -15,6 +15,8 @@ export const layouts: Record<RouteLayout, RouteComponent | (() => Promise<RouteC
 };
 
 export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<RouteComponent>)> = {
+  "exercise-report": () => import("@/views/_ai-test/exercise-report/index.vue"),
+  "exercise-test-subject": () => import("@/views/_ai-test/exercise-test-subject/index.vue"),
   "test-home": () => import("@/views/_ai-test/test-home/index.vue"),
   "test-report": () => import("@/views/_ai-test/test-report/index.vue"),
   "test-subject": () => import("@/views/_ai-test/test-subject/index.vue"),

@@ -31,6 +31,16 @@ export function wxCodeLogin(code: string) {
   });
 }
 
+export function logOut(id: number) {
+  return request<Api.Auth.token>({
+    url: 'aiweb/outlogin',
+    method: 'post',
+    data: {
+      id
+    }
+  });
+}
+
 export function fetchOffSpringId() {
   return request<Api.Auth.offSpriingId[]>({
     url: 'aiweb/offsprings',

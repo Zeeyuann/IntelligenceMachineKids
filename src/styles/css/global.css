@@ -37,3 +37,267 @@ html {
   font-weight: 600;
   font-size: 22px;
 }
+.qml-ques table,
+.qml-ques p,
+.qml-ques {
+  font-size: 14px;
+}
+
+.qml-ques table tr:nth-child(2n),
+.qml-ques table tr {
+  background-color: unset;
+}
+
+.qml-ques table td {
+  padding: 0;
+  max-width: unset;
+}
+
+.qml-ques [wave] {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-underline-position: auto;
+  white-space: pre-wrap;
+}
+
+.qml-ques [em] {
+  -webkit-text-emphasis-position: under;
+  text-emphasis-position: under right;
+  -webkit-text-emphasis-style: circle;
+  text-emphasis-style: circle;
+  white-space: pre-wrap;
+}
+
+.qml-ques [u] {
+  text-decoration: underline;
+}
+
+.qml-ques table tr {
+  background-color: unset;
+}
+.qml-paper {
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  margin: 26px auto 0;
+  max-width: 800px;
+  min-height: 300px;
+  padding: 24px;
+  position: relative;
+  width: 80%;
+  line-height: 1.8;
+}
+
+.qml-paper p {
+  margin-top: 0;
+  margin-bottom: 0;
+  min-height: 24px;
+}
+
+.qml-paper p,
+.qml-paper div {
+  word-break: break-all;
+  margin-bottom: 0;
+}
+
+.qml-paper .bracket {
+  text-decoration: none;
+}
+
+.bk-mp {
+  margin-left: 10px;
+}
+
+.qml-answer {
+  word-break: break-all;
+}
+
+.style-bold {
+  font-weight: bold;
+}
+
+.style-italic {
+  font-style: italic;
+}
+
+.style-strike {
+  text-decoration: line-through;
+}
+
+.style-underline {
+  text-decoration: underline;
+  white-space: pre-wrap;
+}
+
+.qml-col1,
+.qml-col2,
+.qml-col3,
+.qml-col4 {
+  width: 100%;
+}
+
+.qml-col2 td {
+  width: 50%;
+}
+
+.qml-col3 td {
+  width: 33.3%;
+}
+
+.qml-col1 td {
+  width: 100%;
+}
+
+.qml-col4 td {
+  width: 25%;
+}
+
+.qml-stem img {
+  vertical-align: middle;
+}
+.qml-stem {
+  position: relative;
+  margin-top: 10px;
+  word-break: break-all;
+}
+
+.qml-stem:first-child {
+  margin-top: 0;
+}
+
+.qml-sq {
+  position: relative;
+  padding-left: 25px;
+}
+
+.qml-inline {
+  display: inline;
+}
+
+.qml-ques {
+  display: block;
+  word-break: break-all;
+  position: relative;
+  line-height: 1.8;
+  font-family: 'Times New Roman', 'å®‹ä½“';
+  margin-bottom: 20px;
+}
+
+.qml-bk {
+  word-break: break-word;
+  background-color: #ecf9ff;
+  display: inline-block;
+  line-height: 0.8;
+  border-bottom: 1px solid #000;
+  text-align: center;
+  text-decoration-color: unset !important;
+}
+
+.qml-answer {
+  margin-bottom: 5px;
+  margin-left: 10px;
+}
+
+.qml-explanation .qml-seg p,
+.qml-exps-sq {
+  margin-left: 10px;
+}
+
+.qml-block-ans {
+  display: block;
+}
+
+.qml-inline-ans {
+  margin-right: 15px;
+  display: inline-block;
+}
+
+.qml-an-sq {
+}
+.double-line {
+  color: #333;
+  border-bottom: 3px double #000;
+}
+
+.qml-an {
+  margin-right: 10px;
+}
+
+.qml-paper table[border] table[border] {
+  border-collapse: collapse;
+  border-color: #efefef;
+}
+
+.qml-paper table[border] td p {
+  padding: 0;
+  line-height: 1;
+}
+
+.qml-paper span.title-number + table.qml-og {
+  position: relative;
+  top: -3px;
+}
+
+.qml-paper .qml-ques .qml-sq .qml-stem {
+  padding-left: 0;
+}
+
+.qml-exact:before {
+  display: inline;
+  background-color: #5a9600;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 2px;
+  padding: 0 4px;
+  line-height: 1;
+  content: 'æœºé˜…';
+  margin-right: 3px;
+}
+
+.qml-ques img,
+.qml-answer img,
+.qml-stem img,
+.qml-explanation img {
+  vertical-align: middle;
+}
+
+[wave] {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-underline-position: under;
+  white-space: pre-wrap;
+}
+
+table[align='left'] {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+table[align='center'] {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table[align='right'] {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+table td.slash-1 {
+  background: #fff
+    url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxsaW5lIHgxPSIwIiB5MT0iMCIgeDI9IjEwMCUiIHkyPSIxMDAlIiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9zdmc+)
+    no-repeat 100% center;
+}
+.qml-inline.qml-og {
+  display: inline-flex;
+  width: calc(100% - 40px);
+}
+.qml-inline.qml-og span.qml-op {
+  flex-basis: 0;
+  flex-grow: 1;
+}
+
+.qml-sq .qml-stem span.ques-no {
+  display: inline-block;
+  max-width: 40px;
+  white-space: nowrap;
+}

@@ -90,5 +90,10 @@ export const overrideThemeSettings: Partial<App.Theme.ThemeSetting> = {
     mixWidth: 90,
     mixCollapsedWidth: 64,
     mixChildMenuWidth: 200
+  },
+  layout: {
+    mode: 'horizontal',
+    scrollMode: 'wrapper',
+    reverseHorizontalMix: false
   }
 };

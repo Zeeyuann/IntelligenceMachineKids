@@ -185,7 +185,6 @@ const goWriteComposition = (item: any) => {
 }
 .contentbg {
   width: 100%;
-  height: 1155px;
   background: url('https://imgs.superxi.cn/%E5%85%83%E5%88%9B%E6%99%BA%E7%AB%A5AI/image/contentbg.png') no-repeat;
   background-size: cover;
 }

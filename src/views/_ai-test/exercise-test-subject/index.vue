@@ -1,14 +1,27 @@
 <script setup lang="ts">
 import useCountInterval from '@/hooks/common/count';
-import { getEvaluate, getEvaluateQuestion } from '@/service/api';
-import { useSubjectStore } from '@/store/modules/subject';
-import { markedRender } from '@/utils/highlight';
+import { getTaskAnswer, getTaskQuestion } from '@/service/api';
+import { useExerciseSubjectStore } from '@/store/modules/subject/exercise';
 import { useRouterPush } from '@/hooks/common/router';
 
 const { routerPushByKey } = useRouterPush();
+const route = useRoute();
 
-const subjectStore = useSubjectStore() as any;
+const subjectStore = useExerciseSubjectStore() as any;
 subjectStore.clearAnswerList();
+
+const taskId = ref(route.query.id);
+
+watchEffect(async () => {
+  const { data, error } = await getTaskQuestion({ taskId: taskId.value });
+  if (!error) {
+    console.log(data);
+    subjectStore.setQuestionList(data.questions);
+    nextTick(() => {
+      renderMath();
+    });
+  }
+});
 
 const { formattedTime, start, stop } = useCountInterval();
 start();
@@ -33,12 +46,13 @@ const endQuestion = () => {
 startQuestion();
 
 const quetionList: any = computed<any>(() =>
-  Object.keys(subjectStore.questionList).length > 0 ? subjectStore.questionList.quesList : []
+  Object.keys(subjectStore.questionList)?.length > 0 ? subjectStore.questionList : []
 );
+console.log('🚀 ~ quetionList:', quetionList);
 
 const subNo = ref(0);
 
-const percentage = computed(() => Math.floor(((subNo.value + 1) / quetionList.value.length) * 100));
+const percentage = computed(() => Math.floor(((subNo.value + 1) / quetionList.value?.length) * 100));
 
 const selectValue = computed({
   get() {
@@ -47,18 +61,18 @@ const selectValue = computed({
   set() {}
 });
 
-(async () => {
-  if (Object.keys(subjectStore.questionList).length === 0) {
-    const { data, error } = await getEvaluateQuestion(subjectStore.subjectInfo?.params);
-    if (!error) {
-      console.log(data);
-      subjectStore.setQuestionList(data);
-      nextTick(() => {
-        renderMath();
-      });
-    }
-  }
-})();
+// (async () => {
+//   if (Object.keys(subjectStore.questionList).length === 0) {
+//     const { data, error } = await getTaskQuestion({ taskId: useRoute().query.id });
+//     if (!error) {
+//       console.log(data);
+//       subjectStore.setQuestionList(data);
+//       nextTick(() => {
+//         renderMath();
+//       });
+//     }
+//   }
+// })();
 
 const handlePre = () => {
   if (subNo.value > 0) {
@@ -70,6 +84,7 @@ const handleNext = () => {
     window.$message?.info('请选择答案哦');
     return;
   }
+
   if (subNo.value < quetionList.value.length - 1) {
     endQuestion(); // 记录当前题目的时间
     questionIndex.value += 1; // 跳转到下一题
@@ -83,21 +98,23 @@ const handleSubmit = async () => {
     window.$message?.info('请选择答案哦');
     return;
   }
-  console.log(subjectStore.answerList);
+  endQuestion();
+  console.log(times);
+
   // return;
 
   const data = {
-    evaluateId: subjectStore.questionList.evaluateId,
-    useTimes: stop() * 1000,
-    answers: subjectStore.answerList.map((item: any, index: any) => ({ ...item, time: times[index] }))
+    taskId: taskId.value,
+    countTime: stop() * 1000,
+    answerBodyList: subjectStore.answerList.map((item: any, index: any) => ({ ...item, time: times.value[index] }))
   };
-  console.log(stop());
-  const { data: reportData, error } = await getEvaluate(data);
+  console.log('🚀 ~ handleSubmit ~ data:', data);
+  const { data: reportData, error } = await getTaskAnswer(data);
   if (!error) {
     console.log(reportData);
     console.log(stop());
 
-    routerPushByKey('test-report', { query: { id: reportData.evaluateId } });
+    routerPushByKey('exercise-report', { query: { id: reportData.taskId } });
   }
 };
 function renderMath() {
@@ -135,7 +152,7 @@ onMounted(() => {
           <div class="h-26px flex items-end text-14px">
             <span class="mb-5px text-[rgba(0,0,0,0.6)]">答题进度</span>
             <NStatistic class="" :value="subNo + 1">
-              <template #suffix>/{{ quetionList.length }}</template>
+              <template #suffix>/{{ quetionList?.length }}</template>
             </NStatistic>
           </div>
           <NProgress type="line" color="#2CB6FF" :percentage="percentage" indicator-placement="inside" processing />
@@ -147,7 +164,7 @@ onMounted(() => {
         <template v-for="(question, index) in quetionList" :key="question.questionId">
           <div v-show="index === subNo" class="box-border w-full flex flex-1 of-hidden">
             <NScrollbar class="animate__fadeIn animate__animated box-border w-full flex flex-col flex-1 pb-16px">
-              <div class="mb-22px text-18px font-500" v-html="markedRender(question.title)"></div>
+              <div class="mb-22px text-18px font-500" v-html="question.stem.html"></div>
               <div class="flex-1">
                 <NRadioGroup
                   v-model:value="selectValue"
@@ -155,13 +172,13 @@ onMounted(() => {
                   @update:value="val => subjectStore.handleAddAnswer(val, index, question)"
                 >
                   <NRadioButton
-                    v-for="(item, anindex) in question.questionOptions"
-                    :key="item.questionId"
-                    :class="`${anindex !== question.questionOptions.length - 1 ? 'mb-16px' : ''}`"
+                    v-for="(item, anindex) in question.stem.opList"
+                    :key="item.index"
+                    :class="`${anindex !== question.stem.opList.length - 1 ? 'mb-16px' : ''}`"
                     class="flex-1 items-center !h-full !flex"
-                    :value="item.optionContent"
+                    :value="item.index"
                   >
-                    <div class="maths" v-html="markedRender(item.optionContent)"></div>
+                    <div class="maths" v-html="`${item.index}. ${item.html}`"></div>
                   </NRadioButton>
                 </NRadioGroup>
               </div>
@@ -178,8 +195,8 @@ onMounted(() => {
             上一题
           </NButton>
           <NButton
-            v-if="subNo !== quetionList.length - 1"
-            :disabled="subNo === quetionList.length - 1"
+            v-if="subNo !== quetionList?.length - 1"
+            :disabled="subNo === quetionList?.length - 1"
             class="conbtn h-42px w-full flex-1 bg-#2CB6FF !rd-14px"
             @click="handleNext"
           >

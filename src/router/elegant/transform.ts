@@ -167,6 +167,8 @@ const routeMap: RouteMap = {
   "404": "/404",
   "500": "/500",
   "classroom": "/classroom",
+  "exercise-report": "/exercise-report",
+  "exercise-test-subject": "/exercise-test-subject",
   "generate-pic": "/generate-pic",
   "home": "/home",
   "iframe-page": "/iframe-page/:url",

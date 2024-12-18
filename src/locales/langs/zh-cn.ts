@@ -164,7 +164,9 @@ const local: App.I18n.Schema = {
     'test-home': 'AI精准测',
     'test-subject': '测试答题',
     'test-report': '测试报告',
-    study: '智学课堂'
+    study: '智学课堂',
+    'exercise-test-subject': '精准练答题',
+    'exercise-report': '精准练报告'
   },
   page: {
     login: {

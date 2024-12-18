@@ -21,6 +21,8 @@ declare module "@elegant-router/types" {
     "404": "/404";
     "500": "/500";
     "classroom": "/classroom";
+    "exercise-report": "/exercise-report";
+    "exercise-test-subject": "/exercise-test-subject";
     "generate-pic": "/generate-pic";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
@@ -68,6 +70,8 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "classroom"
+    | "exercise-report"
+    | "exercise-test-subject"
     | "generate-pic"
     | "home"
     | "iframe-page"
@@ -96,6 +100,8 @@ declare module "@elegant-router/types" {
    */
   export type LastLevelRouteKey = Extract<
     RouteKey,
+    | "exercise-report"
+    | "exercise-test-subject"
     | "test-home"
     | "test-report"
     | "test-subject"

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { useLoading } from '@sa/hooks';
 import { SetupStoreId } from '@/enum';
 import { useRouterPush } from '@/hooks/common/router';
-import { fetchLogin, fetchOffSpringId, fetchUserInfo, wxCodeLogin } from '@/service/api/login';
+import { fetchLogin, fetchOffSpringId, fetchUserInfo, logOut, wxCodeLogin } from '@/service/api/login';
 import { localStg } from '@/utils/storage';
 import { $t } from '@/locales';
 import { useLoginTypeStoreWithOut } from '@/store/modules/login';
@@ -40,6 +40,11 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   /** Reset auth store */
   async function resetStore() {
     const authStore = useAuthStore();
+    console.log('🚀 ~ resetStore ~ userInfo.user_id:', userInfo.user_id);
+
+    if (userInfo.user_id) {
+      await logOut(userInfo.user_id ?? 0);
+    }
 
     clearAuthStorage();
 
@@ -60,7 +65,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
       name: '',
       sex: 0,
       status: 0,
-      user_id: 0,
+      user_id: null,
       vip_time: 0
     });
 
@@ -85,7 +90,10 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     const { data: loginToken, error } = await fetchLogin(mobile, code);
 
     if (!error) {
+      const now = Date.now();
+      const expireTime = now + 3 * 24 * 60 * 60 * 1000; // 三天后
       localStg.set('token', loginToken);
+      localStg.set('expireTime', expireTime);
       token.value = loginToken;
       const { data: offSpriingid, error: err } = await fetchOffSpringId();
       if (!err) {
@@ -103,7 +111,10 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     const { data: loginToken, error } = await wxCodeLogin(code);
 
     if (!error) {
+      const now = Date.now();
+      const expireTime = now + 3 * 24 * 60 * 60 * 1000; // 三天后
       localStg.set('token', loginToken);
+      localStg.set('expireTime', expireTime);
       token.value = loginToken;
       const { data: offSpriingid, error: err } = await fetchOffSpringId();
       if (!err) {

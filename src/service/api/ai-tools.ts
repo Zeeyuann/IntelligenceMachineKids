@@ -121,6 +121,9 @@ export function getEvaluateGrade(data: any = {}) {
     url: 'evaluate/grade',
     method: 'get',
     data,
+    headers: {
+      hideErr: true
+    },
     proxy: false
   });
 }
@@ -174,6 +177,57 @@ export function getChatrecordsList(data: any = {}) {
   return request<any>({
     url: 'aiweb/airecord/getchatrecordslist',
     method: 'post',
+    data
+  });
+}
+
+export function getTaskList(data: any = {}) {
+  return request<any>({
+    url: 'learn/task/lists',
+    method: 'post',
+    data
+  });
+}
+
+export function getTaskQuestion(data: any = {}) {
+  return request<any>({
+    url: 'learn/webtask/question',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+}
+
+export function getTaskAnswer(data: any = {}) {
+  return request<any>({
+    url: 'learn/webtask/answer',
+    method: 'post',
+    data
+  });
+}
+
+export function getExerciseReport(Authorization?: string, data: any = {}) {
+  console.log('🚀 ~ getExerciseReport ~ Authorization:', Authorization);
+
+  if (Authorization) {
+    return request<any>({
+      url: 'learn/webtask/report',
+      method: 'post',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization
+      },
+      data
+    });
+  }
+  return request<any>({
+    url: 'learn/webtask/report',
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
     data
   });
 }
