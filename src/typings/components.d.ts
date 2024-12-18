@@ -30,7 +30,6 @@ declare module 'vue' {
     IconLocalHi: typeof import('~icons/local/hi')['default']
     IconLocalJiexib: typeof import('~icons/local/jiexib')['default']
     IconLocalJiexig: typeof import('~icons/local/jiexig')['default']
-    IconLocalJiexiplay: typeof import('~icons/local/jiexiplay')['default']
     IconLocalJiexir: typeof import('~icons/local/jiexir')['default']
     IconLocalJiexix: typeof import('~icons/local/jiexix')['default']
     IconLocalLogo: typeof import('~icons/local/logo')['default']
