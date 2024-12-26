@@ -2,11 +2,16 @@
 import html2canvas from 'html2canvas';
 import printJS from 'print-js';
 import dayjs from 'dayjs';
+import wx from 'weixin-js-sdk';
+import type { DataTableColumns } from 'naive-ui';
 import { useEcharts } from '@/hooks/common/echarts';
 // import { useSubjectStore } from '@/store/modules/subject';
 import { getExerciseReport } from '@/service/api';
 import { useRouterPush } from '@/hooks/common/router';
+import QuestionDetail from '@/components/custom/question-detail.vue';
+import VideoStudy from '@/components/custom/video-study.vue';
 import { createColumns, pieOptions } from './data';
+import IconLocalJiexiplay from '~icons/local/jiexiplay';
 
 const { routerPushByKey } = useRouterPush();
 
@@ -78,6 +83,66 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
 });
+
+const handleBack = (item: any) => {
+  wx.miniProgram.navigateTo({
+    url: `/pages-sub/watch-study/modules/subject-detail?id=${item.questionId}&kid=${route.query.kid}`,
+    success() {
+      console.log('跳转成功');
+    },
+    fail(err) {
+      console.log('跳转失败', err);
+    },
+    complete() {
+      console.log('执行');
+    }
+  });
+};
+
+const showDraw = ref(false);
+const activeQuesiontionId = ref(0);
+
+const handleShowDraw = (id: number) => {
+  showDraw.value = true;
+  activeQuesiontionId.value = id;
+};
+
+const showVideoDraw = ref(false);
+const activeVideoId = ref(0);
+function createBigColumns(): DataTableColumns {
+  return [
+    {
+      title: '序号',
+      key: 'key',
+      width: 55,
+      render: (_, index) => {
+        return `${index + 1}`;
+      }
+    },
+    {
+      title: '知识点',
+      key: 'knowledgeName'
+    },
+    {
+      title: '操作',
+      key: 'actions',
+      render(row) {
+        return h(
+          'div',
+          {
+            class: 'bg-#2CB6FF flex items-center justify-center rd-12px w-55px h-18px cursor-pointer',
+            style: { width: '70px' },
+            onClick: async () => {
+              showVideoDraw.value = true;
+              activeVideoId.value = row.knowledgeId as number;
+            }
+          },
+          [h(IconLocalJiexiplay), h('div', { class: 'ml-10px' }, '学习')]
+        );
+      }
+    }
+  ];
+}
 </script>
 
 <template>
@@ -164,6 +229,7 @@ onUnmounted(() => {
                 v-for="(item, index) in subjectTepmp?.questions"
                 :key="item.id"
                 class="h-40px w-full flex cursor-pointer items-center justify-between rd-12px bg-#F4F5F7 px-16px shadow-sm transition-all-300 hover:shadow-lg"
+                @click="handleShowDraw(item.questionId)"
               >
                 <div class="flex items-center">
                   <div class="mr-30px text-14px text-#3d3d3d">第{{ index + 1 }}题</div>
@@ -181,6 +247,11 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
+          <NDrawer v-model:show="showDraw" close-on-esc width="35%" content-class="bluebg" placement="right">
+            <NDrawerContent :native-scrollbar="false" title="错题详解">
+              <QuestionDetail :id="activeQuesiontionId" />
+            </NDrawerContent>
+          </NDrawer>
         </div>
 
         <!-- 知识点解析 -->
@@ -188,19 +259,39 @@ onUnmounted(() => {
           <div class="boder-#D8D8D8 box-border flex flex-col flex-1 rd-10px p24px">
             <div class="title mb12px text-16px text-#000000 font-600">知识点解析</div>
             <div class="grid grid-cols-1">
-              <NDataTable align="center" :columns="createColumns()" :data="subjectTepmp?.knowledge" :bordered="false" />
+              <NDataTable
+                align="center"
+                :columns="createBigColumns()"
+                :data="subjectTepmp?.knowledge"
+                :bordered="false"
+              />
             </div>
           </div>
+          <NDrawer
+            v-model:show="showVideoDraw"
+            block-scroll
+            width="100%"
+            close-on-esc
+            height="80%"
+            content-class="bluebg"
+            placement="bottom"
+          >
+            <NDrawerContent body-content-class="h-full flex" :native-scrollbar="false" title="知识点学习">
+              <VideoStudy :id="activeVideoId" />
+            </NDrawerContent>
+          </NDrawer>
         </div>
 
         <!-- btn -->
-        <div class="box-border w-full flex flex-col items-center px24px pb20px">
+        <!--
+ <div class="box-border w-full flex flex-col items-center px24px pb20px">
           <div class="mb-10px h54px w-343px flex cursor-pointer items-center justify-center rd-12px bg-#2CB6FF">
             <icon-local-jiexib />
             <span class="ml10px text-18px text-#ffffff font-600">举一反三,智能推题</span>
           </div>
           <div class="text-12px text-#000000">基于当前错题智能生成新的练习题</div>
         </div>
+-->
       </div>
     </main>
   </div>
@@ -294,6 +385,7 @@ onUnmounted(() => {
                 v-for="(item, index) in subjectTepmp?.questions"
                 :key="item.id"
                 class="h-40px w-full flex cursor-pointer items-center justify-between rd-12px bg-#F4F5F7 px-16px shadow-sm transition-all-300 hover:shadow-lg"
+                @click="handleBack(item)"
               >
                 <div class="flex items-center">
                   <div class="mr-30px text-14px text-#3d3d3d">第{{ index + 1 }}题</div>
@@ -324,7 +416,7 @@ onUnmounted(() => {
         </div>
 
         <!-- btn -->
-        <div class="box-border w-full flex flex-col items-center px24px pb20px">
+        <div v-if="false" class="box-border w-full flex flex-col items-center px24px pb20px">
           <div class="mb-10px h54px w-343px flex cursor-pointer items-center justify-center rd-12px bg-#2CB6FF">
             <icon-local-jiexib />
             <span class="ml10px text-18px text-#ffffff font-600">举一反三,智能推题</span>

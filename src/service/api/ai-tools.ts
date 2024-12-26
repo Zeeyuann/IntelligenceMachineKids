@@ -209,8 +209,6 @@ export function getTaskAnswer(data: any = {}) {
 }
 
 export function getExerciseReport(Authorization?: string, data: any = {}) {
-  console.log('🚀 ~ getExerciseReport ~ Authorization:', Authorization);
-
   if (Authorization) {
     return request<any>({
       url: 'learn/webtask/report',
@@ -273,5 +271,28 @@ export function ocraiSolve(data: any) {
     },
     data,
     method: 'post'
+  });
+}
+
+export function questionDetail(params: any) {
+  return request<any>({
+    url: 'learn/wrongbook/questionDetail',
+    params,
+    method: 'post'
+  });
+}
+
+export function videoList(params: any) {
+  return request<any>({
+    url: 'learn/video/knowledge',
+    params,
+    method: 'get'
+  });
+}
+
+export function fetchVideo(id: any) {
+  return request<any>({
+    url: `learn/video/path/${id}`,
+    method: 'get'
   });
 }

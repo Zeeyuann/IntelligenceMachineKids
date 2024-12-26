@@ -1,6 +1,8 @@
 import type { DataTableColumns } from 'naive-ui';
+import wx from 'weixin-js-sdk';
 import type { ECOption } from '@/hooks/common/echarts';
 import IconLocalJiexiplay from '~icons/local/jiexiplay';
+
 export const pieOptions: ECOption = {
   grid: {
     containLabel: true
@@ -288,13 +290,26 @@ export function createColumns(): DataTableColumns {
     {
       title: '操作',
       key: 'actions',
-      render() {
+      render(row) {
         return h(
           'div',
           {
             class: 'bg-#2CB6FF flex items-center justify-center rd-12px w-55px h-18px cursor-pointer',
             style: { width: '70px' },
-            onClick: () => {}
+            onClick: async () => {
+              wx.miniProgram.navigateTo({
+                url: `/pages-sub/watch-study/modules/for-webvideo?id=${row.knowledgeId}`,
+                success() {
+                  console.log('跳转成功');
+                },
+                fail(err) {
+                  console.log('跳转失败', err);
+                },
+                complete() {
+                  console.log('执行');
+                }
+              });
+            }
           },
           [h(IconLocalJiexiplay), h('div', { class: 'ml-10px' }, '学习')]
         );

@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import Player, { Events } from 'xgplayer';
 import { useVideosStore } from '@/store/modules/video';
 import 'xgplayer/dist/index.min.css';
+
 const videoStore = useVideosStore();
 
 const props = defineProps<{

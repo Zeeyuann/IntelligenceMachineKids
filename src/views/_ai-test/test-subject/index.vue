@@ -83,13 +83,13 @@ const handleSubmit = async () => {
     window.$message?.info('请选择答案哦');
     return;
   }
-  console.log(subjectStore.answerList);
-  // return;
+
+  endQuestion();
 
   const data = {
     evaluateId: subjectStore.questionList.evaluateId,
     useTimes: stop() * 1000,
-    answers: subjectStore.answerList.map((item: any, index: any) => ({ ...item, time: times[index] }))
+    answers: subjectStore.answerList.map((item: any, index: any) => ({ ...item, time: times.value[index] }))
   };
   console.log(stop());
   const { data: reportData, error } = await getEvaluate(data);

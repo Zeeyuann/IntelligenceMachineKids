@@ -15,6 +15,7 @@ import GlobalContent from '../modules/global-content/index.vue';
 import GlobalFooter from '../modules/global-footer/index.vue';
 import ThemeDrawer from '../modules/theme-drawer/index.vue';
 import { setupMixMenuContext } from '../context';
+import IconLocalHat from '~icons/local/hat';
 
 const authStore = useAuthStore();
 const route = useRoute();
@@ -126,6 +127,17 @@ const { routerPushByKey } = useRouterPush();
 
 const nowDay = dayjs().format('YYYY-MM-DD');
 
+const bg = [
+  {
+    color: '#2EC883',
+    bg: 'rgba(46,200,131,0.06)'
+  },
+  {
+    color: '#41A2EE',
+    bg: 'rgba(65, 162, 238, 0.06)'
+  }
+];
+
 const taskList = ref([]);
 
 const handleExfold = async () => {
@@ -134,6 +146,8 @@ const handleExfold = async () => {
     console.log('🚀 ~ data:', data);
     taskList.value = data.ispulishs;
   }
+
+  window.$notification?.destroyAll();
 
   const n = window.$notification?.create({
     title() {
@@ -145,13 +159,17 @@ const handleExfold = async () => {
     content() {
       return h(
         'div',
-        { class: 'w-full p-18px box-border bg-#A1ECFF rd-16px gap-y-10px grid grid-cols-1' },
-        taskList.value.map((item: any) => {
+        { class: 'w-full  box-border  rd-16px gap-y-10px grid grid-cols-1' },
+        taskList.value.map((item: any, index: number) => {
           return h(
             'div',
             {
               class:
-                'w-full px-11px py-16px box-border flex items-center justify-between alph bg-white hover:shadow-md cursor-pointer transition-all-300',
+                'w-full px-11px py-16px box-border flex items-center justify-between alph bg-white hover:shadow-md cursor-pointer transition-all-300 rd-12px',
+              style: {
+                background: bg[index % bg.length].bg,
+                color: bg[index % bg.length].color
+              },
               onClick() {
                 // window.$message?.info('功能将于12月份开通');
                 if (item.state) {
@@ -163,18 +181,44 @@ const handleExfold = async () => {
               }
             },
             [
-              h('div', { class: 'text-16px font-600 text-#000000 alph' }, `${item?.courseName ?? '科目'}`),
-              h('div', { class: 'text-12px text-#9E9E9E' }, `题量：${item?.catalogIds.split(',').length}题`),
+              h('div', { class: 'flex flex-col' }, [
+                h('div', { class: 'flex items-center' }, [
+                  h(IconLocalHat, { class: 'w-24px h-24px mr-6px' }),
+                  h(
+                    'div',
+                    {
+                      class: 'text-16px font-600 alph',
+                      style: {
+                        color: bg[index % bg.length].color
+                      }
+                    },
+                    `${item?.courseName ?? '科目'}`
+                  )
+                ]),
+
+                h('div', { class: 'flex items-center' }, [
+                  h('div', { class: 'text-12px text-#000000' }, `题量：${item?.catalogIds.split(',').length}题`),
+                  h(
+                    'div',
+                    {
+                      class: `text-12px font-600 text-#ffffff alph w-52px h-18px flex items-center justify-center ml-30px`,
+                      style: {
+                        color: `${item?.state ? '#00B578' : '#FA5151'}`
+                      }
+                    },
+                    `${item?.state ? '已完成' : '未完成'}`
+                  )
+                ])
+              ]),
+
               h(
                 'div',
                 {
-                  class: `text-12px font-600 text-#ffffff alph w-52px h-18px bg-#FF0000 flex items-center justify-center`
+                  class: `w-77px h-23px flex items-center justify-center  rd-12px text-12px font-600 text-#ffffff`,
+                  style: {
+                    background: bg[index % bg.length].color
+                  }
                 },
-                `${item?.state ? '已完成' : '未完成'}`
-              ),
-              h(
-                'div',
-                { class: `w-77px h-23px flex items-center justify-center bg-#FF8F1F rd-12px text-12px font-600` },
                 `${item?.state ? '查看报告' : '去完成'}`
               )
             ]
@@ -209,12 +253,11 @@ const handleExfold = async () => {
   >
     <div
       v-if="authStore.isLogin"
-      :style="{ background: 'rgba(255, 255, 255, 0.85)', borderRadius: '5px 0px 0px 5px' }"
-      class="alph fixed right-10px top-120px box-border h-54px flex flex-col cursor-pointer items-center justify-between p-6px text-12px text-#9E9E9E"
+      :style="{ background: 'rgba(255, 255, 255, 0.85)', borderRadius: '23px 0px 0px 23px' }"
+      class="alph fixed right-10px top-120px box-border flex flex-col cursor-pointer items-center justify-between rd-23px p-6px text-12px text-#9E9E9E"
       @click="handleExfold"
     >
-      <icon-local-fold />
-      展开
+      <icon-local-jzllogo class="h-55px w-68px" />
     </div>
     <template #header>
       <GlobalHeader v-bind="headerProps" />
