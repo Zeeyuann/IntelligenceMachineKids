@@ -147,7 +147,7 @@ function createBigColumns(): DataTableColumns {
 
 <template>
   <div v-if="windowWidth > 1389" class="box-border px-230px py-20px">
-    <main class="topbg box-border size-full flex flex-col rd-10px bg-white p-16px">
+    <main class="topbg box-border size-full flex flex-col items-center rd-10px bg-white p-16px">
       <!-- 头 -->
       <div class="box-border w-full flex flex-col rd-10px px-60px py-30px">
         <div class="flex items-center justify-between text-white">
@@ -296,7 +296,7 @@ function createBigColumns(): DataTableColumns {
     </main>
   </div>
   <div v-else class="box-border px-20px py-20px">
-    <main class="topbg box-border w-full flex flex-col rd-10px p-0px">
+    <main class="topbg box-border w-full flex flex-col items-center rd-10px p-0px">
       <!-- 头 -->
       <div class="box-border w-full flex flex-col items-center justify-between rd-10px p24px text-white">
         <div class="flex flex-col items-center">
