@@ -175,10 +175,10 @@ onMounted(() => {
                     v-for="(item, anindex) in question.stem.opList"
                     :key="item.index"
                     :class="`${anindex !== question.stem.opList.length - 1 ? 'mb-16px' : ''}`"
-                    class="flex-1 items-center !h-full !flex"
+                    class="flex-1 items-center !h-unset !flex"
                     :value="item.index"
                   >
-                    <div class="maths" v-html="`${item.index}. ${item.html}`"></div>
+                    <div class="maths flex items-center" v-html="`${item.index}. ${item.html}`"></div>
                   </NRadioButton>
                 </NRadioGroup>
               </div>

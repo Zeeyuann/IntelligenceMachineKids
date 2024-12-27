@@ -37,7 +37,7 @@ const handlePlay = (item: any) => {
 </script>
 
 <template>
-  <div class="alph flex flex-col lg:overflow-hidden xl:overflow-hidden !bg-#0C0D0A !p-unset">
+  <div class="alph flex flex-col of-auto lg:overflow-auto xl:overflow-auto !bg-#0C0D0A !p-unset">
     <div class="title box-border h-50px w-full flex items-center bg-#191B15 px-160px text-18px text-#ffffff">
       SuperX AI学院
     </div>
