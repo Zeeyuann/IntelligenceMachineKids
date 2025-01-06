@@ -110,6 +110,7 @@ declare module 'vue' {
     TableColumnSetting: typeof import('./../components/advanced/table-column-setting.vue')['default']
     TableHeaderOperation: typeof import('./../components/advanced/table-header-operation.vue')['default']
     ThemeSchemaSwitch: typeof import('./../components/common/theme-schema-switch.vue')['default']
+    VideoHelp: typeof import('./../components/custom/video-help.vue')['default']
     VideoPlayer: typeof import('./../components/custom/video-player.vue')['default']
     VideoStudy: typeof import('./../components/custom/video-study.vue')['default']
     VueTyped: typeof import('./../components/vuetyped/vue-typed.vue')['default']

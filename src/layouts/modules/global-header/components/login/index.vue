@@ -4,6 +4,7 @@ import CodeLogin from './modules/code-login.vue';
 import BindWechat from './modules/bind-wechat.vue';
 
 const authStore = useAuthStore();
+console.log('🚀 ~ authStore:', authStore);
 
 const currentKidIndex = ref<number | null>(null);
 

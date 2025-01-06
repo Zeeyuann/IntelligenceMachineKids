@@ -72,7 +72,7 @@ onMounted(async () => {
         series: [
           {
             ...option.series[0],
-            data: [{ value: reportData.score, name: '等级评定' }]
+            data: [{ value: reportData.score * 100, name: '等级评定' }]
           }
         ]
       };
@@ -154,7 +154,7 @@ function createBigColumns(): DataTableColumns {
           <div>
             <div class="almm titlebg mb-20px text-26px text-white">恭喜完成测试</div>
             <div class="mb5px text-14px">测试得分</div>
-            <div class="text-18px font-600">{{ subjectTepmp?.score }}</div>
+            <div class="text-18px font-600">{{ subjectTepmp?.score * 100 }}</div>
           </div>
           <div>
             <div class="flex items-center text-13px">
@@ -303,7 +303,7 @@ function createBigColumns(): DataTableColumns {
           <div class="almm titlebg text-26px text-white">恭喜完成测试</div>
           <div class="flex items-center">
             <div class="text-14px">测试得分</div>
-            <div class="ml-20px text-18px font-600">{{ subjectTepmp?.score }}</div>
+            <div class="ml-20px text-18px font-600">{{ subjectTepmp?.score * 100 }}</div>
           </div>
         </div>
         <div class="flex flex-col">

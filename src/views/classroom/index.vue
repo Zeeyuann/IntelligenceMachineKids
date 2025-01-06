@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import { useNaiveForm } from '@/hooks/common/form';
 import { getEvaluateGrade, getEvaluatePress, getEvaluateSubject } from '@/service/api';
 import { useAuthStore } from '@/store/modules/auth';
@@ -153,6 +154,11 @@ async function handleSubmit() {
     setTimeout(() => {
       loginClassStore.setFlag(false);
     }, 1000);
+    return;
+  }
+
+  if (authStore.userInfo.vip_time < dayjs().valueOf()) {
+    window?.$message?.error('抱歉,您没有使用权限');
     return;
   }
   console.log(model);

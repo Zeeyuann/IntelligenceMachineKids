@@ -2,6 +2,7 @@
 import { useRouterPush } from '@/hooks/common/router';
 import { useAuthStore } from '@/store/modules/auth';
 import { useLoginTypeStore } from '@/store/modules/login';
+import VideoHelp from '@/components/custom/video-help.vue';
 
 const { show } = useLoginTypeStore();
 
@@ -50,6 +51,7 @@ const getCodeMes = async () => {
     }
   }
 };
+console.log();
 
 onMounted(async () => {
   getCodeMes();
@@ -80,8 +82,14 @@ onMounted(async () => {
       </div>
     </header>
     <main class="contentbg box-border flex flex-col px-50px pb-150px xl:pl-255px xl:pr-268px">
+      <div class="my-50px h-full overflow-hidden rd-22px">
+        <VideoHelp
+          url="https://zhitong-superx.oss-cn-shanghai.aliyuncs.com/video/help_video/AI%E5%AD%A6%E4%B9%A0%E5%8D%A1-%E5%93%81%E7%89%8C%E8%A7%86%E9%A2%91.mp4"
+          :autoplay="false"
+        />
+      </div>
       <!-- 轻松创作 -->
-      <div class="first mt-50px flex flex-col flex-1 items-center justify-between xl:mt-unset lg:flex-row xl:flex-row">
+      <div class="first mb-60px flex flex-col flex-1 items-center justify-between xl:mt-unset lg:flex-row xl:flex-row">
         <!-- 左边 -->
         <div class="flex flex-col lg:mr-50px xl:mr-unset">
           <div class="relative text-65px text-#2a2a2a font-700">

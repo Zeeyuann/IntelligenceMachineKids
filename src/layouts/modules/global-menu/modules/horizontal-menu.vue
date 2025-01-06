@@ -5,6 +5,7 @@ import { GLOBAL_HEADER_MENU_ID } from '@/constants/app';
 import { useRouteStore } from '@/store/modules/route';
 import { useRouterPush } from '@/hooks/common/router';
 import { useMenu } from '../../../context';
+import HelpVideo from '../components/help-video.vue';
 type MenuThemeOverrides = NonNullable<MenuProps['themeOverrides']>;
 const menuThemeOverrides: MenuThemeOverrides = {
   itemTextColor: '#6F6F6F',
@@ -33,6 +34,7 @@ const { selectedKey } = useMenu();
       :theme-overrides="menuThemeOverrides"
       @update:value="routerPushByKeyWithMetaQuery"
     />
+    <HelpVideo class="ml-10px" />
   </Teleport>
 </template>
 

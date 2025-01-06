@@ -58,7 +58,12 @@ const appStore = useAppStore();
   >
     <GlobalLogo v-if="showLogo" class="h-full" />
     <MenuToggler v-if="showMenuToggler" :collapsed="appStore.siderCollapse" @click="appStore.toggleSiderCollapse" />
-    <div v-if="showMenu" :id="GLOBAL_HEADER_MENU_ID" class="h-full flex-y-center flex-1-hidden"></div>
+    <div
+      v-if="showMenu"
+      :id="GLOBAL_HEADER_MENU_ID"
+      class="h-full flex flex-1-hidden items-center justify-center"
+    ></div>
+
     <div v-else class="bg h-full flex-y-center flex-1-hidden">
       <GlobalBreadcrumb v-if="!appStore.isMobile" class="ml-12px" />
     </div>
@@ -93,6 +98,7 @@ const appStore = useAppStore();
   background: linear-gradient(180deg, #fd7925 0%, #fd7925 100%), #fd7925;
 }
 :deep(.n-menu) {
+  width: unset;
   justify-content: center !important;
 }
 :deep(.v-overflow) {
