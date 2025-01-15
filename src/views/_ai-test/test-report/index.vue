@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import html2canvas from 'html2canvas';
 import printJS from 'print-js';
+import dayjs from 'dayjs';
 import { useEcharts } from '@/hooks/common/echarts';
 // import { useSubjectStore } from '@/store/modules/subject';
 import { getReport } from '@/service/api';
@@ -236,7 +237,7 @@ onUnmounted(() => {
           <div class="flex items-center text-13px">
             <span>
               日期：
-              <span>{{ subjectTepmp?.createTime }}</span>
+              <span>{{ dayjs(subjectTepmp?.createTime * 1000).format('YYYY-MM-DD') }}</span>
             </span>
           </div>
           <div class="my8px flex items-center text-13px">
@@ -472,7 +473,7 @@ onUnmounted(() => {
             <div class="flex items-center text-13px">
               <span>
                 日期：
-                <span>{{ subjectTepmp?.createTime }}</span>
+                <span>{{ dayjs(subjectTepmp?.createTime * 1000).format('YYYY-MM-DD') }}</span>
               </span>
             </div>
             <div class="my8px flex items-center text-13px">

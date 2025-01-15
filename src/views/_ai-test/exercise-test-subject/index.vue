@@ -17,6 +17,7 @@ watchEffect(async () => {
   const { data, error } = await getTaskQuestion({ taskId: taskId.value });
   if (!error) {
     console.log(data);
+    (data as any).questions = (data as any)?.questions.filter((item: any) => item.question?.stem?.type === '选择题');
     subjectStore.setQuestionList(data.questions);
     nextTick(() => {
       renderMath();
