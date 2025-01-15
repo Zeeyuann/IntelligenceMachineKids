@@ -117,7 +117,7 @@ const handleGoBack = () => {
         </div>
       </div>
       <!-- 功能 -->
-      <div class="animate__animated animate__fadeInRight mt-34px w-full">
+      <div v-if="false" class="animate__animated animate__fadeInRight mt-34px w-full">
         <div class="mb-16px text-15px text-#7A808D">快来探索这些功能</div>
         <div class="flex items-center">
           <NButton

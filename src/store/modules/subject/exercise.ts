@@ -8,6 +8,8 @@ export const useExerciseSubjectStore = defineStore(
 
     const answerList = ref<any>([]);
 
+    const mutiVal = ref<any>([]);
+
     const setInfo = (val: any) => {
       subjectInfo.value = val;
     };
@@ -20,18 +22,41 @@ export const useExerciseSubjectStore = defineStore(
       questionList.value = {};
     };
 
-    // eslint-disable-next-line max-params
     const handleAddAnswer = (val: any, index: any, question: any) => {
-      const { id, kpoints, difficultyLevel, answer, difficulty } = question;
+      const { questionId, knowledges, difficulty_level, difficulty, question: ques } = question;
       // const item = questionOptions.find((ele: any) => ele.optionContent === val);
       const obj = {
-        knowledgeId: kpoints.map((item: any) => item.id).join(','),
-        questionId: Number(id),
+        knowledgeId: knowledges.map((item: any) => item.id).join(','),
+        questionId: Number(questionId),
         difficulty,
-        isright: Number(answer.includes(val)),
-        difficultyLevel,
+        isRight: Number(ques?.answer?.anSqs?.[0]?.ans.map((item: any) => item.html).includes(val)),
+        difficultyLevel: difficulty_level,
         userAnswer: val
       };
+      console.log('🚀 ~ handleAddAnswer ~ obj:', obj);
+      answerList.value[index] = obj;
+    };
+    // eslint-disable-next-line max-params
+    const handleAddMutiAnswer = (val: any, index: any, question: any, originQuestion: any) => {
+      console.log('🚀 ~ handleAddMutiAnswer ~ originQuestion:', originQuestion);
+      console.log('🚀 ~ handleAddMutiAnswer ~ question:', question);
+      const forPush = {
+        val,
+        form: question?.html
+      };
+      mutiVal.value.push(forPush);
+      const { questionId, knowledges, difficulty_level, difficulty, question: ques } = originQuestion;
+      // const item = questionOptions.find((ele: any) => ele.optionContent === val);
+      const obj = {
+        knowledgeId: knowledges.map((item: any) => item.id).join(','),
+        questionId: Number(questionId),
+        difficulty,
+        isRight: Number(ques?.answer?.anSqs?.[0]?.ans.map((item: any) => item.html).includes(val)),
+        difficultyLevel: difficulty_level,
+        userAnswer: val
+      };
+      console.log('🚀 ~ handleAddMutiAnswer ~ mutiVal:', mutiVal);
+
       console.log('🚀 ~ handleAddAnswer ~ obj:', obj);
       answerList.value[index] = obj;
     };
@@ -48,6 +73,7 @@ export const useExerciseSubjectStore = defineStore(
       clearAnswerList,
       setQuestionList,
       clearQuestionList,
+      handleAddMutiAnswer,
       setInfo
     };
   },

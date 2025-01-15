@@ -181,17 +181,17 @@ export function getChatrecordsList(data: any = {}) {
   });
 }
 
-export function getTaskList(data: any = {}) {
+export function getTaskList(params: any = {}) {
   return request<any>({
-    url: 'learn/task/lists',
-    method: 'post',
-    data
+    url: 'wxx/learn/getUserTask',
+    method: 'get',
+    params
   });
 }
 
 export function getTaskQuestion(data: any = {}) {
   return request<any>({
-    url: 'learn/webtask/question',
+    url: 'wxx/learn/task_questions',
     method: 'post',
     data,
     headers: {
@@ -202,31 +202,28 @@ export function getTaskQuestion(data: any = {}) {
 
 export function getTaskAnswer(data: any = {}) {
   return request<any>({
-    url: 'learn/webtask/answer',
+    url: 'wxx/learn/task_submit',
     method: 'post',
     data
   });
 }
 
-export function getExerciseReport(Authorization?: string, data: any = {}) {
+export function getExerciseReport(Authorization?: string, params: any = {}) {
   if (Authorization) {
+    console.log('🚀 ~ getExerciseReport ~ Authorization:', Authorization);
     return request<any>({
-      url: 'learn/webtask/report',
-      method: 'post',
+      url: 'wxx/learn/getTaskReport',
+      method: 'get',
       headers: {
-        'Content-Type': 'multipart/form-data',
         Authorization
       },
-      data
+      params
     });
   }
   return request<any>({
-    url: 'learn/webtask/report',
-    method: 'post',
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
-    data
+    url: 'wxx/learn/getTaskReport',
+    method: 'get',
+    params
   });
 }
 

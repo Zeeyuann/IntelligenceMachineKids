@@ -144,7 +144,7 @@ const handleExfold = async () => {
   const { data, error } = await getTaskList({ date: nowDay });
   if (!error) {
     console.log('🚀 ~ data:', data);
-    taskList.value = data.ispulishs;
+    taskList.value = data;
   }
 
   window.$notification?.destroyAll();
@@ -197,11 +197,15 @@ const handleExfold = async () => {
                 ]),
 
                 h('div', { class: 'flex items-center' }, [
-                  h('div', { class: 'text-12px text-#000000' }, `题量：${item?.catalogIds.split(',').length}题`),
+                  h(
+                    'div',
+                    { class: 'text-12px text-#000000 hidden' },
+                    `题量：${item?.catalogIds?.split(',').length}题`
+                  ),
                   h(
                     'div',
                     {
-                      class: `text-12px font-600 text-#ffffff alph w-52px h-18px flex items-center justify-center ml-30px`,
+                      class: `text-12px font-600 text-#ffffff alph w-52px h-18px flex items-center justify-center `,
                       style: {
                         color: `${item?.state ? '#00B578' : '#FA5151'}`
                       }

@@ -101,7 +101,8 @@ function handleScroll() {
   nextTick(() => {
     const content: any = document.querySelector('.n-scrollbar-container');
     if (content?.scrollHeight > content?.clientHeight) {
-      scrollBar.value.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
+      if (!scrollBar.value) return;
+      scrollBar.value?.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
     }
     isComplete.value = false;
     renderMath();
@@ -111,21 +112,26 @@ function handleScroll() {
 const cid = ref<string>('');
 // 文本生成
 const handleGenerate = async (data: any, forShow: any) => {
-  const formData = new FormData();
-  Object.keys(data).forEach(key => {
-    formData.append(key, data[key as keyof Data]);
-  });
-  const { data: textData, error } = await ocraiSolve(formData);
-  if (!error) {
-    await nextTick();
+  try {
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+      formData.append(key, data[key as keyof Data]);
+    });
+    const { data: textData, error } = await ocraiSolve(formData);
+    if (!error) {
+      await nextTick();
 
-    cid.value = textData.sessionId;
-    const index = chatList.length - 1;
-    chatList[index] = { ...forShow, ...textData };
-    handleScroll();
+      cid.value = textData.sessionId;
+      const index = chatList.length - 1;
+      chatList[index] = { ...forShow, ...textData };
+      handleScroll();
+    }
+    endLoading();
+    handleRestForm();
+  } catch (error) {
+    console.log('🚀 ~ handleGenerate ~ error:', error);
+    window?.$message?.error('生成失败,请稍后再试');
   }
-  endLoading();
-  handleRestForm();
 };
 // 从文本首页生成
 const handleGenerateFromHome = async (temp: any) => {

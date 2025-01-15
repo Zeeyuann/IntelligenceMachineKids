@@ -9,6 +9,7 @@ const route = useRoute();
 
 const subjectStore = useExerciseSubjectStore() as any;
 subjectStore.clearAnswerList();
+subjectStore.clearQuestionList();
 
 const taskId = ref(route.query.id);
 
@@ -56,6 +57,9 @@ const percentage = computed(() => Math.floor(((subNo.value + 1) / quetionList.va
 
 const selectValue = computed({
   get() {
+    if (subjectStore.answerList[subNo.value]?.type === '复合题') {
+      return subjectStore.answerList[subNo.value]?.knowledgeId || '';
+    }
     return subjectStore.answerList[subNo.value]?.userAnswer || '';
   },
   set() {}
@@ -105,7 +109,7 @@ const handleSubmit = async () => {
 
   const data = {
     taskId: taskId.value,
-    countTime: stop() * 1000,
+    countTime: stop(),
     answerBodyList: subjectStore.answerList.map((item: any, index: any) => ({ ...item, time: times.value[index] }))
   };
   console.log('🚀 ~ handleSubmit ~ data:', data);
@@ -164,23 +168,55 @@ onMounted(() => {
         <template v-for="(question, index) in quetionList" :key="question.questionId">
           <div v-show="index === subNo" class="box-border w-full flex flex-1 of-hidden">
             <NScrollbar class="animate__fadeIn animate__animated box-border w-full flex flex-col flex-1 pb-16px">
-              <div class="mb-22px text-18px font-500" v-html="question.stem.html"></div>
+              <div class="mb-22px text-18px font-500" v-html="question?.question?.stem?.html"></div>
               <div class="flex-1">
+                <!-- 选择题 -->
                 <NRadioGroup
+                  v-if="question?.question?.stem?.type === '选择题'"
                   v-model:value="selectValue"
                   class="titlegroup w-full flex flex-col items-center !h-42px"
                   @update:value="val => subjectStore.handleAddAnswer(val, index, question)"
                 >
                   <NRadioButton
-                    v-for="(item, anindex) in question.stem.opList"
+                    v-for="(item, anindex) in question?.question?.stem?.og?.ogOps || question?.question?.stem?.sqs"
                     :key="item.index"
-                    :class="`${anindex !== question.stem.opList.length - 1 ? 'mb-16px' : ''}`"
+                    :class="`${anindex !== question?.question?.stem?.og?.ogOps?.length - 1 ? 'mb-16px' : ''}`"
                     class="flex-1 items-center !h-unset !flex"
                     :value="item.index"
                   >
                     <div class="maths flex items-center" v-html="`${item.index}. ${item.html}`"></div>
                   </NRadioButton>
                 </NRadioGroup>
+                <!-- 复合题 -->
+                <template v-else-if="false && question?.question?.stem?.type === '复合题'">
+                  <div class="flex flex-col">
+                    <div
+                      v-for="(subItem, subIndex) in question?.question?.stem?.sqs"
+                      :key="subItem.html"
+                      class="box-border w-full flex flex-col flex-1 pb-16px"
+                    >
+                      <div class="mb-22px text-18px font-500" v-html="`${subIndex + 1}. ${subItem?.html}`"></div>
+                      <div class="flex">
+                        <NRadioGroup
+                          v-model:value="selectValue"
+                          class="titlegroup w-full flex flex-col flex-1 items-center !h-full"
+                          @update:value="val => subjectStore.handleAddAnswer(val, index, question)"
+                        >
+                          <NRadioButton
+                            v-for="(subInside, anindex) in subItem?.og?.ogOps"
+                            :key="subInside.index"
+                            :class="`${anindex !== question?.question?.stem?.og?.ogOps?.length - 1 ? 'mb-16px' : ''}`"
+                            class="flex-1 items-center !h-unset !flex"
+                            :value="subInside.index"
+                            @click="subjectStore.handleAddMutiAnswer(subInside.index, index, subInside, question)"
+                          >
+                            <div class="maths flex items-center" v-html="`${subInside.index}. ${subInside.html}`"></div>
+                          </NRadioButton>
+                        </NRadioGroup>
+                      </div>
+                    </div>
+                  </div>
+                </template>
               </div>
             </NScrollbar>
           </div>

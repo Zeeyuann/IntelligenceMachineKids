@@ -43,16 +43,16 @@ export function logOut(id: number) {
 
 export function fetchOffSpringId() {
   return request<Api.Auth.offSpriingId[]>({
-    url: 'aiweb/offsprings',
-    method: 'post'
+    url: 'wxx/user/getUserOffsprings',
+    method: 'get'
   });
 }
 
-export function fetchUserInfo(Offspriingid?: string | number) {
+export function fetchUserInfo(offspringId?: string | number) {
   return request<Api.Auth.offSpriingId>({
     url: 'aiweb/center/detail',
     headers: {
-      Offspriingid
+      offspringId
     },
     method: 'post'
   });

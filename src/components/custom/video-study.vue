@@ -35,10 +35,10 @@ const handlePlay = async (item: any) => {
 
 <template>
   <div class="alph flex flex-col flex-1 !p-unset">
-    <main class="box-border box-border w-full flex flex-col flex-1 of-hidden px-160px py-32px text-#181818">
+    <main class="box-border box-border w-full flex flex-col flex-1 of-hidden py-32px text-#181818">
       <div class="mb-20px text-20px font-600">{{ activeVideo?.title }}</div>
       <div class="w-full flex flex-1 of-hidden">
-        <div class="mr-10px h-full flex-1">
+        <div class="mr-10px h-full min-w-200px flex-1">
           <VideoPlayer
             v-if="activeVideo.video_path"
             :title="activeVideo.title"
@@ -52,7 +52,7 @@ const handlePlay = async (item: any) => {
         <div class="h-full of-hidden">
           <NScrollbar
             :style="{ border: '1px solid rgba(255, 255, 255, 1)' }"
-            class="ml-1px box-border w-428px of-hidden rd-12px bg-#ffffff p-20px"
+            class="ml-1px box-border of-hidden rd-12px bg-#ffffff p-20px"
           >
             <div class="flex items-center justify-between">
               <div class="mb-20px flex items-center">
