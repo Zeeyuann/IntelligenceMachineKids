@@ -279,6 +279,14 @@ export function questionDetail(params: any) {
   });
 }
 
+export function fetchQuestion(params: any) {
+  return request<any>({
+    url: 'wxx/learn/getQuestionById',
+    params,
+    method: 'get'
+  });
+}
+
 export function videoList(params: any) {
   return request<any>({
     url: 'learn/video/knowledge',

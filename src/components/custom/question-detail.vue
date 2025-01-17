@@ -1,18 +1,32 @@
 <script setup lang="ts">
-import { questionDetail } from '@/service/api';
+import { fetchQuestion, questionDetail } from '@/service/api';
 
 const props = defineProps<{
   id: number;
 }>();
 
 const questionTemp: any = ref({});
+const knowledges = ref<any>([]);
+
+const emit = defineEmits<{
+  openVideo: [id: number];
+}>();
 watchEffect(async () => {
   const { data, error } = await questionDetail({ questionId: props.id });
   if (!error) {
     console.log('🚀 ~ watchEffect ~ data:', data);
     questionTemp.value = data;
   }
+  const { data: question, error: quesError } = await fetchQuestion({ questionId: props.id });
+  if (!quesError) {
+    console.log('🚀 ~ watchEffect ~ data:', data);
+    knowledges.value = question?.knowledgeIds ?? [];
+  }
 });
+
+const goVideo = (id: number) => {
+  emit('openVideo', id);
+};
 </script>
 
 <template>
@@ -57,6 +71,22 @@ watchEffect(async () => {
         <div class="text-14px text-[rgba(0,0,0,0.85)]" v-html="item.html"></div>
       </div>
     </div>
+    <div v-if="knowledges.length > 0" class="mt12px w-full flex flex-col flex-1">
+      <div class="mb-12px w-full flex-col">
+        <div class="flex items-center">
+          <div class="mr-5px h-13px w-4px rd-14px bg-#2CB6FF"></div>
+          <div class="text-16px text-#000000 font-500">关联知识点</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-10px">
+        <NButton v-for="item in knowledges" :key="item.id" class="kbg !w-full !bg-#00B578" @click="goVideo(item.id)">
+          <div class="flex items-center">
+            <icon-local-live-fill class="mr-10px"></icon-local-live-fill>
+            <span class="alph text-white">{{ item.name }}</span>
+          </div>
+        </NButton>
+      </div>
+    </div>
     <div
       v-if="false"
       class="mt28px box-border w-full flex flex-col items-center justify-center border-t border-t-[#E6E6E6] border-t-solid"
@@ -76,4 +106,13 @@ watchEffect(async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+:deep(.kbg) {
+  /* background: linear-gradient(180deg, #2cb6ff 10%, #a1ecff 100%), #d8d8d8; */
+  --n-border: 1px solid #00b578 !important;
+  --n-border-hover: 1px solid #00b578 !important;
+  --n-border-pressed: 1px solid #00b578 !important;
+  --n-border-focus: 1px solid #00b578 !important;
+  --n-border-disabled: 1px solid #00b578 !important;
+}
+</style>

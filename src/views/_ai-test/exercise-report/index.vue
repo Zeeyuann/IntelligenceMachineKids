@@ -96,6 +96,11 @@ const handleBack = (item: any) => {
 
 const showVideoDraw = ref(false);
 const activeVideoId = ref(0);
+const handleOpenVideo = (id: number) => {
+  showVideoDraw.value = true;
+  activeVideoId.value = id;
+};
+
 function createBigColumns(): DataTableColumns {
   return [
     {
@@ -435,8 +440,8 @@ function createSmallColumns(): DataTableColumns {
     </main>
   </div>
   <NDrawer v-model:show="showDraw" close-on-esc :width="worngWitdth" content-class="bluebg" placement="right">
-    <NDrawerContent :native-scrollbar="false" title="错题详解">
-      <QuestionDetail :id="activeQuesiontionId" />
+    <NDrawerContent :native-scrollbar="false" title="错题详解" closable>
+      <QuestionDetail :id="activeQuesiontionId" @open-video="handleOpenVideo" />
     </NDrawerContent>
   </NDrawer>
   <NDrawer
@@ -448,7 +453,7 @@ function createSmallColumns(): DataTableColumns {
     content-class="bluebg"
     placement="bottom"
   >
-    <NDrawerContent body-content-class="h-full flex" :native-scrollbar="false" title="知识点学习">
+    <NDrawerContent closable body-content-class="h-full flex" :native-scrollbar="false" title="知识点学习">
       <VideoStudy :id="activeVideoId" />
     </NDrawerContent>
   </NDrawer>
