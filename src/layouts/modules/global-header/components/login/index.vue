@@ -19,6 +19,12 @@ const emit = defineEmits<{
 const handleClose = () => {
   emit('close');
 };
+
+const handleLogout = () => {
+  authStore.resetStore();
+  authStore.token = '';
+  authStore.offSpriingId = '';
+};
 </script>
 
 <template>
@@ -44,7 +50,7 @@ const handleClose = () => {
             </div>
           </div>
         </div>
-        <div v-else class="size-full flex-center">
+        <div v-else class="relative size-full flex-center">
           <div class="size-full flex flex-col items-center justify-center">
             <div class="w-full flex items-center justify-center text-20px text-#000000 font-600">选择登录的子账号</div>
 
@@ -71,11 +77,13 @@ const handleClose = () => {
                 <div class="mi text-14px text-#7A808D">{{ item.description }}</div>
               </div>
             </div>
+
+            <icon-local-close class="absolute right-10px top-0 cursor-pointer text-20px" @click="handleLogout" />
           </div>
         </div>
       </Transition>
       <template v-if="!authStore.token" #header-extra>
-        <icon-local-close class="h-20px w-20px cursor-pointer" @click="handleClose" />
+        <icon-local-close class="cursor-pointer text-20px" @click="handleClose" />
       </template>
     </NCard>
   </div>
